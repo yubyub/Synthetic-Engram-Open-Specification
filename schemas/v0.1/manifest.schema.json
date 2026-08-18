@@ -3,27 +3,10 @@
   "$id": "https://synthetic-engram.org/schema/v0.1/manifest.schema.json",
   "title": "Synthetic Engram package manifest",
   "type": "object",
-  "required": ["format", "data_model_version", "id", "created_at", "updated_at", "owner", "profiles", "objects"],
-  "properties": {
-    "format": {"const": "synthetic-engram"},
-    "data_model_version": {"type": "string", "pattern": "^0\\.(?:[1-9][0-9]*)$"},
-    "features": {
-      "type": "array",
-      "items": {"type": "string", "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)+$"},
-      "uniqueItems": true
-    },
-    "id": {"$ref": "definitions.schema.json#/$defs/id"},
-    "created_at": {"$ref": "definitions.schema.json#/$defs/timestamp"},
-    "updated_at": {"$ref": "definitions.schema.json#/$defs/timestamp"},
   "required": [
     "format",
     "version",
-    "engram_id",
     "id",
-    "id",
-    "engram_id",
-    "export_id",
-    "completeness",
     "created_at",
     "updated_at",
     "owner",
@@ -38,7 +21,6 @@
       "const": "0.1.0"
     },
     "id": {
-      "$ref": "definitions.schema.json#/$defs/packageId"
       "$ref": "definitions.schema.json#/$defs/id"
     },
     "created_at": {
@@ -50,15 +32,6 @@
     "owner": {
       "type": "object",
       "required": [
-        "id",
-        "type"
-      ],
-      "properties": {
-        "id": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255
-        },
         "type",
         "name"
       ],
@@ -70,7 +43,6 @@
             "other"
           ]
         },
-        "display_name": {
         "name": {
           "type": "string",
           "minLength": 1
@@ -80,11 +52,6 @@
     },
     "profiles": {
       "type": "array",
-      "contains": {"const": "core"},
-      "items": {
-        "anyOf": [
-          {"enum": ["core", "graph", "media", "action"]},
-          {"type": "string", "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)+$"}
       "contains": {
         "const": "core"
       },
@@ -109,29 +76,6 @@
           "path"
         ],
         "properties": {
-          "id": {"$ref": "definitions.schema.json#/$defs/id"},
-          "kind": {"enum": ["record", "graph", "attachment", "blob"]},
-          "media_type": {"type": "string", "pattern": "^[^/\\s]+/[^/\\s]+$"},
-          "path": {"$ref": "definitions.schema.json#/$defs/safePath"}
-        },
-        "allOf": [
-          {
-            "if": {"properties": {"kind": {"const": "record"}}},
-            "then": {"properties": {"media_type": {"const": "text/markdown"}}}
-          },
-          {
-            "if": {"properties": {"kind": {"const": "graph"}}},
-            "then": {"properties": {"media_type": {"const": "application/vnd.synthetic-engram.graph+json"}}}
-          },
-          {
-            "if": {"properties": {"kind": {"const": "attachment"}}},
-            "then": {"properties": {"media_type": {"const": "application/vnd.synthetic-engram.attachment+json"}}}
-          }
-        ],
-        "additionalProperties": false
-      }, "minItems": 1
-    },
-    "extensions": {"$ref": "definitions.schema.json#/$defs/extensions"}
           "id": {
             "$ref": "definitions.schema.json#/$defs/id"
           },
@@ -151,73 +95,6 @@
             "$ref": "definitions.schema.json#/$defs/safePath"
           }
         },
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "if": {
-              "properties": {
-                "kind": {
-                  "enum": [
-                    "record"
-                  ]
-                }
-              },
-              "required": [
-                "kind"
-              ]
-            },
-            "then": {
-              "properties": {
-                "id": {
-                  "$ref": "definitions.schema.json#/$defs/recordId"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "kind": {
-                  "enum": [
-                    "graph"
-                  ]
-                }
-              },
-              "required": [
-                "kind"
-              ]
-            },
-            "then": {
-              "properties": {
-                "id": {
-                  "$ref": "definitions.schema.json#/$defs/graphId"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "kind": {
-                  "enum": [
-                    "attachment",
-                    "blob"
-                  ]
-                }
-              },
-              "required": [
-                "kind"
-              ]
-            },
-            "then": {
-              "properties": {
-                "id": {
-                  "$ref": "definitions.schema.json#/$defs/attachmentId"
-                }
-              }
-            }
-          }
-        ]
         "additionalProperties": false
       },
       "minItems": 1
@@ -226,7 +103,6 @@
       "$ref": "definitions.schema.json#/$defs/extensions"
     },
     "engram_id": {
-      "$ref": "definitions.schema.json#/$defs/engramId"
       "$ref": "definitions.schema.json#/$defs/id",
       "description": "Stable identity of the durable Synthetic Engram."
     },

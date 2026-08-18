@@ -1,6 +1,6 @@
 ---
 id: action_01ARZ3NDEKTSV4RRFFQ69G5FAZ
-schema_version: 0.1
+schema_version: "0.1"
 type: action
 title: Action
 created_at: 2025-01-01T00:00:00Z

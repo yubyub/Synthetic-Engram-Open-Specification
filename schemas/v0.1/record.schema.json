@@ -3,131 +3,8 @@
   "$id": "https://synthetic-engram.org/schema/v0.1/record.schema.json",
   "title": "Synthetic Engram record front matter",
   "type": "object",
-  "required": [
-    "id",
-    "schema_version",
-    "type",
-    "title",
-    "created_at",
-    "updated_at"
-  ],
+  "required": ["id", "schema_version", "type", "title", "created_at", "updated_at"],
   "properties": {
-    "id": {
-      "$ref": "definitions.schema.json#/$defs/id"
-    },
-    "schema_version": {
-      "const": "0.1"
-    },
-    "type": {
-      "enum": [
-        "note",
-        "project",
-        "action"
-      ]
-    },
-    "title": {
-      "type": "string",
-      "minLength": 1
-    },
-    "created_at": {
-      "$ref": "definitions.schema.json#/$defs/timestamp"
-    },
-    "updated_at": {
-      "$ref": "definitions.schema.json#/$defs/timestamp"
-    },
-    "parent": {
-      "$ref": "definitions.schema.json#/$defs/id"
-    },
-    "links": {
-      "type": "array",
-      "items": {
-        "$ref": "definitions.schema.json#/$defs/link"
-      }
-    },
-    "tags": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      },
-      "uniqueItems": true
-    },
-    "status": {
-      "enum": [
-        "open",
-        "in_progress",
-        "done",
-        "cancelled"
-      ]
-    },
-    "due_at": {
-      "$ref": "definitions.schema.json#/$defs/timestamp"
-    },
-    "extensions": {
-      "$ref": "definitions.schema.json#/$defs/extensions"
-    }
-  },
-  "allOf": [
-    {
-      "if": {
-        "properties": {
-          "type": {
-            "const": "note"
-          }
-        },
-        "required": [
-          "type"
-        ]
-      },
-      "then": {
-        "properties": {
-          "id": {
-            "pattern": "^note_[0-9A-HJKMNP-TV-Z]{26}$"
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "type": {
-            "const": "project"
-          }
-        },
-        "required": [
-          "type"
-        ]
-      },
-      "then": {
-        "properties": {
-          "id": {
-            "pattern": "^project_[0-9A-HJKMNP-TV-Z]{26}$"
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "type": {
-            "const": "action"
-          }
-        },
-        "required": [
-          "type"
-        ]
-      },
-      "then": {
-        "properties": {
-          "id": {
-            "pattern": "^action_[0-9A-HJKMNP-TV-Z]{26}$"
-          }
-        },
-        "required": [
-          "status"
-        ]
-      }
-    }
     "id": {"$ref": "definitions.schema.json#/$defs/id"},
     "schema_version": {"const": "0.1"},
     "type": {"enum": ["note", "project", "action"]},
@@ -142,19 +19,6 @@
     "due_at": {"$ref": "definitions.schema.json#/$defs/timestamp"},
     "extensions": {"$ref": "definitions.schema.json#/$defs/extensions"}
   },
-  "allOf": [{
-    "if": {"properties": {"type": {"const": "action"}}, "required": ["type"]},
-    "then": {"required": ["status"]},
-    "else": {
-      "not": {
-        "anyOf": [
-          {"required": ["status"]},
-          {"required": ["due_at"]}
-        ]
-      }
-    }
-    "else": {"not": {"anyOf": [{"required": ["status"]}, {"required": ["due_at"]}]}}
-  }],
   "allOf": [
     {"if": {"properties": {"type": {"const": "action"}}, "required": ["type"]}, "then": {"required": ["status"]}},
     {"if": {"required": ["parent_scope"]}, "then": {"required": ["parent"]}}

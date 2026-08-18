@@ -3,25 +3,11 @@
   "schema_version": "0.1",
   "type": "graph",
   "title": "Portable hosting and backup",
-  "scope": "curated",
   "nodes": [
-    {
-      "id": "node_01J00000000000000000000008",
-      "record": "note_01J00000000000000000000003",
-      "label": "Hosting"
-    },
-    {
-      "id": "node_01J00000000000000000000009",
-      "record": "note_01J00000000000000000000004",
-      "label": "Backup"
-    }
+    {"id": "hosting", "record": "note_01J00000000000000000000003", "label": "Hosting"},
+    {"id": "backup", "record": "note_01J00000000000000000000004", "label": "Backup"}
   ],
   "edges": [
-    {
-      "id": "edge_01J00000000000000000000010",
-      "from": "node_01J00000000000000000000008",
-      "to": "node_01J00000000000000000000009",
-      "relation": "depends_on"
-    }
+    {"id": "requires", "from": "hosting", "to": "backup", "relation": "depends_on"}
   ]
 }

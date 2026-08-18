@@ -1,6 +1,6 @@
 ---
 id: note_01ARZ3NDEKTSV4RRFFQ69G5FAW
-schema_version: 0.1
+schema_version: "0.1"
 type: note
 title: Note
 title: Again
