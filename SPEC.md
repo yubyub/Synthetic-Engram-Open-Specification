@@ -60,7 +60,8 @@ The package root MUST contain `engram.json`, conforming to
 It declares:
 
 - `format`, fixed to `synthetic-engram`;
-- specification `version`;
+- data-model `data_model_version` (major and minor only);
+- optional minor-version `features`, when used;
 - the package `id`;
 - creation and update timestamps;
 - an owner descriptor;
@@ -144,14 +145,50 @@ See [docs/conformance.md](docs/conformance.md) for the testable checklist.
 
 ## 12. Versioning
 
-`version` uses Semantic Versioning. Patch releases clarify text or tighten tests
-without changing valid data. Minor releases add backward-compatible optional
-features. Major releases may make incompatible changes. A consumer MUST reject
-a package with an unsupported major version and SHOULD report unsupported minor
-features rather than silently discard them.
+Four different concepts MUST NOT be conflated:
 
-Schema paths are versioned by major and minor version. Package data uses
-`schema_version: "0.1"`; it does not include the patch version.
+- The **specification release version** (the `Version` displayed by this
+  document and recorded in `CHANGELOG.md`) is Semantic Versioning. It versions
+  the prose, schemas, tests, and release bundle, but is not package data.
+- The **data-model version** identifies the package's core data language.
+  Manifests use `data_model_version: "MAJOR.MINOR"`; it has no patch component.
+- A **schema version** is a concrete validation artifact for one data-model
+  major/minor, identified by its `$id` under `schema/vMAJOR.MINOR/`. Corrected
+  schemas may ship in multiple specification patch releases without changing
+  their `$id` or the package's data-model version, because a patch release MUST
+  NOT change which package data is valid. Object `schema_version` fields record
+  the schema language used for that object and likewise contain major/minor.
+- **Declared optional features** are identifiers in the manifest's optional
+  `features` array. They advertise semantics introduced by a minor release;
+  they are not version numbers or conformance profiles.
+
+Before full schema validation, a consumer MUST parse only a minimal manifest
+envelope: `format`, `data_model_version`, and `features` (treating an absent
+`features` as empty). It MUST reject malformed values and an unsupported major.
+It then MUST select the highest schema it supports with the same major and a
+minor no greater than the package minor. If none exists, it MUST reject the
+package. Finally it validates the entire package with that schema and performs
+the cross-file conformance checks. Schema selection MUST NOT begin by applying
+an exact-version full manifest schema: that would prevent compatibility
+negotiation.
+
+A later minor MUST retain the earlier minor's closed core schema. New optional
+feature payloads MUST therefore be stored beneath the existing `extensions`
+member, keyed by the same reverse-DNS feature identifier; they MUST NOT add a
+property to a closed core object, change a core field's meaning, or make
+previously valid core data invalid. Producers MUST list every such feature in
+`features`. A consumer that does not implement a declared feature MAY ignore
+its extension payload while reading the understood core, but MUST report the
+feature as unsupported. A round-trip processor MUST preserve the feature's
+declaration and payload unchanged or reject the package; it MUST NOT silently
+discard either. Features whose semantics cannot satisfy these rules require a
+new major version.
+
+Thus specification releases `0.1.0` and `0.1.1`, for example, both produce
+`data_model_version: "0.1"`. Patch numbers never appear in package version
+fields, and validators MUST NOT use an exact specification-release constant.
+See [docs/versioning.md](docs/versioning.md) for the normative decision table
+and fixtures.
 
 ## 13. Security and privacy
 

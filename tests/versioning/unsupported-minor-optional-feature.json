@@ -1,0 +1,9 @@
+{
+  "manifest": {
+    "format": "synthetic-engram",
+    "data_model_version": "0.2",
+    "features": ["org.example.summary"],
+    "extensions": {"org.example.summary": {"text": "Preserve this value unchanged."}}
+  },
+  "expected_outcome": "ACCEPT_WITH_UNSUPPORTED_FEATURES"
+}
