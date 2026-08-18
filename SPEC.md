@@ -104,6 +104,46 @@ Markdown content. Front matter begins with `---` on the first line and ends
 with `---` on a line by itself. It MUST conform to
 [`schemas/v1.0/record.schema.json`](schemas/v1.0/record.schema.json).
 
+### 7.1 Serialization
+
+Records MUST be UTF-8 without a byte-order mark. Lines MAY end with either LF
+or CRLF; a bare CR is not a line ending. Unicode text is compared as encoded:
+consumers MUST NOT require or silently apply a normalization form. Producers
+SHOULD emit Unicode Normalization Form C (NFC).
+
+The opening delimiter is exactly the three ASCII characters `---`, followed by
+LF or CRLF, at byte zero. The closing delimiter is the next line whose content
+is exactly `---`; spaces, comments, or other characters are not permitted on a
+delimiter line. It MAY be followed by LF, CRLF, or end of file. Everything
+after that delimiter and its optional line ending is record content. Record
+content MAY be empty. Thus, the delimiter is structural and is not found by
+parsing YAML or by searching for a prefix.
+
+Front matter MUST use the following restricted YAML 1.2 subset:
+
+- it is exactly one mapping in exactly one YAML document;
+- mapping keys MUST be strings and MUST be unique within their mapping;
+  consumers MUST reject duplicate keys rather than select a value;
+- sequences, mappings, and JSON-compatible scalar values are permitted;
+- directives, explicit tags, anchors, aliases, merge keys (`<<`), and explicit
+  YAML document-start or document-end markers are prohibited; and
+- only block collections are permitted; flow collections are prohibited.
+
+Plain scalars use this deterministic typing rule. The exact lowercase tokens
+`null`, `true`, and `false` are null and booleans. JSON-number syntax produces
+numbers (with no non-finite values); every other plain scalar is a string.
+Single-quoted and double-quoted scalars are always strings. In particular,
+timestamps, Engram IDs, schema versions, and values such as `yes`, `no`, `on`,
+and `off` are strings. Schema constraints still determine where numbers,
+booleans, null, or strings are valid. Producers SHOULD quote strings when their
+plain spelling would otherwise be typed as null, a boolean, or a number.
+
+The content is Markdown, but v0.1 does not select a Markdown dialect and body
+rendering is implementation-defined. Raw HTML is allowed as record text, but
+no consumer is required to render it. As required by Section 13, Markdown and
+raw HTML are untrusted input: consumers MUST NOT execute them and renderers
+MUST sanitize or escape unsafe constructs for their output context.
+
 The core envelope requires `id`, `schema_version`, `type`, `title`,
 `created_at`, and `updated_at`. `type` is one of `note`, `project`, or `action`
 in v1.0. An action additionally MUST provide `status`; it MAY provide `due_at`.
@@ -165,8 +205,64 @@ local IDs and MAY reference Engram IDs. Directed edges reference local node IDs.
 Referenced Engram IDs MUST resolve in a complete package unless their `record_scope` is `outside_engram`. Node and
 edge IDs MUST each be unique within their graph.
 
+Graphs are optional, non-authoritative views. A package MAY contain no graphs,
+even when it declares relationships between records. No record, attachment,
+blob, graph, or other inventoried artifact is required to appear as a graph
+node. The manifest inventory, not graph membership, defines package contents.
+A graph MAY therefore be an application-specific diagram or a projection of
+some package relationships, but it is not an authoritative relationship set.
+
+Every graph MUST declare its coverage with `scope`:
+
+- `curated` means that its nodes and edges are a selected or partial view. It
+  MAY omit any inventoried record and MAY contain application-specific nodes;
+- `complete_records` claims complete record coverage. It MUST contain at least
+  one non-external node whose `record` is each inventoried record ID. It MAY
+  also contain application-specific or external nodes. Complete coverage does
+  not require attachments, blobs, or other graphs to be nodes and does not make
+  the graph authoritative for relationships.
+
+Record `parent` and `links` fields are authoritative package relationships.
+Graph edges are independent, descriptive topology: they are not required to be
+projections of record relationships, and records are not required to repeat
+graph edges in `links` or `parent`. A graph edge that appears to contradict or
+omit a record relationship does not create a validation conflict; consumers
+MUST use the record field when determining record hierarchy or typed record
+links. Producers SHOULD choose graph relations and labels that avoid misleading
+users, but validators MUST NOT infer agreement from similarly named relations.
+
 The v0.1 graph format describes interoperable topology and optional labels. It
 does not standardize layout, rendering, or an application-specific graph DSL.
+
+These abbreviated examples show the coverage rules (the other required graph
+and manifest fields are omitted here for clarity). Complete, validated versions
+are provided by the [no-graph](tests/valid/no-graphs),
+[curated-graph](tests/valid/basic-engram), and
+[complete-record-graph](tests/valid/complete-record-graph) fixtures:
+
+```json
+{"profiles":["core"], "objects":[{"id":"note_...", "kind":"record", "path":"records/note.md"}]}
+```
+
+The package above has no graph; the record remains a package member because it
+is inventoried. A curated graph can select two of several records:
+
+```json
+{"scope":"curated", "nodes":[
+  {"id":"first", "record":"note_01J00000000000000000000003"},
+  {"id":"second", "record":"note_01J00000000000000000000004"}
+]}
+```
+
+A graph claiming complete coverage must reference every inventoried record:
+
+```json
+{"scope":"complete_records", "nodes":[
+  {"id":"project", "record":"project_01J00000000000000000000002"},
+  {"id":"first", "record":"note_01J00000000000000000000003"},
+  {"id":"second", "record":"note_01J00000000000000000000004"}
+]}
+```
 
 ## 9. Attachments
 
@@ -179,7 +275,12 @@ payload inventory entry uses kind `blob` and the attachment ID.
 
 Markdown MAY refer to an attachment with
 `engram-attachment:<attachment-id>`. Consumers MUST resolve that URI by ID and
-MUST NOT treat an embedded path or remote URL as authoritative.
+MUST NOT treat an embedded path or remote URL as authoritative. The text is a
+URI with the `engram-attachment` scheme and is discovered only when it is the
+destination of a normal Markdown link or image. Consumers MUST NOT scan
+arbitrary body text for attachment references. Because Markdown parsing is
+implementation-defined, implementations MAY recognize link and image syntax
+in their chosen dialect, but MUST apply this discovery rule consistently.
 
 ## 10. Extensions
 

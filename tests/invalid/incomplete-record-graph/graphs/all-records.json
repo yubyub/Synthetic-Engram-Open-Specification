@@ -1,0 +1,14 @@
+{
+  "id": "graph_01J00000000000000000000014",
+  "schema_version": "0.1",
+  "type": "graph",
+  "title": "All records",
+  "scope": "complete_records",
+  "nodes": [
+    {
+      "id": "first",
+      "record": "note_01J00000000000000000000012"
+    }
+  ],
+  "edges": []
+}
