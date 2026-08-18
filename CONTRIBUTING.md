@@ -1,6 +1,8 @@
 # Contributing
 
-Contributions are welcome while the standard is experimental.
+Contributions are welcome as this candidate open standard builds independent
+implementation and adoption evidence. Core 1.0 is stable; experimental future
+work must not silently alter its frozen schemas or semantics.
 
 ## Proposing a change
 
@@ -10,8 +12,12 @@ Contributions are welcome while the standard is experimental.
    data, compatibility and security analysis, and conformance fixtures.
 3. Keep normative requirements in `SPEC.md`; put rationale and tutorials in
    `docs/`.
-4. Run `python scripts/validate.py` before opening a pull request.
-5. Add a changelog entry for user-visible changes.
+4. Check the non-normative
+   [`implementation-feedback` register](docs/development/implementation-feedback.md)
+   for related adoption concerns, and update its evidence/status when the change
+   implements or resolves one of them.
+5. Run `python scripts/validate.py` before opening a pull request.
+6. Add a changelog entry for user-visible changes.
 
 Use one logical change per pull request. Normative language must use the BCP 14
 keywords consistently. JSON Schemas and prose must not contradict one another.

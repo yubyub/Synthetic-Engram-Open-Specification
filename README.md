@@ -1,13 +1,67 @@
 # Synthetic Engram Open Standard
 
 **Keep knowledge useful when the application, AI provider, database, or hosting
-model changes.** Synthetic Engram is an open interchange standard for a
+model changes.** Synthetic Engram is a candidate open interchange standard for a
 human-owned knowledge base: typed Markdown records, explicit relationships,
 portable graphs, and verifiable attachments with stable identities.
 
 > [!NOTE]
 > **Status: Synthetic Engram Open Standard 1.0.0.** The normative schemas use
 > permanent `v1.0` identifiers; published schema bytes are immutable.
+
+## Purpose
+
+Synthetic Engram is a **candidate open interchange standard and portable
+knowledge structure** for durable, human-owned application knowledge. It gives
+humans, conventional applications, and AI-enabled tools a shared definition of
+typed records, stable identities, relationships, graphs, and attachments without
+requiring them to use the same database, hosting provider, or AI runtime.
+
+The standard is currently an emerging, maintainer-led specification with two
+included cross-language implementations, not an established multi-vendor
+industry standard. Adopt it first as an import/export boundary and evaluate it
+with real round trips.
+
+It standardizes the knowledge **at the interoperability boundary**. An
+application may also use the model internally, but conformance does not require
+its live database or filesystem to match an Engram Package. Human ownership here
+means durable data remains portable and inspectable; it does **not** mean the
+package grants or enforces authentication, authorization, encryption, consent,
+or access privileges.
+
+## Where it fits
+
+```text
+ human owner
+     |
+     | creates, reviews, controls, and moves durable knowledge
+     v
+ +---------------- application that implements Synthetic Engram ---------------+
+ | notes / projects / knowledge service / personal data store / migration tool |
+ |                                                                             |
+ | proprietary or package-native live store                                    |
+ |                 |                                                           |
+ |          import / export adapter                                             |
+ +-----------------|-----------------------------------------------------------+
+                   v
+       portable Synthetic Engram Package
+       records + stable IDs + links + graphs + attachments
+                   |
+          +--------+---------+------------------+
+          |                  |                  |
+     another app       AI/retrieval tool    archive/validator
+     imports it        selects context      preserves/checks it
+
+ Outside core 1.0: live sync, retrieval/ranking, model memory policy,
+ authentication, authorization, encryption, rendering, and database design.
+```
+
+Applications that commonly **implement** the standard are knowledge bases,
+note/project/task tools, personal-data stores, migration and backup products,
+and hosted services that promise a portable exit. Applications that may
+**interface with an implementation** include AI assistants, coding agents,
+search/indexing systems, graph viewers, archive validators, and other importers.
+The latter do not need to use an Engram Package as their own live store.
 
 ## Why use it?
 
@@ -29,6 +83,14 @@ software that stores or uses it. Choose it when you want to:
 - validate what an export contains, including references and attachment hashes;
 - allow partial implementations to declare exactly which profiles they support.
 
+It is most likely to provide a net benefit when users need a credible exit path,
+IDs and links must survive renames or migrations, multiple independently evolving
+tools need the same durable objects, or complete and deliberately partial exports
+must be distinguishable. It is more likely to be a burden when only one program
+will ever read the data, plain Markdown is sufficient, or the real requirement is
+live synchronization, collaborative history, authorization, semantic-web
+reasoning, or an AI retrieval engine.
+
 It is **not** a database, sync protocol, application framework, retrieval
 algorithm, or AI-memory policy. Implementations keep their preferred live
 architecture and import or export the standard package at the interoperability
@@ -46,14 +108,24 @@ boundary.
 
 ## Evaluate the standard
 
-1. Read the [architecture](docs/architecture.md) to understand what belongs in
-   the portable layer and what remains implementation-specific.
-2. Inspect the [complete 1.0 example](examples/v1.0/basic-engram/README.md), including a
-   project, notes, an action, their graph, and an attachment.
-3. Read the [normative specification](SPEC.md) and
-   [conformance checklist](docs/conformance.md).
-4. Run the validator, then compare the model with the
-   [related-work analysis](docs/related-standards.md).
+Choose the shortest path for your role:
+
+- **Deciding whether to adopt:** read the
+  [adoption guide](docs/adoption-guide.md), inspect the
+  [complete example](examples/v1.0/basic-engram/README.md), and compare
+  [related standards](docs/related-standards.md).
+- **Building an exporter or importer:** read the
+  [architecture](docs/architecture.md), then the [normative specification](SPEC.md)
+  and [conformance checklist](docs/conformance.md).
+- **Building an AI or retrieval integration:** read the
+  [AI integration guide](docs/ai-integration.md), then implement only the profiles
+  needed by the integration.
+- **Reviewing or evolving the standard:** use the
+  [implementation-feedback register](docs/development/implementation-feedback.md)
+  and the [decision records](docs/decisions/README.md).
+- **Using an agent to implement support:** provide `SPEC.md`, the applicable JSON
+  Schemas, `docs/conformance.md`, and the relevant fixtures as authoritative
+  context; rationale and guides are non-normative.
 
 ## Documentation map
 
@@ -65,6 +137,9 @@ boundary.
 - [Design rationale](docs/rationale.md)
 - [Architecture and implementation boundaries](docs/architecture.md)
 - [Related standards and projects](docs/related-standards.md)
+- [Adoption and implementation-cost guide](docs/adoption-guide.md)
+- [AI and retrieval integration guide](docs/ai-integration.md)
+- [Implementation-feedback register](docs/development/implementation-feedback.md)
 - [Non-normative design-decision matrix](docs/design-decisions.md)
 - [Open design questions](docs/open-questions.md)
 - [Authoritative 1.0 promotion checklist](docs/releases/1.0-checklist.md)
@@ -113,4 +188,6 @@ the repository's valid and invalid conformance fixtures.
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [GOVERNANCE.md](GOVERNANCE.md).
 Specification prose is licensed under
 [CC BY-SA 4.0](LICENSE); schemas, examples, and validation software are licensed
-under [MPL 2.0](LICENSE-CODE).
+under [MPL 2.0](LICENSE-CODE). Both licenses permit commercial use while keeping
+changes to the covered specification or source files open under their respective
+terms; see the [plain-language licensing guide](docs/licensing.md).
