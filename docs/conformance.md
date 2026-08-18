@@ -12,6 +12,11 @@ checklist. In a conflict, `SPEC.md` wins.
 - Partial packages supply selection metadata; complete packages close over every current durable source artifact.
 - Object IDs are unique and agree with their inventory entries.
 - Every included optional object type has its corresponding declared profile.
+- Parsers are selected from inventory media types, never filename extensions.
+- Every record media type is `text/markdown`; non-Markdown structured records
+  are not part of the 1.0 core.
+- Unsupported inventoried media types are reported, and a processor claiming
+  round-trip preservation retains their inventory fields and bytes unchanged.
 
 ## Reference checks
 
