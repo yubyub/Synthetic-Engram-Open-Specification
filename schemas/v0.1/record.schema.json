@@ -145,6 +145,14 @@
   "allOf": [{
     "if": {"properties": {"type": {"const": "action"}}, "required": ["type"]},
     "then": {"required": ["status"]},
+    "else": {
+      "not": {
+        "anyOf": [
+          {"required": ["status"]},
+          {"required": ["due_at"]}
+        ]
+      }
+    }
     "else": {"not": {"anyOf": [{"required": ["status"]}, {"required": ["due_at"]}]}}
   }],
   "allOf": [

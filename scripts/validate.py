@@ -9,6 +9,7 @@ import json
 import re
 import sys
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -221,6 +222,13 @@ def safe_path(root: Path, value: str) -> Path:
         fail(f"inventory path escapes package: {value}")
     return path
 
+def timestamp(value: str) -> datetime:
+    """Parse a schema-validated UTC RFC 3339 timestamp for comparisons."""
+    return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+def check_timestamp_order(created: str, updated: str, label: Path) -> None:
+    if timestamp(updated) < timestamp(created):
+        fail(f"{label}: updated_at precedes created_at")
 
 def validate_package(root: Path) -> None:
     manifest_path = root / "engram.json"
@@ -237,6 +245,7 @@ def validate_package(root: Path) -> None:
         if entry.get("id") in manifest_identity:
             fail(f"identity collision: inventory ID {entry['id']} conflicts with manifest identity")
     check_schema(manifest, "manifest.schema.json", registry, manifest_path)
+    check_timestamp_order(manifest["created_at"], manifest["updated_at"], manifest_path)
     version = manifest.get("version", "")
     schema_version = "1.0" if version.startswith("1.0.") else "0.1"
     schema_dir = SCHEMA_ROOT / f"v{schema_version}"
@@ -282,6 +291,14 @@ def validate_package(root: Path) -> None:
         identity_source[entry["id"]] = f"object {entry['path']}"
         if kind == "record" and "parent" in value:
             parent[entry["id"]] = value["parent"]
+        if kind == "record":
+            check_timestamp_order(value["created_at"], value["updated_at"], path)
+            if "due_at" in value and timestamp(value["due_at"]) < timestamp(value["created_at"]):
+                fail(f"{path}: due_at precedes created_at")
+            if timestamp(value["created_at"]) < timestamp(manifest["created_at"]):
+                fail(f"{path}: record created_at precedes package created_at")
+            if timestamp(value["updated_at"]) > timestamp(manifest["updated_at"]):
+                fail(f"{path}: record updated_at exceeds package updated_at")
         required_profile = PROFILE_FOR.get(kind)
         if required_profile and required_profile not in manifest["profiles"]:
             fail(f"{kind} object requires profile {required_profile}")
@@ -370,6 +387,8 @@ def validate_package(root: Path) -> None:
                 if missing:
                     fail(f"{path}: complete_records graph omits inventoried record {missing[0]}")
         elif kind == "attachment":
+            if value["filename"] != PurePosixPath(value["path"]).name:
+                fail(f"{path}: attachment filename does not match payload path basename")
             payload = safe_path(root, value["path"])
             blob_entries = [
                 entry
