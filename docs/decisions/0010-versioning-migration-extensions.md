@@ -1,6 +1,6 @@
 # Decision 10: Versioning, migration, and extension policy
 
-- **Status:** open
+- **Status:** accepted
 - **Outcome:** Include Semantic Versioning, stable versioned schema identifiers, deterministic unsupported-major handling, and reverse-DNS extensions in core 1.0. A 0.x migration is required only if v1.0 claims to accept that repository format.
 
 ## Rationale and compatibility
@@ -13,11 +13,11 @@ Consumers need predictable rejection rather than best-effort reinterpretation. E
 
 ## Acceptance criteria and evidence
 
-- **Open:** expand [versioning.md](../versioning.md) with a table classifying representative field, validation, profile, and semantic changes as patch/minor/major.
+- **Satisfied:** [versioning.md](../versioning.md) classifies schema, validation, semantic, profile, and serialization changes as patch, minor, or major.
 - **Satisfied:** unsupported major versions and required capabilities have deterministic non-success outcomes through `REQ-VERS-001`, `REQ-CONF-003`, `CONSUMER-002`, and `CONSUMER-004`.
-- **Open:** document and test reverse-DNS ownership, collision handling, unknown preservation, and extension-to-core promotion. Existing `REQ-EXT-*` and [`extension-preservation`](../../tests/valid/extension-preservation) cover only naming, non-redefinition, and conditional preservation.
-- **Open pending release scope:** before closure, list every pre-1.0 format v1.0 accepts and add migration notes/fixtures for each, or explicitly state that v1.0 accepts none.
+- **Satisfied:** reverse-DNS ownership, collision handling, unknown preservation, and extension-to-core promotion are normative and exercised by `ROUNDTRIP-006` and `ROUNDTRIP-007`.
+- **Satisfied:** core v1.0 explicitly does not accept v0.1 input, so no migration fixture is applicable.
 
 ## Linked changes required to close
 
-Update [versioning](../versioning.md), [SPEC](../../SPEC.md), [schemas README](../../schemas/README.md), [fixtures/vectors](../../tests), [traceability](../traceability.md), and [CHANGELOG](../../CHANGELOG.md). Keep the gate open until each item has merged evidence.
+Implemented in [versioning](../versioning.md), [SPEC](../../SPEC.md), [schemas README](../../schemas/README.md), [fixtures/vectors](../../tests), [traceability](../traceability.md), and [CHANGELOG](../../CHANGELOG.md).
