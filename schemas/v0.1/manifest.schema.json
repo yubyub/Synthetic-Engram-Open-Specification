@@ -68,6 +68,11 @@
     },
     "profiles": {
       "type": "array",
+      "contains": {"const": "core"},
+      "items": {
+        "anyOf": [
+          {"enum": ["core", "graph", "media", "action"]},
+          {"type": "string", "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)+$"}
       "contains": {
         "const": "core"
       },
@@ -92,6 +97,29 @@
           "path"
         ],
         "properties": {
+          "id": {"$ref": "definitions.schema.json#/$defs/id"},
+          "kind": {"enum": ["record", "graph", "attachment", "blob"]},
+          "media_type": {"type": "string", "pattern": "^[^/\\s]+/[^/\\s]+$"},
+          "path": {"$ref": "definitions.schema.json#/$defs/safePath"}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"kind": {"const": "record"}}},
+            "then": {"properties": {"media_type": {"const": "text/markdown"}}}
+          },
+          {
+            "if": {"properties": {"kind": {"const": "graph"}}},
+            "then": {"properties": {"media_type": {"const": "application/vnd.synthetic-engram.graph+json"}}}
+          },
+          {
+            "if": {"properties": {"kind": {"const": "attachment"}}},
+            "then": {"properties": {"media_type": {"const": "application/vnd.synthetic-engram.attachment+json"}}}
+          }
+        ],
+        "additionalProperties": false
+      }, "minItems": 1
+    },
+    "extensions": {"$ref": "definitions.schema.json#/$defs/extensions"}
           "id": {
             "$ref": "definitions.schema.json#/$defs/id"
           },

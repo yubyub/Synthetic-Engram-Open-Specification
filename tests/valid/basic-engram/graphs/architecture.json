@@ -3,6 +3,7 @@
   "schema_version": "0.1",
   "type": "graph",
   "title": "Portable hosting and backup",
+  "scope": "curated",
   "nodes": [
     {
       "id": "node_01J00000000000000000000008",

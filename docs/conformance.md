@@ -18,6 +18,11 @@ checklist. In a conflict, `SPEC.md` wins.
 - Partial packages supply selection metadata; complete packages close over every current durable source artifact.
 - Object IDs are unique and agree with their inventory entries.
 - Every included optional object type has its corresponding declared profile.
+- Parsers are selected from inventory media types, never filename extensions.
+- Every record media type is `text/markdown`; non-Markdown structured records
+  are not part of the 1.0 core.
+- Unsupported inventoried media types are reported, and a processor claiming
+  round-trip preservation retains their inventory fields and bytes unchanged.
 
 ## Reference checks
 
@@ -26,6 +31,11 @@ checklist. In a conflict, `SPEC.md` wins.
 - Parent relationships are acyclic.
 - Graph node references resolve unless explicitly external.
 - Graph edge endpoints resolve to nodes in the same graph.
+- Every graph declares `scope` as `curated` or `complete_records`.
+- A `complete_records` graph references every inventoried record from at least
+  one non-external node; a `curated` graph has no coverage requirement.
+- Graph membership is not used to determine package inventory, and graph edges
+  are not compared with authoritative record `parent` or `links` relationships.
 
 ## Media checks
 
