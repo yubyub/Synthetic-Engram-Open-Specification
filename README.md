@@ -61,6 +61,7 @@ boundary.
 - [Complete example package](examples/basic-engram/README.md)
 - [JSON Schemas](schemas/README.md)
 - [Conformance and validation](docs/conformance.md)
+- [Language-neutral conformance harness protocol](docs/harness-protocol.md)
 - [Design rationale](docs/rationale.md)
 - [Architecture and implementation boundaries](docs/architecture.md)
 - [Related standards and projects](docs/related-standards.md)

@@ -1,11 +1,9 @@
 {
-  "vector_version": "1.0",
-  "role": "round-trip",
-  "cases": [
-    {"id":"ROUNDTRIP-001","requirement":"REQ-ID-003","input":"tests/valid/all-record-types","operation":"import then export without logical edits","expected":{"all_object_ids_unchanged":true}},
-    {"id":"ROUNDTRIP-002","requirement":"REQ-ID-004","input":"tests/valid/all-record-types","operation":"rename titles and package paths, then export","expected":{"all_object_ids_unchanged":true}},
-    {"id":"ROUNDTRIP-003","requirement":"REQ-EXT-002","input":"tests/valid/extension-preservation","operation":"import then export while claiming unknown-extension preservation","expected":{"json_compatible_extension_value_deep_equal":true,"core_semantics_unchanged":true}},
-    {"id":"ROUNDTRIP-004","requirement":"REQ-ENC-003","input":"tests/valid/unicode-content","operation":"import then export without edits","expected":{"markdown_utf8_bytes_unchanged":true}},
-    {"id":"ROUNDTRIP-005","requirement":"REQ-INV-005","input":"tests/valid/zero-byte-attachment","operation":"import then export","expected":{"all_normative_inventory_entries_present":true,"payload_size":0}}
+  "vector_version":"1.0", "role":"round-trip", "cases":[
+    {"id":"ROUNDTRIP-001","requirement":"REQ-ID-003","adapter_operation":"round-trip","fixture":{"kind":"directory","source":"tests/valid/all-record-types"},"parameters":{"edits":[]},"expected":{"all_object_ids_unchanged":true}},
+    {"id":"ROUNDTRIP-002","requirement":"REQ-ID-004","adapter_operation":"round-trip","fixture":{"kind":"directory","source":"tests/valid/all-record-types"},"parameters":{"edits":["rename-titles","rename-paths"]},"expected":{"all_object_ids_unchanged":true}},
+    {"id":"ROUNDTRIP-003","requirement":"REQ-EXT-002","adapter_operation":"round-trip","fixture":{"kind":"directory","source":"tests/valid/extension-preservation"},"parameters":{"claim_unknown_extension_preservation":true},"expected":{"json_compatible_extension_value_deep_equal":true,"core_semantics_unchanged":true}},
+    {"id":"ROUNDTRIP-004","requirement":"REQ-ENC-003","adapter_operation":"round-trip","fixture":{"kind":"directory","source":"tests/valid/unicode-content"},"parameters":{"edits":[]},"expected":{"markdown_utf8_bytes_unchanged":true}},
+    {"id":"ROUNDTRIP-005","requirement":"REQ-INV-005","adapter_operation":"round-trip","fixture":{"kind":"directory","source":"tests/valid/zero-byte-attachment"},"parameters":{"edits":[]},"expected":{"all_normative_inventory_entries_present":true,"payload_size":0}}
   ]
 }
