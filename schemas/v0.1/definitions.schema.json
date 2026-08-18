@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synthetic-engram.org/schema/v0.1/definitions.schema.json",
+  "title": "Synthetic Engram common definitions",
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,31}_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "timestamp": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "safePath": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*\\u0000).+$"},
+    "extensions": {
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$"}
+    },
+    "link": {
+      "type": "object",
+      "required": ["target", "relation"],
+      "properties": {
+        "target": {"$ref": "#/$defs/id"},
+        "relation": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$"},
+        "external": {"type": "boolean", "default": false}
+      },
+      "additionalProperties": false
+    }
+  }
+}
