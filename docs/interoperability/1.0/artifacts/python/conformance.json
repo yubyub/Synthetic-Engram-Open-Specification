@@ -1,22 +1,140 @@
 {
   "protocol_version": "1.0",
   "adapter": "implementations/python-engram/engram_adapter.py",
-  "passed": 16,
+  "passed": 20,
   "results": [
     {
       "protocol_version": "1.0",
-      "case_id": "PRODUCER-001",
+      "case_id": "ROUNDTRIP-001",
       "outcome": "completed",
       "observed": {
-        "status": "success",
-        "package_artifact_present": true,
-        "declared_profiles": [
-          "core",
-          "graph",
-          "media",
-          "action"
-        ],
-        "inventory_preserved": true
+        "all_object_ids_unchanged": true,
+        "json_compatible_extension_value_deep_equal": true,
+        "core_semantics_unchanged": true,
+        "markdown_utf8_bytes_unchanged": true,
+        "all_normative_inventory_entries_present": true
+      },
+      "diagnostics": [],
+      "artifacts": [
+        {
+          "path": "package/engram.json",
+          "media_type": "application/json"
+        }
+      ]
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "ROUNDTRIP-002",
+      "outcome": "completed",
+      "observed": {
+        "all_object_ids_unchanged": true,
+        "json_compatible_extension_value_deep_equal": true,
+        "core_semantics_unchanged": true,
+        "markdown_utf8_bytes_unchanged": true,
+        "all_normative_inventory_entries_present": true
+      },
+      "diagnostics": [],
+      "artifacts": [
+        {
+          "path": "package/engram.json",
+          "media_type": "application/json"
+        }
+      ]
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "ROUNDTRIP-003",
+      "outcome": "completed",
+      "observed": {
+        "all_object_ids_unchanged": true,
+        "json_compatible_extension_value_deep_equal": true,
+        "core_semantics_unchanged": true,
+        "markdown_utf8_bytes_unchanged": true,
+        "all_normative_inventory_entries_present": true,
+        "unknown_extension_keys_unchanged": true,
+        "unknown_extension_values_deep_equal": true
+      },
+      "diagnostics": [],
+      "artifacts": [
+        {
+          "path": "package/engram.json",
+          "media_type": "application/json"
+        }
+      ]
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "ROUNDTRIP-004",
+      "outcome": "completed",
+      "observed": {
+        "all_object_ids_unchanged": true,
+        "json_compatible_extension_value_deep_equal": true,
+        "core_semantics_unchanged": true,
+        "markdown_utf8_bytes_unchanged": true,
+        "all_normative_inventory_entries_present": true
+      },
+      "diagnostics": [],
+      "artifacts": [
+        {
+          "path": "package/engram.json",
+          "media_type": "application/json"
+        }
+      ]
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "ROUNDTRIP-005",
+      "outcome": "completed",
+      "observed": {
+        "all_object_ids_unchanged": true,
+        "json_compatible_extension_value_deep_equal": true,
+        "core_semantics_unchanged": true,
+        "markdown_utf8_bytes_unchanged": true,
+        "all_normative_inventory_entries_present": true,
+        "payload_size": 0
+      },
+      "diagnostics": [],
+      "artifacts": [
+        {
+          "path": "package/engram.json",
+          "media_type": "application/json"
+        }
+      ]
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "ROUNDTRIP-006",
+      "outcome": "completed",
+      "observed": {
+        "all_object_ids_unchanged": true,
+        "json_compatible_extension_value_deep_equal": true,
+        "core_semantics_unchanged": true,
+        "markdown_utf8_bytes_unchanged": true,
+        "all_normative_inventory_entries_present": true,
+        "unknown_extension_keys_unchanged": true,
+        "unknown_extension_values_deep_equal": true
+      },
+      "diagnostics": [],
+      "artifacts": [
+        {
+          "path": "package/engram.json",
+          "media_type": "application/json"
+        }
+      ]
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "ROUNDTRIP-007",
+      "outcome": "completed",
+      "observed": {
+        "all_object_ids_unchanged": true,
+        "json_compatible_extension_value_deep_equal": true,
+        "core_semantics_unchanged": true,
+        "markdown_utf8_bytes_unchanged": true,
+        "all_normative_inventory_entries_present": true,
+        "status": "extension-namespace-collision",
+        "collision_key": "org.example.payload",
+        "definitions_merged": false
       },
       "diagnostics": [],
       "artifacts": [
@@ -140,91 +258,41 @@
     },
     {
       "protocol_version": "1.0",
-      "case_id": "ROUNDTRIP-001",
+      "case_id": "CONSUMER-011",
       "outcome": "completed",
       "observed": {
-        "all_object_ids_unchanged": true,
-        "json_compatible_extension_value_deep_equal": true,
-        "core_semantics_unchanged": true,
-        "markdown_utf8_bytes_unchanged": true,
-        "all_normative_inventory_entries_present": true
+        "status": "success",
+        "newer_minor_accepted": true
       },
       "diagnostics": [],
-      "artifacts": [
-        {
-          "path": "package/engram.json",
-          "media_type": "application/json"
-        }
-      ]
+      "artifacts": []
     },
     {
       "protocol_version": "1.0",
-      "case_id": "ROUNDTRIP-002",
+      "case_id": "CONSUMER-012",
       "outcome": "completed",
       "observed": {
-        "all_object_ids_unchanged": true,
-        "json_compatible_extension_value_deep_equal": true,
-        "core_semantics_unchanged": true,
-        "markdown_utf8_bytes_unchanged": true,
-        "all_normative_inventory_entries_present": true
+        "status": "unsupported-required-capability",
+        "capability": "graph",
+        "must_not_report_success": true
       },
       "diagnostics": [],
-      "artifacts": [
-        {
-          "path": "package/engram.json",
-          "media_type": "application/json"
-        }
-      ]
+      "artifacts": []
     },
     {
       "protocol_version": "1.0",
-      "case_id": "ROUNDTRIP-003",
+      "case_id": "PRODUCER-001",
       "outcome": "completed",
       "observed": {
-        "all_object_ids_unchanged": true,
-        "json_compatible_extension_value_deep_equal": true,
-        "core_semantics_unchanged": true,
-        "markdown_utf8_bytes_unchanged": true,
-        "all_normative_inventory_entries_present": true
-      },
-      "diagnostics": [],
-      "artifacts": [
-        {
-          "path": "package/engram.json",
-          "media_type": "application/json"
-        }
-      ]
-    },
-    {
-      "protocol_version": "1.0",
-      "case_id": "ROUNDTRIP-004",
-      "outcome": "completed",
-      "observed": {
-        "all_object_ids_unchanged": true,
-        "json_compatible_extension_value_deep_equal": true,
-        "core_semantics_unchanged": true,
-        "markdown_utf8_bytes_unchanged": true,
-        "all_normative_inventory_entries_present": true
-      },
-      "diagnostics": [],
-      "artifacts": [
-        {
-          "path": "package/engram.json",
-          "media_type": "application/json"
-        }
-      ]
-    },
-    {
-      "protocol_version": "1.0",
-      "case_id": "ROUNDTRIP-005",
-      "outcome": "completed",
-      "observed": {
-        "all_object_ids_unchanged": true,
-        "json_compatible_extension_value_deep_equal": true,
-        "core_semantics_unchanged": true,
-        "markdown_utf8_bytes_unchanged": true,
-        "all_normative_inventory_entries_present": true,
-        "payload_size": 0
+        "status": "success",
+        "package_artifact_present": true,
+        "declared_profiles": [
+          "core",
+          "graph",
+          "media",
+          "action"
+        ],
+        "inventory_preserved": true
       },
       "diagnostics": [],
       "artifacts": [

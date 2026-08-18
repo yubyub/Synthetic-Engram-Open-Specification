@@ -44,10 +44,10 @@ def compare(label,left,right):
 def main():
     if BASE.exists(): shutil.rmtree(BASE)
     for d in ('python','node','exchange'): (BASE/d).mkdir(parents=True)
-    source=ROOT/'examples/basic-engram'
+    source=ROOT/'examples/v1.0/basic-engram'
     py=invoke('python','produce',source,BASE/'python','PY-PRODUCE-BASIC'); node=invoke('node','produce',source,BASE/'node','NODE-PRODUCE-BASIC')
     node_from_py=invoke('node','round-trip',py,BASE/'exchange/node-import-python','NODE-IMPORT-PYTHON')
     py_from_node=invoke('python','round-trip',node,BASE/'exchange/python-import-node','PYTHON-IMPORT-NODE')
-    report={'report_version':'1.0','source':'examples/basic-engram','comparisons':[compare('Python producer -> Node consumer/producer',py,node_from_py),compare('Node producer -> Python consumer/producer',node,py_from_node)]}
+    report={'report_version':'1.0','source':'examples/v1.0/basic-engram','comparisons':[compare('Python producer -> Node consumer/producer',py,node_from_py),compare('Node producer -> Python consumer/producer',node,py_from_node)]}
     (BASE/'exchange/comparison.json').write_text(json.dumps(report,indent=2)+'\n')
 if __name__=='__main__': main()

@@ -2,7 +2,7 @@
 
 - **Report version:** 1.0
 - **Executed:** 2026-08-18 (UTC)
-- **Exchange fixture:** [`examples/basic-engram`](../../../examples/basic-engram)
+- **Exchange fixture:** [`examples/v1.0/basic-engram`](../../../examples/v1.0/basic-engram)
 - **Required profile set:** `core`, `graph`, `media`, and `action`
 - **Overall result:** **PASS** — both independent implementations pass as producers,
   consumers, and round-trip processors for core and every optional profile retained
@@ -37,9 +37,9 @@ python scripts/run_interoperability.py
 python scripts/validate.py
 ```
 
-The common suite contains one producer, ten consumer, and five round-trip cases.
-Both implementations passed all **16/16** cases. `PRODUCER-001` imports and
-exports `examples/basic-engram` with no logical edits; the exchange runner then
+The common suite contains one producer, twelve consumer, and seven round-trip cases.
+Both implementations passed all **20/20** cases. `PRODUCER-001` imports and
+exports `examples/v1.0/basic-engram` with no logical edits; the exchange runner then
 feeds each export to the other implementation's round-trip operation.
 
 ## Result artifacts

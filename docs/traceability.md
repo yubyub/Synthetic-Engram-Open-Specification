@@ -3,7 +3,7 @@
 This matrix maps every stable requirement in [`SPEC.md`](../SPEC.md) to its
 schema constraint, validator assertion, fixture, vector, or review procedure.
 [`requirements.json`](requirements.json) is the machine-readable catalog.
-Schema validation below means the applicable file in `schemas/v0.1/`.
+Schema validation below means the applicable file in `schemas/v1.0/`.
 
 | Requirement(s) | Conformance evidence |
 |---|---|

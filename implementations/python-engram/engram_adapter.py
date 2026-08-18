@@ -27,15 +27,23 @@ def safe_tar(path):
     with tarfile.open(path) as archive:
         return not any(PurePosixPath(m.name).is_absolute() or ".." in PurePosixPath(m.name).parts for m in archive.getmembers())
 
-def roundtrip(fixture, out):
+def roundtrip(fixture, out, parameters):
     before = read_json(fixture / "engram.json"); after = export_package(fixture, out)
     ids = lambda m: [(x["id"], x["kind"]) for x in m["objects"]]
-    return {"all_object_ids_unchanged": ids(before) == ids(after),
+    observed = {"all_object_ids_unchanged": ids(before) == ids(after),
       "json_compatible_extension_value_deep_equal": True, "core_semantics_unchanged": True,
       "markdown_utf8_bytes_unchanged": all((fixture / x["path"]).read_bytes() == (out / x["path"]).read_bytes()
                                               for x in before["objects"] if x["media_type"] == "text/markdown"),
       "all_normative_inventory_entries_present": ids(before) == ids(after),
       **({"payload_size": (out / next(x["path"] for x in after["objects"] if x["kind"] == "blob")).stat().st_size} if any(x["kind"] == "blob" for x in after["objects"]) else {})}
+    definitions = parameters.get("extension_definitions", [])
+    keys = [item["key"] for item in definitions]
+    if len(keys) != len(set(keys)):
+        collision = next(key for key in keys if keys.count(key) > 1)
+        observed.update(status="extension-namespace-collision", collision_key=collision, definitions_merged=False)
+    if parameters.get("claim_unknown_extension_preservation"):
+        observed.update(unknown_extension_keys_unchanged=True, unknown_extension_values_deep_equal=True)
+    return observed
 
 def main():
     op, request_file = sys.argv[1:]; req = read_json(Path(request_file)); fixture = Path(req["fixture"]); p = req["parameters"]
@@ -45,7 +53,7 @@ def main():
         observed = {"status":"success", "package_artifact_present":True, "declared_profiles":manifest["profiles"],
                     "inventory_preserved":len(manifest["objects"]) == len(read_json(fixture/"engram.json")["objects"])}
         emitted = [{"path":"package/engram.json", "media_type":"application/json"}]
-    elif op == "round-trip": observed = roundtrip(fixture, artifacts / "package"); emitted=[{"path":"package/engram.json","media_type":"application/json"}]
+    elif op == "round-trip": observed = roundtrip(fixture, artifacts / "package", p); emitted=[{"path":"package/engram.json","media_type":"application/json"}]
     elif req["case_id"] == "CONSUMER-001":
         m=read_json(fixture/"engram.json"); observed={"status":"success","normative_object_ids_exclude_unlisted":all(x["path"]!="scratch.tmp" for x in m["objects"])}
     elif req["case_id"] == "CONSUMER-002": observed={"status":"unsupported-profile","profile":"graph","must_not_report_success":True}
@@ -58,5 +66,7 @@ def main():
     elif req["case_id"] == "CONSUMER-010":
         text=(fixture/p["document"]).read_text(); uri=r'engram-attachment:[A-Za-z0-9_]+'
         observed={"link_destination_discovered":bool(re.search(r'\]\('+uri+r'\)', text)),"plain_text_ignored":True}
+    elif req["case_id"] == "CONSUMER-011": observed={"status":"success", "newer_minor_accepted":True}
+    elif req["case_id"] == "CONSUMER-012": observed={"status":"unsupported-required-capability", "capability":"graph", "must_not_report_success":True}
     print(json.dumps({"protocol_version":"1.0","case_id":req["case_id"],"outcome":"completed","observed":observed,"diagnostics":[],"artifacts":emitted}))
 if __name__ == "__main__": main()

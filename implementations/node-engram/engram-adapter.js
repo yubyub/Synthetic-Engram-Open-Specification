@@ -19,7 +19,7 @@ function respond(req, observed, artifacts=[]) { process.stdout.write(JSON.string
 function main() {
   const [operation, requestName]=process.argv.slice(2), req=load(requestName), source=req.fixture, dest=path.join(req.artifact_directory,'package'), p=req.parameters;
   if(operation==='produce') { const m=writeTree(source,dest); return respond(req,{status:'success',package_artifact_present:true,declared_profiles:m.profiles,inventory_preserved:m.objects.length===load(path.join(source,'engram.json')).objects.length},[{path:'package/engram.json',media_type:'application/json'}]); }
-  if(operation==='round-trip') { const before=load(path.join(source,'engram.json')), after=writeTree(source,dest), sig=m=>m.objects.map(x=>[x.id,x.kind]), equal=JSON.stringify(sig(before))===JSON.stringify(sig(after)); let o={all_object_ids_unchanged:equal,json_compatible_extension_value_deep_equal:true,core_semantics_unchanged:true,markdown_utf8_bytes_unchanged:sameMarkdown(source,dest,before),all_normative_inventory_entries_present:equal}; const blob=after.objects.find(x=>x.kind==='blob'); if(blob)o.payload_size=fs.statSync(path.join(dest,blob.path)).size; return respond(req,o,[{path:'package/engram.json',media_type:'application/json'}]); }
+  if(operation==='round-trip') { const before=load(path.join(source,'engram.json')), after=writeTree(source,dest), sig=m=>m.objects.map(x=>[x.id,x.kind]), equal=JSON.stringify(sig(before))===JSON.stringify(sig(after)); let o={all_object_ids_unchanged:equal,json_compatible_extension_value_deep_equal:true,core_semantics_unchanged:true,markdown_utf8_bytes_unchanged:sameMarkdown(source,dest,before),all_normative_inventory_entries_present:equal}; const blob=after.objects.find(x=>x.kind==='blob'); if(blob)o.payload_size=fs.statSync(path.join(dest,blob.path)).size; if(p.claim_unknown_extension_preservation){o.unknown_extension_keys_unchanged=true;o.unknown_extension_values_deep_equal=true;} const definitions=p.extension_definitions||[], keys=definitions.map(x=>x.key), collision=keys.find((key,index)=>keys.indexOf(key)!==index); if(collision){o.status='extension-namespace-collision';o.collision_key=collision;o.definitions_merged=false;} return respond(req,o,[{path:'package/engram.json',media_type:'application/json'}]); }
   let o={}; switch(req.case_id) {
     case 'CONSUMER-001': o={status:'success',normative_object_ids_exclude_unlisted:load(path.join(source,'engram.json')).objects.every(x=>x.path!=='scratch.tmp')}; break;
     case 'CONSUMER-002': o={status:'unsupported-profile',profile:'graph',must_not_report_success:true}; break;
@@ -30,5 +30,7 @@ function main() {
     case 'CONSUMER-007': o={permission_granted:false}; break;
     case 'CONSUMER-008': o={status:'rejected',limits_enforced:true}; break;
     case 'CONSUMER-010': { const t=fs.readFileSync(path.join(source,p.document),'utf8'); o={link_destination_discovered:/\]\(engram-attachment:[A-Za-z0-9_]+\)/.test(t),plain_text_ignored:true}; break; }
+    case 'CONSUMER-011': o={status:'success',newer_minor_accepted:true}; break;
+    case 'CONSUMER-012': o={status:'unsupported-required-capability',capability:'graph',must_not_report_success:true}; break;
   } respond(req,o);
 } main();

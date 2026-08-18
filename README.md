@@ -5,9 +5,9 @@ model changes.** Synthetic Engram is an open interchange standard for a
 human-owned knowledge base: typed Markdown records, explicit relationships,
 portable graphs, and verifiable attachments with stable identities.
 
-> [!IMPORTANT]
-> **Status: experimental v0.1 draft.** The format is implementable so that its
-> assumptions can be tested, but it is not yet a stable 1.0 standard.
+> [!NOTE]
+> **Status: Synthetic Engram Open Standard 1.0.0.** The normative schemas use
+> permanent `v1.0` identifiers; published schema bytes are immutable.
 
 ## Why use it?
 
@@ -48,7 +48,7 @@ boundary.
 
 1. Read the [architecture](docs/architecture.md) to understand what belongs in
    the portable layer and what remains implementation-specific.
-2. Inspect the [complete example](examples/basic-engram/README.md), including a
+2. Inspect the [complete 1.0 example](examples/v1.0/basic-engram/README.md), including a
    project, notes, an action, their graph, and an attachment.
 3. Read the [normative specification](SPEC.md) and
    [conformance checklist](docs/conformance.md).
@@ -58,7 +58,7 @@ boundary.
 ## Documentation map
 
 - [Normative specification](SPEC.md)
-- [Complete example package](examples/basic-engram/README.md)
+- [Complete 1.0 example package](examples/v1.0/basic-engram/README.md)
 - [JSON Schemas](schemas/README.md)
 - [Conformance and validation](docs/conformance.md)
 - [Language-neutral conformance harness protocol](docs/harness-protocol.md)
@@ -93,7 +93,7 @@ my-engram/
 
 Every package has a JSON manifest. Records are Markdown files with a normative
 YAML front matter envelope; graphs and attachment metadata are JSON. See
-[`examples/basic-engram`](examples/basic-engram) for a small valid package.
+[`examples/v1.0/basic-engram`](examples/v1.0/basic-engram) for a small valid package.
 
 ## Validate the repository
 

@@ -10,7 +10,7 @@ Normative clauses have stable `REQ-*` identifiers. See the complete
 
 ## Package checks
 
-- `engram.json` exists and validates against the v0.1 manifest schema.
+- `engram.json` exists and validates against the 1.0 manifest schema.
 - Every inventory path is safe, unique, and exists.
 - Every normative object appears in the inventory.
 - `id`, `engram_id`, and `export_id` identify the package instance, durable Engram, and export event.
@@ -137,10 +137,10 @@ and audit the result:
 ## Repository fixtures
 
 Run `python scripts/validate.py`. It validates the complete example and every
-fixture in `tests/valid`, then asserts that every fixture in `tests/invalid` is
+fixture in `tests/v1.0/valid`, then asserts that every fixture in `tests/v1.0/invalid` is
 rejected. Invalid fixtures contain an `expected-error.txt` substring to ensure
 they fail for the intended reason. The suite also checks catalog/traceability
-coverage and concrete fixture recipes in `tests/vectors`.
+coverage and concrete fixture recipes in `tests/v1.0/vectors`.
 
 Behavioral results are executed, not inferred from vector shape. Run the
 [language-neutral harness](harness-protocol.md) against an implementation
