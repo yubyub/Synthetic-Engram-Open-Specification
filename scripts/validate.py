@@ -103,9 +103,24 @@ def validate_package(root: Path) -> None:
     if not manifest_path.is_file():
         fail(f"{root}: missing engram.json")
     manifest = load_json(manifest_path)
+    # Check manifest/object collisions before schema prefix checks so diagnostics
+    # identify identity reuse rather than only its consequent prefix mismatch.
+    manifest_identity = {manifest.get("engram_id"), manifest.get("id")}
+    for entry in manifest.get("objects", []):
+        if entry.get("id") in manifest_identity:
+            fail(f"identity collision: inventory ID {entry['id']} conflicts with manifest identity")
     check_schema(manifest, "manifest.schema.json", registry, manifest_path)
 
     paths: set[str] = set()
+    # All durable and fragment identities share one Engram-wide uniqueness domain.
+    # The attachment/blob inventory alias is handled separately below.
+    identity_source: dict[str, str] = {
+        manifest["engram_id"]: "manifest engram_id",
+        manifest["id"]: "manifest package id",
+    }
+    if len(identity_source) != 2:
+        fail("manifest Engram ID and package ID collide")
+
     entries_by_id: dict[str, list[dict[str, Any]]] = defaultdict(list)
     objects: dict[str, tuple[str, Any, Path]] = {}
     parent: dict[str, str] = {}
@@ -115,10 +130,12 @@ def validate_package(root: Path) -> None:
             fail(f"duplicate inventory path: {entry['path']}")
         paths.add(entry["path"])
         entries_by_id[entry["id"]].append(entry)
+        kind = entry["kind"]
+        if entry["id"] in identity_source and kind != "blob":
+            fail(f"identity collision: inventory ID {entry['id']} conflicts with {identity_source[entry['id']]}")
         path = safe_path(root, entry["path"])
         if not path.is_file():
             fail(f"missing inventory path: {entry['path']}")
-        kind = entry["kind"]
         if kind == "blob":
             continue
         value = read_record(path) if kind == "record" else load_json(path)
@@ -128,6 +145,7 @@ def validate_package(root: Path) -> None:
         if entry["id"] in objects:
             fail(f"duplicate object ID: {entry['id']}")
         objects[entry["id"]] = (kind, value, path)
+        identity_source[entry["id"]] = f"object {entry['path']}"
         if kind == "record" and "parent" in value:
             parent[entry["id"]] = value["parent"]
         required_profile = PROFILE_FOR.get(kind)
@@ -158,6 +176,10 @@ def validate_package(root: Path) -> None:
                 fail(f"{path}: duplicate graph node ID")
             if len(edge_ids) != len(set(edge_ids)):
                 fail(f"{path}: duplicate graph edge ID")
+            for fragment_id in [*node_ids, *edge_ids]:
+                if fragment_id in identity_source:
+                    fail(f"identity collision: fragment ID {fragment_id} conflicts with {identity_source[fragment_id]}")
+                identity_source[fragment_id] = f"fragment in {path}"
             for node in value["nodes"]:
                 if "record" in node:
                     resolve(node["record"], node.get("external", False), path)

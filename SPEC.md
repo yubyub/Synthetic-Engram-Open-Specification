@@ -25,7 +25,9 @@ and **MAY** are to be interpreted as described by BCP 14 (RFC 2119 and RFC
 - **Engram Package:** a directory or archive containing all or part of a
   Synthetic Engram in this portable representation.
 - **Engram Record:** one durable typed object in an Engram.
-- **Engram ID:** a stable identifier for a package object.
+- **Synthetic Engram ID:** the stable identity of the knowledge environment,
+  independent of any particular export.
+- **Package ID:** the identity of one package/export of a Synthetic Engram.
 - **Implementation:** software that produces or consumes an Engram Package.
 - **Extension:** namespaced, non-core data preserved alongside core data.
 
@@ -42,16 +44,35 @@ Producers SHOULD emit seconds even when the value has no sub-second precision.
 
 ## 5. Identifiers
 
-Every durable package object MUST have an ID matching:
+IDs are semantic. Every durable ID MUST have a canonical uppercase ULID suffix,
+and its prefix MUST agree with its role:
 
-```regex
-^[a-z][a-z0-9-]{1,31}_[0-9A-HJKMNP-TV-Z]{26}$
-```
+| Role | Required prefix |
+| --- | --- |
+| Synthetic Engram | `engram_` |
+| package/export | `package_` |
+| note record | `note_` |
+| project record | `project_` |
+| action record | `action_` |
+| graph | `graph_` |
+| attachment metadata and its blob inventory alias | `attachment_` |
+| graph node fragment | `node_` |
+| graph edge fragment | `edge_` |
 
-The prefix communicates an object kind (for example `engram_`, `note_`, or
-`attachment_`); the suffix is a canonical uppercase ULID. IDs MUST be unique
-within a package and MUST NOT be reassigned to a different logical object.
-Identity MUST NOT depend on a title, filename, path, or storage key.
+The complete identifier matches the role prefix followed by
+`[0-9A-HJKMNP-TV-Z]{26}`. The prefix is normative, not decorative. A producer
+MUST NOT use an ID whose prefix disagrees with its manifest kind or record type.
+
+The uniqueness domain is one Synthetic Engram, including its Synthetic Engram
+ID, every package/export ID, every durable object ID, every attachment metadata
+ID, and every graph node or edge fragment ID in every export. No two logical
+entities in that domain may share an ID. The sole permitted repetition is the
+attachment metadata ID on its `blob` inventory alias; both entries identify the
+same logical attachment. IDs are only guaranteed unique within one Synthetic
+Engram, not globally unique by construction. Producers SHOULD nevertheless use
+ULID generation practices that make cross-Engram collisions negligible and
+MUST NOT reassign an ID to a different logical entity. Identity MUST NOT depend
+on a title, filename, path, or storage key.
 
 ## 6. Package manifest
 
@@ -61,9 +82,10 @@ It declares:
 
 - `format`, fixed to `synthetic-engram`;
 - specification `version`;
-- the package `id`;
+- the Synthetic Engram `engram_id` and this package/export's `id`;
 - creation and update timestamps;
-- an owner descriptor;
+- an owner descriptor containing a stable opaque `id` and optional
+  `display_name`;
 - supported conformance `profiles`; and
 - an explicit inventory of package objects.
 
@@ -72,6 +94,20 @@ path. The path MUST exist and its contained object ID MUST equal the inventory
 ID. Inventory IDs MUST be unique except that an attachment's `blob` entry MUST
 repeat its attachment metadata ID. Producers MUST list every normative object.
 Consumers MUST NOT infer that unlisted files are normative package objects.
+
+The owner ID is stable attribution or ownership metadata only. It does not
+represent a public key, signature, authenticated principal, authorization
+grant, or other cryptographic authority, and consumers MUST NOT treat it as
+proof of identity or control. `display_name` is presentation metadata and MAY
+change without changing the owner ID.
+
+Ownership MAY be transferred by changing `owner.id` (and, if desired,
+`owner.type` and `owner.display_name`) while retaining `engram_id`. A transfer
+therefore does not create a new Synthetic Engram identity. Producers SHOULD
+update `updated_at`; v0.1 does not define a transfer history, consent protocol,
+signature, or authorization mechanism. A policy that requires a transfer to
+create a distinct Engram MUST issue a new `engram_id` and treat it as a new
+Engram rather than describing that operation as a v0.1 ownership transfer.
 
 ## 7. Records
 
@@ -93,9 +129,10 @@ MUST NOT contain a cycle formed by `parent` references.
 
 A graph is a JSON object conforming to
 [`schemas/v0.1/graph.schema.json`](schemas/v0.1/graph.schema.json). Nodes have
-local IDs and MAY reference Engram IDs. Directed edges reference local node IDs.
-Referenced Engram IDs MUST resolve unless explicitly marked external. Node and
-edge IDs MUST each be unique within their graph.
+fragment IDs and MAY reference Engram IDs. Directed edges reference node fragment
+IDs. Referenced Engram IDs MUST resolve unless explicitly marked external. Node
+and edge IDs participate in the Engram-wide uniqueness domain described in
+Section 5; they are not merely local to a graph.
 
 The v0.1 graph format describes interoperable topology and optional labels. It
 does not standardize layout, rendering, or an application-specific graph DSL.

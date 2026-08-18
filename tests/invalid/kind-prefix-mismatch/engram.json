@@ -18,7 +18,7 @@
   ],
   "objects": [
     {
-      "id": "project_01J00000000000000000000002",
+      "id": "graph_01J00000000000000000000002",
       "kind": "record",
       "media_type": "text/markdown",
       "path": "records/projects/knowledge-garden.md"
