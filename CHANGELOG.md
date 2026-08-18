@@ -4,6 +4,11 @@ All notable specification changes are recorded here.
 
 ## [Unreleased]
 
+### Fixed
+
+- Updated GitHub Actions to their Node.js 24 releases and made the pip cache
+  use the repository's `requirements-dev.txt` dependency file.
+
 ### Added
 
 - Experimental v0.1 normative package specification.
