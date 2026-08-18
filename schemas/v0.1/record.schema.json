@@ -12,6 +12,7 @@
     "created_at": {"$ref": "definitions.schema.json#/$defs/timestamp"},
     "updated_at": {"$ref": "definitions.schema.json#/$defs/timestamp"},
     "parent": {"$ref": "definitions.schema.json#/$defs/id"},
+    "parent_scope": {"enum": ["synthetic_engram", "outside_engram"], "default": "synthetic_engram", "description": "Whether parent is a durable member of this Synthetic Engram."},
     "links": {"type": "array", "items": {"$ref": "definitions.schema.json#/$defs/link"}},
     "tags": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
     "status": {"enum": ["open", "in_progress", "done", "cancelled"]},
@@ -23,5 +24,9 @@
     "then": {"required": ["status"]},
     "else": {"not": {"anyOf": [{"required": ["status"]}, {"required": ["due_at"]}]}}
   }],
+  "allOf": [
+    {"if": {"properties": {"type": {"const": "action"}}, "required": ["type"]}, "then": {"required": ["status"]}},
+    {"if": {"required": ["parent_scope"]}, "then": {"required": ["parent"]}}
+  ],
   "additionalProperties": false
 }
