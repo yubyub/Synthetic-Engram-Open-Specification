@@ -1,5 +1,7 @@
 {
   "format": "synthetic-engram",
+  "data_model_version": "0.1",
+  "id": "engram_01J00000000000000000000001",
   "version": "0.1.0",
   "engram_id": "engram_01J00000000000000000000001",
   "id": "package_01J00000000000000000000008",

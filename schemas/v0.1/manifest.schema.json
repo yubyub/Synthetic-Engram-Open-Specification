@@ -3,6 +3,18 @@
   "$id": "https://synthetic-engram.org/schema/v0.1/manifest.schema.json",
   "title": "Synthetic Engram package manifest",
   "type": "object",
+  "required": ["format", "data_model_version", "id", "created_at", "updated_at", "owner", "profiles", "objects"],
+  "properties": {
+    "format": {"const": "synthetic-engram"},
+    "data_model_version": {"type": "string", "pattern": "^0\\.(?:[1-9][0-9]*)$"},
+    "features": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)+$"},
+      "uniqueItems": true
+    },
+    "id": {"$ref": "definitions.schema.json#/$defs/id"},
+    "created_at": {"$ref": "definitions.schema.json#/$defs/timestamp"},
+    "updated_at": {"$ref": "definitions.schema.json#/$defs/timestamp"},
   "required": [
     "format",
     "version",

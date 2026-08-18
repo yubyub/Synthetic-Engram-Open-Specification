@@ -25,6 +25,10 @@ OBJECT_SCHEMA = {
     "attachment": "attachment.schema.json",
 }
 PROFILE_FOR = {"graph": "graph", "attachment": "media"}
+SUPPORTED_DATA_MODELS = {(0, 1)}
+SUPPORTED_FEATURES: set[str] = set()
+VERSION_RE = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
+FEATURE_RE = re.compile(r"^[a-z0-9]+(?:[.-][a-z0-9]+)+$")
 
 
 # PyYAML normally converts timestamps to datetime objects. The data model treats
@@ -74,6 +78,26 @@ EngramLoader.add_constructor("tag:yaml.org,2002:map", _unique_mapping)
 class ValidationError(Exception):
     pass
 
+def negotiate_manifest(manifest: Any) -> tuple[tuple[int, int], list[str]]:
+    """Parse the minimal envelope and choose a schema before full validation."""
+    if not isinstance(manifest, dict) or manifest.get("format") != "synthetic-engram":
+        fail("invalid minimal manifest envelope: format")
+    value = manifest.get("data_model_version")
+    match = VERSION_RE.fullmatch(value) if isinstance(value, str) else None
+    if not match:
+        fail("invalid minimal manifest envelope: data_model_version")
+    package_version = (int(match.group(1)), int(match.group(2)))
+    same_major = sorted(v for v in SUPPORTED_DATA_MODELS if v[0] == package_version[0] and v[1] <= package_version[1])
+    if not same_major:
+        if not any(v[0] == package_version[0] for v in SUPPORTED_DATA_MODELS):
+            fail(f"unsupported data-model major: {package_version[0]}")
+        fail(f"no compatible schema for data-model version: {value}")
+    features = manifest.get("features", [])
+    if (not isinstance(features, list) or
+            any(not isinstance(item, str) or not FEATURE_RE.fullmatch(item) for item in features) or
+            len(features) != len(set(features))):
+        fail("invalid minimal manifest envelope: features")
+    return same_major[-1], sorted(set(features) - SUPPORTED_FEATURES)
 
 def fail(message: str) -> None:
     raise ValidationError(message)
@@ -202,6 +226,9 @@ def validate_package(root: Path) -> None:
     if not manifest_path.is_file():
         fail(f"{root}: missing engram.json")
     manifest = load_json(manifest_path)
+    selected_schema, unsupported_features = negotiate_manifest(manifest)
+    if unsupported_features:
+        print(f"NOTICE {manifest_path}: unsupported optional features: {', '.join(unsupported_features)}")
     # Check manifest/object collisions before schema prefix checks so diagnostics
     # identify identity reuse rather than only its consequent prefix mismatch.
     manifest_identity = {manifest.get("engram_id"), manifest.get("id")}
@@ -366,6 +393,8 @@ def validate_package(root: Path) -> None:
 
 def repository_suite() -> None:
     check_local_markdown_links()
+    versioning_fixture_suite()
+    targets = [ROOT / "examples" / "basic-engram", *sorted((ROOT / "tests" / "valid").iterdir())]
     targets = [
         ROOT / "examples" / "basic-engram",
         *sorted((ROOT / "tests" / "valid").iterdir()),
@@ -384,6 +413,17 @@ def repository_suite() -> None:
         else:
             fail(f"{target}: invalid fixture was accepted")
 
+def versioning_fixture_suite() -> None:
+    for path in sorted((ROOT / "tests" / "versioning").glob("*.json")):
+        case = load_json(path)
+        try:
+            _, unsupported = negotiate_manifest(case["manifest"])
+            outcome = "ACCEPT_WITH_UNSUPPORTED_FEATURES" if unsupported else "ACCEPT"
+        except ValidationError as exc:
+            outcome = "REJECT_UNSUPPORTED_MAJOR" if "unsupported data-model major" in str(exc) else "REJECT"
+        if outcome != case["expected_outcome"]:
+            fail(f"{path}: expected {case['expected_outcome']}, got {outcome}")
+        print(f"PASS {path.relative_to(ROOT)} ({outcome})")
 
 def check_local_markdown_links() -> None:
     link_pattern = re.compile(r"(?<!!)\[[^]]+\]\(([^)]+)\)")
