@@ -227,6 +227,14 @@
       "spec_anchor": "#req-version-major"
     },
     {
+      "id": "REQ-VERS-002",
+      "spec_anchor": "#req-version-capability"
+    },
+    {
+      "id": "REQ-VERS-003",
+      "spec_anchor": "#req-version-preservation"
+    },
+    {
       "id": "REQ-SEC-001",
       "spec_anchor": "#req-security-path"
     },

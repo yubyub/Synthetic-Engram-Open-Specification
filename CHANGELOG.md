@@ -11,6 +11,8 @@ All notable specification changes are recorded here.
 
 ### Added
 
+- Normative version-support, schema-immutability, profile-evolution, and extension-ownership policy with consumer and round-trip conformance cases.
+
 - Experimental v0.1 normative package specification.
 - Draft 2020-12 schemas for manifests, records, graphs, and attachments.
 - Complete Core + Graph + Media + Action example package.

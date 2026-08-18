@@ -1,14 +1,289 @@
 {
-  "vector_version":"1.0", "role":"consumer", "cases":[
-    {"id":"CONSUMER-001","requirement":"REQ-INV-006","adapter_operation":"consume","fixture":{"kind":"directory","source":"tests/valid/basic-engram","steps":[{"action":"write-text","path":"scratch.tmp","content":"not inventoried\n"}]},"parameters":{"task":"inventory"},"expected":{"status":"success","normative_object_ids_exclude_unlisted":true}},
-    {"id":"CONSUMER-002","requirement":"REQ-CONF-003","adapter_operation":"consume","fixture":{"kind":"directory","source":"tests/valid/empty-graph"},"supported_profiles":["core"],"parameters":{"task":"import"},"expected":{"status":"unsupported-profile","profile":"graph","must_not_report_success":true}},
-    {"id":"CONSUMER-003","requirement":"REQ-MEDIA-003","adapter_operation":"consume","fixture":{"kind":"directory","source":"tests/valid/zero-byte-attachment","steps":[{"action":"write-text","path":"reference.md","content":"[payload](engram-attachment:attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1) suggested/path.bin\n"}]},"parameters":{"task":"resolve-attachment","uri":"engram-attachment:attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1"},"expected":{"resolved_inventory_id":"attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1","suggested_path_ignored":true}},
-    {"id":"CONSUMER-004","requirement":"REQ-VERS-001","adapter_operation":"consume","fixture":{"kind":"directory","source":"tests/valid/basic-engram","steps":[{"action":"set-manifest-version","version":"1.0.0"}]},"parameters":{"task":"import"},"expected":{"status":"unsupported-major-version","must_not_report_success":true}},
-    {"id":"CONSUMER-005","requirement":"REQ-SEC-001","adapter_operation":"consume","fixture":{"kind":"generated-tar","entries":[{"path":"../../escape","content":"escape"},{"path":"engram.json","content":"{}"}]},"parameters":{"task":"extract","max_bytes":1024,"max_objects":10},"expected":{"status":"rejected","outside_root_writes":0,"record_content_executions":0,"limits_enforced":true}},
-    {"id":"CONSUMER-006","requirement":"REQ-SEC-004","adapter_operation":"consume","fixture":{"kind":"directory","source":"tests/valid/unicode-content","steps":[{"action":"write-text","path":"untrusted.txt","content":"<script>globalThis.pwned=true</script>\n"}]},"parameters":{"task":"import-untrusted"},"expected":{"content_treated_as_data":true,"record_content_executions":0}},
-    {"id":"CONSUMER-007","requirement":"REQ-SEC-005","adapter_operation":"consume","fixture":{"kind":"directory","source":"tests/valid/basic-engram"},"parameters":{"task":"authorize","credential":null},"expected":{"permission_granted":false}},
-    {"id":"CONSUMER-008","requirement":"REQ-SEC-002","adapter_operation":"consume","fixture":{"kind":"directory","source":"tests/valid/basic-engram","steps":[{"action":"write-text","path":"oversize.bin","content":"0123456789abcdef"}]},"parameters":{"task":"import","max_bytes":8,"max_objects":100},"expected":{"status":"rejected","limits_enforced":true}},
-    {"id":"CONSUMER-009","requirement":"REQ-SEC-003","adapter_operation":"consume","fixture":{"kind":"directory","source":"tests/valid/unicode-content","steps":[{"action":"write-text","path":"executable.html","content":"<script>throw new Error('executed')</script>"}]},"parameters":{"task":"import-and-render"},"expected":{"record_content_executions":0}},
-    {"id":"CONSUMER-010","requirement":"REQ-MEDIA-004","adapter_operation":"consume","fixture":{"kind":"directory","source":"tests/valid/zero-byte-attachment","steps":[{"action":"write-text","path":"references.md","content":"engram-attachment:attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1\n[payload](engram-attachment:attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1)\n"}]},"parameters":{"task":"discover-attachment-references","document":"references.md"},"expected":{"link_destination_discovered":true,"plain_text_ignored":true}}
+  "vector_version": "1.0",
+  "role": "consumer",
+  "cases": [
+    {
+      "id": "CONSUMER-001",
+      "requirement": "REQ-INV-006",
+      "adapter_operation": "consume",
+      "fixture": {
+        "kind": "directory",
+        "source": "tests/valid/basic-engram",
+        "steps": [
+          {
+            "action": "write-text",
+            "path": "scratch.tmp",
+            "content": "not inventoried\n"
+          }
+        ]
+      },
+      "parameters": {
+        "task": "inventory"
+      },
+      "expected": {
+        "status": "success",
+        "normative_object_ids_exclude_unlisted": true
+      }
+    },
+    {
+      "id": "CONSUMER-002",
+      "requirement": "REQ-CONF-003",
+      "adapter_operation": "consume",
+      "fixture": {
+        "kind": "directory",
+        "source": "tests/valid/empty-graph"
+      },
+      "supported_profiles": [
+        "core"
+      ],
+      "parameters": {
+        "task": "import"
+      },
+      "expected": {
+        "status": "unsupported-profile",
+        "profile": "graph",
+        "must_not_report_success": true
+      }
+    },
+    {
+      "id": "CONSUMER-003",
+      "requirement": "REQ-MEDIA-003",
+      "adapter_operation": "consume",
+      "fixture": {
+        "kind": "directory",
+        "source": "tests/valid/zero-byte-attachment",
+        "steps": [
+          {
+            "action": "write-text",
+            "path": "reference.md",
+            "content": "[payload](engram-attachment:attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1) suggested/path.bin\n"
+          }
+        ]
+      },
+      "parameters": {
+        "task": "resolve-attachment",
+        "uri": "engram-attachment:attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1"
+      },
+      "expected": {
+        "resolved_inventory_id": "attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1",
+        "suggested_path_ignored": true
+      }
+    },
+    {
+      "id": "CONSUMER-004",
+      "requirement": "REQ-VERS-001",
+      "adapter_operation": "consume",
+      "fixture": {
+        "kind": "directory",
+        "source": "tests/valid/basic-engram",
+        "steps": [
+          {
+            "action": "set-manifest-version",
+            "version": "1.0.0"
+          }
+        ]
+      },
+      "parameters": {
+        "task": "import"
+      },
+      "expected": {
+        "status": "unsupported-major-version",
+        "must_not_report_success": true
+      }
+    },
+    {
+      "id": "CONSUMER-005",
+      "requirement": "REQ-SEC-001",
+      "adapter_operation": "consume",
+      "fixture": {
+        "kind": "generated-tar",
+        "entries": [
+          {
+            "path": "../../escape",
+            "content": "escape"
+          },
+          {
+            "path": "engram.json",
+            "content": "{}"
+          }
+        ]
+      },
+      "parameters": {
+        "task": "extract",
+        "max_bytes": 1024,
+        "max_objects": 10
+      },
+      "expected": {
+        "status": "rejected",
+        "outside_root_writes": 0,
+        "record_content_executions": 0,
+        "limits_enforced": true
+      }
+    },
+    {
+      "id": "CONSUMER-006",
+      "requirement": "REQ-SEC-004",
+      "adapter_operation": "consume",
+      "fixture": {
+        "kind": "directory",
+        "source": "tests/valid/unicode-content",
+        "steps": [
+          {
+            "action": "write-text",
+            "path": "untrusted.txt",
+            "content": "<script>globalThis.pwned=true</script>\n"
+          }
+        ]
+      },
+      "parameters": {
+        "task": "import-untrusted"
+      },
+      "expected": {
+        "content_treated_as_data": true,
+        "record_content_executions": 0
+      }
+    },
+    {
+      "id": "CONSUMER-007",
+      "requirement": "REQ-SEC-005",
+      "adapter_operation": "consume",
+      "fixture": {
+        "kind": "directory",
+        "source": "tests/valid/basic-engram"
+      },
+      "parameters": {
+        "task": "authorize",
+        "credential": null
+      },
+      "expected": {
+        "permission_granted": false
+      }
+    },
+    {
+      "id": "CONSUMER-008",
+      "requirement": "REQ-SEC-002",
+      "adapter_operation": "consume",
+      "fixture": {
+        "kind": "directory",
+        "source": "tests/valid/basic-engram",
+        "steps": [
+          {
+            "action": "write-text",
+            "path": "oversize.bin",
+            "content": "0123456789abcdef"
+          }
+        ]
+      },
+      "parameters": {
+        "task": "import",
+        "max_bytes": 8,
+        "max_objects": 100
+      },
+      "expected": {
+        "status": "rejected",
+        "limits_enforced": true
+      }
+    },
+    {
+      "id": "CONSUMER-009",
+      "requirement": "REQ-SEC-003",
+      "adapter_operation": "consume",
+      "fixture": {
+        "kind": "directory",
+        "source": "tests/valid/unicode-content",
+        "steps": [
+          {
+            "action": "write-text",
+            "path": "executable.html",
+            "content": "<script>throw new Error('executed')</script>"
+          }
+        ]
+      },
+      "parameters": {
+        "task": "import-and-render"
+      },
+      "expected": {
+        "record_content_executions": 0
+      }
+    },
+    {
+      "id": "CONSUMER-010",
+      "requirement": "REQ-MEDIA-004",
+      "adapter_operation": "consume",
+      "fixture": {
+        "kind": "directory",
+        "source": "tests/valid/zero-byte-attachment",
+        "steps": [
+          {
+            "action": "write-text",
+            "path": "references.md",
+            "content": "engram-attachment:attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1\n[payload](engram-attachment:attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1)\n"
+          }
+        ]
+      },
+      "parameters": {
+        "task": "discover-attachment-references",
+        "document": "references.md"
+      },
+      "expected": {
+        "link_destination_discovered": true,
+        "plain_text_ignored": true
+      }
+    },
+    {
+      "id": "CONSUMER-011",
+      "requirement": "REQ-VERS-002",
+      "adapter_operation": "consume",
+      "fixture": {
+        "kind": "directory",
+        "source": "tests/valid/basic-engram",
+        "steps": [
+          {
+            "action": "set-manifest-version",
+            "version": "0.2.0"
+          }
+        ]
+      },
+      "supported_profiles": [
+        "core"
+      ],
+      "parameters": {
+        "task": "import",
+        "supported_major": 0,
+        "supported_minor": 1
+      },
+      "expected": {
+        "status": "success",
+        "newer_minor_accepted": true
+      }
+    },
+    {
+      "id": "CONSUMER-012",
+      "requirement": "REQ-VERS-002",
+      "adapter_operation": "consume",
+      "fixture": {
+        "kind": "directory",
+        "source": "tests/valid/empty-graph",
+        "steps": [
+          {
+            "action": "set-manifest-version",
+            "version": "0.2.0"
+          }
+        ]
+      },
+      "supported_profiles": [
+        "core"
+      ],
+      "parameters": {
+        "task": "import",
+        "supported_major": 0,
+        "supported_minor": 1
+      },
+      "expected": {
+        "status": "unsupported-required-capability",
+        "capability": "graph",
+        "must_not_report_success": true
+      }
+    }
   ]
 }

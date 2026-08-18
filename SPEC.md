@@ -206,10 +206,24 @@ See [docs/conformance.md](docs/conformance.md) for the testable checklist.
 
 ## 12. Versioning
 
-`version` uses Semantic Versioning. Patch releases clarify text or tighten tests
-without changing valid data. Minor releases add backward-compatible optional
-features. Major releases may make incompatible changes. <a id="req-version-major"></a> **REQ-VERS-001:** A consumer MUST reject a package with an unsupported major version and SHOULD report unsupported minor
-features rather than silently discard them.
+`version` uses Semantic Versioning. The [normative version and support
+policy](docs/versioning.md) defines release classification, negotiation,
+profile evolution, immutable schema URIs, extension ownership and promotion,
+the supported release window, and the v0.1/v1.0 boundary.
+
+<a id="req-version-major"></a> **REQ-VERS-001:** A consumer MUST reject a
+package with an unsupported major version and MUST NOT report successful
+consumption.
+
+<a id="req-version-capability"></a> **REQ-VERS-002:** A consumer MUST NOT
+reject a package solely because it has a newer minor version in a supported
+major, but MUST report a non-success result for every unknown declared profile
+or other required capability rather than silently discard its governed data.
+
+<a id="req-version-preservation"></a> **REQ-VERS-003:** A round-trip processor
+claiming unknown-data preservation MUST preserve unknown extension keys and
+values with deep structural equality and MUST report namespace collisions
+rather than merge or reinterpret them.
 
 Schema paths are versioned by major and minor version. Package data uses
 `schema_version: "0.1"`; it does not include the patch version.
