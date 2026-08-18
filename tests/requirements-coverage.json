@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "default_executable_assertion": "repository-package-and-schema-suite",
+  "overrides": {
+    "REQ-ID-003": ["ROUNDTRIP-001"],
+    "REQ-ID-004": ["ROUNDTRIP-002"],
+    "REQ-INV-005": ["ROUNDTRIP-005"],
+    "REQ-INV-006": ["CONSUMER-001"],
+    "REQ-MEDIA-003": ["CONSUMER-003"],
+    "REQ-MEDIA-004": ["CONSUMER-010"],
+    "REQ-EXT-002": ["ROUNDTRIP-003"],
+    "REQ-CONF-003": ["CONSUMER-002"],
+    "REQ-VERS-001": ["CONSUMER-004"],
+    "REQ-SEC-001": ["CONSUMER-005"],
+    "REQ-SEC-002": ["CONSUMER-008"],
+    "REQ-SEC-003": ["CONSUMER-009"],
+    "REQ-SEC-004": ["CONSUMER-006"],
+    "REQ-SEC-005": ["CONSUMER-007"],
+    "REQ-ENC-003": ["ROUNDTRIP-004"]
+  },
+  "manual_reviews": {
+    "REQ-SCOPE-002": {"procedure":"Confirm selection metadata is not used as proof of source closure.","owner":"producer reviewer","evidence_location":"published conformance report"},
+    "REQ-CLOSE-003": {"procedure":"Inspect source snapshot classification and confirm transient artifacts are excluded.","owner":"producer reviewer","evidence_location":"published conformance report"},
+    "REQ-CLOSE-004": {"procedure":"Inspect adopted durable artifacts and confirm each is inventoried.","owner":"producer reviewer","evidence_location":"published conformance report"},
+    "REQ-CLOSE-005": {"procedure":"Compare the export inventory with the bounded source snapshot.","owner":"producer reviewer","evidence_location":"published conformance report"},
+    "REQ-REC-010": {"procedure":"Render the adversarial Markdown fixture in an instrumented sandbox and record that no active content executes.","owner":"security reviewer","evidence_location":"published security review"},
+    "REQ-CONF-001": {"procedure":"Compare every advertised role and profile claim with the completed harness report.","owner":"conformance reviewer","evidence_location":"published conformance report"},
+    "REQ-CONF-004": {"procedure":"Verify successful-consumption claims include only supported profiles and processed normative content.","owner":"conformance reviewer","evidence_location":"published conformance report"}
+  }
+}

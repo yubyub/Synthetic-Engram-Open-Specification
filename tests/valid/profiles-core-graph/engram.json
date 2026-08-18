@@ -1,0 +1,29 @@
+{
+  "format": "synthetic-engram",
+  "version": "0.1.0",
+  "id": "engram_01ARZ3NDEKTSV4RRFFQ69G5FAV",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-01T00:00:00Z",
+  "owner": {
+    "type": "person",
+    "name": "Test"
+  },
+  "profiles": [
+    "core",
+    "graph"
+  ],
+  "objects": [
+    {
+      "id": "note_01ARZ3NDEKTSV4RRFFQ69G5FAW",
+      "kind": "record",
+      "media_type": "text/markdown",
+      "path": "records/note.md"
+    },
+    {
+      "id": "graph_01ARZ3NDEKTSV4RRFFQ69G5FB0",
+      "kind": "graph",
+      "media_type": "application/json",
+      "path": "graphs/empty.json"
+    }
+  ]
+}

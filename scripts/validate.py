@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import itertools
 import json
 import re
 import sys
@@ -311,6 +312,17 @@ def validate_package(root: Path) -> None:
 def repository_suite() -> None:
     check_local_markdown_links()
     check_traceability_and_vectors()
+    expected_profile_sets = {
+        frozenset(("core", *selected))
+        for count in range(4)
+        for selected in itertools.combinations(("graph", "media", "action"), count)
+    }
+    fixture_profile_sets = {
+        frozenset(load_json(path / "engram.json")["profiles"])
+        for path in (ROOT / "tests" / "valid").glob("profiles-*")
+    }
+    if fixture_profile_sets != expected_profile_sets:
+        fail("optional-profile fixtures do not cover every legal combination")
     targets = [
         ROOT / "examples" / "basic-engram",
         *sorted((ROOT / "tests" / "valid").iterdir()),
@@ -366,6 +378,29 @@ def check_traceability_and_vectors() -> None:
                 fail(f"{path}: vector references unknown requirement")
             if not isinstance(case.get("expected"), dict) or not case["expected"]:
                 fail(f"{path}: vector lacks observable expected output")
+            if case.get("adapter_operation") != vector["role"].replace("consumer", "consume"):
+                fail(f"{path}: vector adapter operation does not match role")
+            fixture = case.get("fixture")
+            if not isinstance(fixture, dict) or fixture.get("kind") not in {"directory", "generated-tar"}:
+                fail(f"{path}: vector lacks a concrete fixture recipe")
+
+    coverage = load_json(ROOT / "tests" / "requirements-coverage.json")
+    default = coverage.get("default_executable_assertion")
+    overrides = coverage.get("overrides", {})
+    reviews = coverage.get("manual_reviews", {})
+    unknown = (set(overrides) | set(reviews)) - spec_ids
+    if unknown:
+        fail(f"coverage registry references unknown requirements: {', '.join(sorted(unknown))}")
+    for requirement in spec_ids:
+        assertions = overrides.get(requirement, [default] if default else [])
+        review = reviews.get(requirement)
+        if not assertions and not review:
+            fail(f"{requirement} has neither an executable assertion nor a manual-review procedure")
+        for assertion in assertions:
+            if assertion != "repository-package-and-schema-suite" and assertion not in vector_ids:
+                fail(f"{requirement} references unknown executable assertion {assertion}")
+        if review and not all(review.get(key) for key in ("procedure", "owner", "evidence_location")):
+            fail(f"{requirement} manual review is not specifically identified")
 
 def main() -> int:
     parser = argparse.ArgumentParser()
