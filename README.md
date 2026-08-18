@@ -67,6 +67,7 @@ boundary.
 - [Related standards and projects](docs/related-standards.md)
 - [Non-normative design-decision matrix](docs/design-decisions.md)
 - [Open design questions](docs/open-questions.md)
+- [Authoritative 1.0 promotion checklist](docs/releases/1.0-checklist.md)
 
 ## Design principles
 

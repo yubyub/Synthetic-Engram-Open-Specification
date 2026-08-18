@@ -1,5 +1,9 @@
 # 1.0.0 release evidence
 
+The authoritative promotion decision is the
+[`1.0 promotion checklist`](releases/1.0-checklist.md). This document supplies
+supporting evidence and does not supersede the checklist.
+
 **Candidate:** `1.0.0-rc.1`
 **Promoted unchanged:** `1.0.0`
 **Release date:** 2026-08-18
