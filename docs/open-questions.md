@@ -1,7 +1,7 @@
-# Decisions required before 1.0
+# 1.0 release decisions
 
-This is a release-gate list, not a catalogue of possible features. A question
-is closed only by a merged decision record or normative change that meets every
+This is a release-gate list, not a catalogue of possible features. At release, a question
+was closed only by a merged decision record or normative change that meets every
 acceptance criterion below. Deferral is a valid decision when the core retains
 an identified compatibility hook and the specification clearly excludes the
 deferred semantics.
@@ -10,14 +10,13 @@ deferred semantics.
 
 The linked records are the auditable source for scope, evidence, and remaining
 work. `accepted` and `deferred` are closed states; `open` is not. A decision
-record added by an unmerged change does not close its gate. **A v1.0 release
-candidate MUST NOT be created until all 11 rows are closed and the index reports
-11/11 closed.**
+record added by an unmerged change did not close its gate. **All 11 rows were
+closed before the v1.0 release candidate was created.**
 
 | Gate | Decision | Status |
 |---:|---|---|
-| 1 | [Core package and identifier contract](decisions/0001-core-package-and-identifiers.md) | open |
-| 2 | [Profiles and partial consumption](decisions/0002-profiles-and-partial-consumption.md) | open |
+| 1 | [Core package and identifier contract](decisions/0001-core-package-and-identifiers.md) | accepted |
+| 2 | [Profiles and partial consumption](decisions/0002-profiles-and-partial-consumption.md) | accepted |
 | 3 | [Namespace, fragment, and lens scope](decisions/0003-namespace-fragment-lens.md) | deferred |
 | 4 | [History and current state](decisions/0004-history-and-current-state.md) | deferred |
 | 5 | [Provenance and external references](decisions/0005-provenance-and-external-references.md) | deferred |
@@ -25,8 +24,8 @@ candidate MUST NOT be created until all 11 rows are closed and the index reports
 | 7 | [Graph interoperability](decisions/0007-graph-interoperability.md) | accepted |
 | 8 | [Access descriptors and security](decisions/0008-access-and-authority.md) | deferred |
 | 9 | [Migration outcome reporting](decisions/0009-migration-reporting.md) | deferred |
-| 10 | [Versioning, migration, and extensions](decisions/0010-versioning-migration-extensions.md) | open |
-| 11 | [Evidence and release bar](decisions/0011-release-evidence.md) | open |
+| 10 | [Versioning, migration, and extensions](decisions/0010-versioning-migration-extensions.md) | accepted |
+| 11 | [Evidence and release bar](decisions/0011-release-evidence.md) | accepted |
 
 ## 1. Freeze the core package and identifier contract
 

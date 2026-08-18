@@ -1,8 +1,11 @@
 # JSON Schemas
 
-The v0.1 schemas use JSON Schema Draft 2020-12. `manifest.schema.json`,
+The frozen 1.0 schemas use JSON Schema Draft 2020-12. Their permanent base URI
+is `https://synthetic-engram.org/schema/v1.0/`. `manifest.schema.json`,
 `record.schema.json`, `graph.schema.json`, and `attachment.schema.json` are
-entry points; `definitions.schema.json` contains shared definitions.
+entry points; `definitions.schema.json` contains shared definitions. The
+archived experimental schemas remain under [`v0.1`](v0.1/) and are not accepted
+as 1.0 input.
 
 Published schema URIs and their bytes are immutable. Errata never replace a
 released schema in place; see the [normative version and support
@@ -10,4 +13,5 @@ policy](../docs/versioning.md) for publication and compatibility rules.
 
 Record schemas validate parsed YAML front matter, not the Markdown body. Schema
 validation alone is insufficient: use `python scripts/validate.py` for package
-scope, complete-export closure, inventory, reference, cycle, and checksum checks. These experimental schemas will move to the `v1.0` schema path when the standard reaches 1.0; their current location implies no 1.0 stability.
+scope, complete-export closure, inventory, reference, cycle, and checksum
+checks.

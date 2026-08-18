@@ -1,6 +1,6 @@
 ---
 id: note_01J00000000000000000000003
-schema_version: "0.1"
+schema_version: "1.0"
 type: note
 title: Hosting decision
 created_at: 2026-08-18T09:05:00Z

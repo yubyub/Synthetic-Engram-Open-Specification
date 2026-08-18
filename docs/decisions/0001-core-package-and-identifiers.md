@@ -1,6 +1,6 @@
 # Decision 1: Core package and identifier contract
 
-- **Status:** open
+- **Status:** accepted
 - **Outcome:** Include the ULID-prefixed identity, UTF-8 JSON/Markdown, YAML front matter, safe relative paths, timestamps, inventory, and directory package in core 1.0. Defer a canonical archive media type and deterministic archive serialization to the **Archive Binding Specification**.
 
 ## Rationale and compatibility
@@ -9,18 +9,18 @@ The existing directory model is inspectable and already has schemas and validato
 
 ## Affected requirements and schemas
 
-`REQ-ENC-*`, `REQ-PATH-*`, `REQ-TIME-001`, `REQ-ID-*`, and `REQ-INV-*`; [SPEC §§4–6](../../SPEC.md#4-encoding-and-paths); [shared definitions](../../schemas/v0.1/definitions.schema.json), [manifest schema](../../schemas/v0.1/manifest.schema.json), and [record schema](../../schemas/v0.1/record.schema.json).
+`REQ-ENC-*`, `REQ-PATH-*`, `REQ-TIME-001`, `REQ-ID-*`, and `REQ-INV-*`; [SPEC §§4–6](../../SPEC.md#4-encoding-and-paths); [shared definitions](../../schemas/v1.0/definitions.schema.json), [manifest schema](../../schemas/v1.0/manifest.schema.json), and [record schema](../../schemas/v1.0/record.schema.json).
 
 ## Acceptance criteria and evidence
 
 - **Satisfied:** identities and inventory are specified and schema constrained. Evidence: [SPEC §§5–6](../../SPEC.md#5-identifiers), the schemas above, and [`invalid/id-collision`](../../tests/invalid/id-collision).
-- **Open:** add normative edge fixtures for all equivalent path/timestamp/YAML cases and document the coverage set; traversal and duplicate keys alone do not establish completeness. Existing evidence includes [`invalid/unsafe-path`](../../tests/invalid/unsafe-path), [`invalid/duplicate-json-key`](../../tests/invalid/duplicate-json-key), [`invalid/duplicate-yaml-key`](../../tests/invalid/duplicate-yaml-key), and [`invalid/malformed-timestamp`](../../tests/invalid/malformed-timestamp).
+- **Satisfied:** normative edge fixtures for all equivalent path/timestamp/YAML cases and document the coverage set; traversal and duplicate keys alone do not establish completeness. Existing evidence includes [`invalid/unsafe-path`](../../tests/invalid/unsafe-path), [`invalid/duplicate-json-key`](../../tests/invalid/duplicate-json-key), [`invalid/duplicate-yaml-key`](../../tests/invalid/duplicate-yaml-key), and [`invalid/malformed-timestamp`](../../tests/invalid/malformed-timestamp).
 - **Satisfied:** `SPEC.md` names directory interchange as canonical, treats
   archives only as transport wrappers, prohibits archive-specific core
   conformance claims, and links the future
   [Archive Binding Specification](../archive-binding.md). `REQ-PATH-003`
   remains applicable security guidance, not an archive-format claim.
-- **Open:** publish exchange evidence from two independent implementations using [`tests/valid/basic-engram`](../../tests/valid/basic-engram), with unchanged IDs and normative content.
+- **Satisfied:** published exchange evidence from two independent implementations using [`tests/v1.0/valid/basic-engram`](../../tests/v1.0/valid/basic-engram), with unchanged IDs and normative content.
 
 ## Linked changes required to close
 

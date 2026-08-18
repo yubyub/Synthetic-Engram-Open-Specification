@@ -1,6 +1,6 @@
 ---
 id: note_01J00000000000000000000004
-schema_version: "0.1"
+schema_version: "1.0"
 type: note
 title: Backup policy
 created_at: 2026-08-18T09:06:00Z

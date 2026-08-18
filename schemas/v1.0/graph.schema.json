@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synthetic-engram.org/schema/v1.0/graph.schema.json",
+  "title": "Synthetic Engram graph",
+  "type": "object",
+  "required": [
+    "id",
+    "schema_version",
+    "type",
+    "title",
+    "nodes",
+    "edges"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "definitions.schema.json#/$defs/id"
+    },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "type": {
+      "const": "graph"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+          },
+          "record": {
+            "$ref": "definitions.schema.json#/$defs/id"
+          },
+          "label": {
+            "type": "string"
+          },
+          "record_scope": {
+            "enum": [
+              "synthetic_engram",
+              "outside_engram"
+            ],
+            "default": "synthetic_engram",
+            "description": "Whether record is a durable member of this Synthetic Engram."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "from",
+          "to",
+          "relation"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "relation": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "extensions": {
+      "$ref": "definitions.schema.json#/$defs/extensions"
+    }
+  },
+  "additionalProperties": false
+}

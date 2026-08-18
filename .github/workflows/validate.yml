@@ -6,13 +6,29 @@ permissions:
   contents: read
 jobs:
   validate:
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
           cache: pip
           cache-dependency-path: requirements-dev.txt
       - run: python -m pip install -r requirements-dev.txt
       - run: python scripts/validate.py
+      - run: python scripts/conformance_harness.py --adapter implementations/python-engram/engram_adapter.py
+  node-conformance:
+    strategy:
+      matrix:
+        node-version: [20, 22, 24]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: python scripts/conformance_harness.py --adapter implementations/node-engram/engram-adapter.js
+      - run: python scripts/run_interoperability.py

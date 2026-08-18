@@ -1,0 +1,1 @@
+YAML tags, anchors, and aliases are not permitted

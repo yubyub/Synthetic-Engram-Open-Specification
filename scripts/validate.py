@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate Synthetic Engram v0.1 packages and repository fixtures."""
+"""Validate Synthetic Engram 1.0 packages and repository fixtures."""
 
 from __future__ import annotations
 
@@ -19,7 +19,8 @@ from jsonschema import Draft202012Validator, FormatChecker
 from referencing import Registry, Resource
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA_DIR = ROOT / "schemas" / "v0.1"
+SCHEMA_DIR = ROOT / "schemas" / "v1.0"
+FIXTURE_DIR = ROOT / "tests" / "v1.0"
 OBJECT_SCHEMA = {
     "record": "record.schema.json",
     "graph": "graph.schema.json",
@@ -324,13 +325,13 @@ def repository_suite() -> None:
     if fixture_profile_sets != expected_profile_sets:
         fail("optional-profile fixtures do not cover every legal combination")
     targets = [
-        ROOT / "examples" / "basic-engram",
-        *sorted((ROOT / "tests" / "valid").iterdir()),
+        ROOT / "examples" / "v1.0" / "basic-engram",
+        *sorted((FIXTURE_DIR / "valid").iterdir()),
     ]
     for target in targets:
         validate_package(target)
         print(f"PASS {target.relative_to(ROOT)}")
-    for target in sorted((ROOT / "tests" / "invalid").iterdir()):
+    for target in sorted((FIXTURE_DIR / "invalid").iterdir()):
         expected = (target / "expected-error.txt").read_text().strip()
         try:
             validate_package(target)
@@ -366,7 +367,7 @@ def check_traceability_and_vectors() -> None:
         fail(f"requirements missing from traceability matrix: {', '.join(missing)}")
 
     vector_ids: set[str] = set()
-    for path in sorted((ROOT / "tests" / "vectors").glob("*.json")):
+    for path in sorted((FIXTURE_DIR / "vectors").glob("*.json")):
         vector = load_json(path)
         if vector.get("role") not in {"producer", "consumer", "round-trip"}:
             fail(f"{path}: invalid vector role")

@@ -1,6 +1,6 @@
 {
   "id": "attachment_01J00000000000000000000007",
-  "schema_version": "0.1",
+  "schema_version": "1.0",
   "type": "attachment",
   "filename": "package-overview.txt",
   "media_type": "text/plain",

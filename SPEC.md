@@ -1,9 +1,9 @@
-# Synthetic Engram Open Standard v0.1
+# Synthetic Engram Open Standard 1.0
 
-**Status:** Experimental draft
+**Status:** Stable release
 
-**Version:** 0.1.0
-**Schema base:** `https://synthetic-engram.org/schema/v0.1/`
+**Version:** 1.0.0
+**Schema base:** `https://synthetic-engram.org/schema/v1.0/`
 
 ## 1. Scope
 
@@ -81,7 +81,7 @@ The prefix communicates an object kind (for example `engram_`, `note_`, or
 ## 6. Package manifest
 
 <a id="req-manifest-root"></a> **REQ-MAN-001:** The package root MUST contain `engram.json`, conforming to
-[`schemas/v0.1/manifest.schema.json`](schemas/v0.1/manifest.schema.json).
+[`schemas/v1.0/manifest.schema.json`](schemas/v1.0/manifest.schema.json).
 It declares:
 
 - `format`, fixed to `synthetic-engram`;
@@ -129,7 +129,7 @@ self-consistency. <a id="req-closure-compare"></a> **REQ-CLOSE-005:** A producer
 ## 7. Records
 
 <a id="req-record-envelope"></a> **REQ-REC-001:** A record MUST be a `.md` file consisting of YAML 1.2 front matter followed by Markdown content; front matter begins with `---` on the first line and ends with `---` on a line by itself.
-<a id="req-record-schema"></a> **REQ-REC-002:** Its front matter MUST conform to [`schemas/v0.1/record.schema.json`](schemas/v0.1/record.schema.json).
+<a id="req-record-schema"></a> **REQ-REC-002:** Its front matter MUST conform to [`schemas/v1.0/record.schema.json`](schemas/v1.0/record.schema.json).
 
 ### 7.1 Serialization
 
@@ -144,7 +144,7 @@ self-consistency. <a id="req-closure-compare"></a> **REQ-CLOSE-005:** A producer
 
 <a id="req-record-yaml-typing"></a> **REQ-REC-009:** A parser MUST type plain scalars deterministically: the exact lowercase tokens `null`, `true`, and `false` are null and booleans; JSON-number syntax produces finite numbers; every other plain scalar is a string; and all quoted scalars are strings. Producers SHOULD quote strings whose plain spelling would otherwise receive another type.
 
-The content is Markdown, but v0.1 does not select a Markdown dialect and body rendering is implementation-defined. Raw HTML is allowed as record text. See [REQ-SEC-003](#req-security-execution) for the authoritative non-execution rule.
+The content is Markdown, but 1.0 does not select a Markdown dialect and body rendering is implementation-defined. Raw HTML is allowed as record text. See [REQ-SEC-003](#req-security-execution) for the authoritative non-execution rule.
 <a id="req-record-render"></a> **REQ-REC-010:** A renderer MUST sanitize or escape unsafe constructs for its output context.
 
 The core envelope fields and allowed record types are defined by the record schema. <a id="req-action-status"></a> **REQ-REC-011:** An action record MUST provide `status`; it MAY provide `due_at`.
@@ -159,17 +159,17 @@ A `parent` denotes hierarchy. Each `links` entry denotes a typed directed link. 
 
 ## 8. Graphs
 
-A graph is a JSON object conforming to [`schemas/v0.1/graph.schema.json`](schemas/v0.1/graph.schema.json). Nodes have local IDs and MAY reference Engram record IDs. Directed edges reference local node IDs. Graph-node record references use [REQ-REF-001](#req-reference-resolution).
+A graph is a JSON object conforming to [`schemas/v1.0/graph.schema.json`](schemas/v1.0/graph.schema.json). Nodes have local IDs and MAY reference Engram record IDs. Directed edges reference local node IDs. Graph-node record references use [REQ-REF-001](#req-reference-resolution).
 
 <a id="req-graph-node-ids"></a> **REQ-GRAPH-001:** Node IDs MUST be unique within their graph.
 <a id="req-graph-edge-ids"></a> **REQ-GRAPH-002:** Edge IDs MUST be unique within their graph.
 <a id="req-graph-endpoints"></a> **REQ-GRAPH-003:** Each edge's `from` and `to` values MUST resolve to node IDs in the same graph.
 
-The v0.1 graph format describes interoperable topology and optional labels. It does not standardize layout, rendering, or an application-specific graph DSL.
+The 1.0 graph format describes interoperable topology and optional labels. It does not standardize layout, rendering, or an application-specific graph DSL.
 
 ## 9. Attachments
 
-Attachment metadata is a JSON object conforming to [`schemas/v0.1/attachment.schema.json`](schemas/v0.1/attachment.schema.json). It identifies a separate payload by relative `path`, media type, byte size, and lowercase SHA-256 digest.
+Attachment metadata is a JSON object conforming to [`schemas/v1.0/attachment.schema.json`](schemas/v1.0/attachment.schema.json). It identifies a separate payload by relative `path`, media type, byte size, and lowercase SHA-256 digest.
 
 <a id="req-media-integrity"></a> **REQ-MEDIA-001:** The payload MUST exist at the metadata object's `path`, and its bytes MUST match both the declared `size` and `sha256` digest.
 <a id="req-media-inventory"></a> **REQ-MEDIA-002:** Attachment metadata and its payload MUST both be listed in the manifest; the payload entry MUST use kind `blob`, the attachment ID, and the metadata object's payload `path`.
@@ -186,7 +186,7 @@ object SHOULD preserve unknown extensions unchanged. <a id="req-extension-core">
 
 ## 11. Profiles and conformance
 
-v0.1 defines these profiles:
+Version 1.0 defines these profiles:
 
 - **core:** manifest, records, stable IDs, hierarchy, links, import, and export;
 - **graph:** graph objects and referenced-record preservation;
@@ -226,7 +226,7 @@ values with deep structural equality and MUST report namespace collisions
 rather than merge or reinterpret them.
 
 Schema paths are versioned by major and minor version. Package data uses
-`schema_version: "0.1"`; it does not include the patch version.
+`schema_version: "1.0"`; it does not include the patch version.
 
 ## 13. Security and privacy
 
@@ -234,12 +234,12 @@ Package content is untrusted input.
 <a id="req-security-path"></a> **REQ-SEC-001:** Implementations MUST prevent path traversal.
 <a id="req-security-limits"></a> **REQ-SEC-002:** Implementations MUST enforce resource limits.
 <a id="req-security-execution"></a> **REQ-SEC-003:** Implementations MUST NOT execute record content.
-<a id="req-security-untrusted"></a> **REQ-SEC-004:** Media types, filenames, links, extensions, Markdown, and graph labels MUST be treated as untrusted. Hashes provide integrity checks, not authenticity. Encryption, signing, identity proof, and authorization are outside v0.1.
+<a id="req-security-untrusted"></a> **REQ-SEC-004:** Media types, filenames, links, extensions, Markdown, and graph labels MUST be treated as untrusted. Hashes provide integrity checks, not authenticity. Encryption, signing, identity proof, and authorization are outside core 1.0.
 <a id="req-security-permission"></a> **REQ-SEC-005:** Applications MUST NOT infer permission merely from possession of a package. See [SECURITY.md](SECURITY.md).
 
 ## 14. Non-goals and future work
 
-v0.1 does not define synchronization, conflict resolution, access-control
+Core 1.0 does not define synchronization, conflict resolution, access-control
 descriptors, certification branding, query lenses, AI context selection, or
 portable revision deltas. These subjects remain documented in
 [docs/open-questions.md](docs/open-questions.md).

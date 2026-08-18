@@ -24,8 +24,8 @@ release-candidate tag or artifact.
 
 | Gate | Record | Outcome | Status |
 |---:|---|---|---|
-| 1 | [Core package and identifiers](0001-core-package-and-identifiers.md) | Core directory format; deterministic archives deferred | open |
-| 2 | [Profiles and partial consumption](0002-profiles-and-partial-consumption.md) | Core plus graph/media/action optional profiles | open |
+| 1 | [Core package and identifiers](0001-core-package-and-identifiers.md) | Core directory format; deterministic archives deferred | accepted |
+| 2 | [Profiles and partial consumption](0002-profiles-and-partial-consumption.md) | Core plus graph/media/action optional profiles | accepted |
 | 3 | [Namespace, fragment, and lens](0003-namespace-fragment-lens.md) | Namespace and Selection Specification | deferred |
 | 4 | [History and current state](0004-history-and-current-state.md) | Current state in core; History and Synchronization Specification | deferred |
 | 5 | [Provenance and references](0005-provenance-and-external-references.md) | Minimal external links; Data and Provenance Specification | deferred |
@@ -33,7 +33,7 @@ release-candidate tag or artifact.
 | 7 | [Graph interoperability](0007-graph-interoperability.md) | Topology in graph profile; languages/derivation deferred | accepted |
 | 8 | [Access and authority](0008-access-and-authority.md) | Access and Authority Specification | deferred |
 | 9 | [Migration reporting](0009-migration-reporting.md) | Migration Specification | deferred |
-| 10 | [Versioning and extensions](0010-versioning-migration-extensions.md) | SemVer policy in core | open |
-| 11 | [Release evidence](0011-release-evidence.md) | Evidence bar in core; branding deferred | open |
+| 10 | [Versioning and extensions](0010-versioning-migration-extensions.md) | SemVer policy in core | accepted |
+| 11 | [Release evidence](0011-release-evidence.md) | Evidence bar in core; branding deferred | accepted |
 
-**Closure count: 7/11. Release candidate blocked.**
+**Closure count: 11/11. Release approved.**

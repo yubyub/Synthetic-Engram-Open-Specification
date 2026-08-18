@@ -75,7 +75,7 @@ def run(adapter: list[str], case: dict[str, Any], base: Path) -> dict[str, Any]:
 def main() -> int:
     parser=argparse.ArgumentParser(); parser.add_argument("--adapter", required=True); parser.add_argument("--report", type=Path)
     args=parser.parse_args(); cases=[]
-    for path in (ROOT/"tests/vectors").glob("*.json"): cases += json.loads(path.read_text())["cases"]
+    for path in (ROOT/"tests/v1.0/vectors").glob("*.json"): cases += json.loads(path.read_text())["cases"]
     try:
         with tempfile.TemporaryDirectory(prefix="engram-harness-") as tmp:
             adapter = shlex.split(args.adapter)

@@ -1,23 +1,20 @@
 # Core 1.0 security review
 
-**Review status:** release review complete  
+**Review status:** release review complete
 **Reviewed surface:** the frozen normative model in [`SPEC.md`](../SPEC.md), the
-v0.1 wire schemas, reference validator, example packages, invalid fixtures, and
-the language-neutral conformance harness.  
+1.0 wire schemas, reference validator, versioned examples and fixtures, and the
+language-neutral conformance harness.
 **Threat model:** every package, archive wrapper, pathname, declared media type,
 owner value, extension value, link, graph label, Markdown byte, and attachment
 byte is attacker-controlled. The reference implementation is evidence about the
 format, not a hardened importer.
 
-This review uses “Core 1.0” for the frozen model and harness contract. The wire
-documents currently identify themselves as `0.1.0`; this review does not change
-that identifier or create an archive binding. The accepted implementation
-boundary is the repository's [security policy](../SECURITY.md): callers must add
-limits, non-execution, rendering/filename sanitization, and safe extraction. The
-[1.0 release notes](../CHANGELOG.md#unreleased) likewise describe the current
-schemas, examples, validator, and conformance material as experimental. These
-limitations are release conditions, not claims that hostile imports are safe by
-default.
+This review applies to the permanent 1.0 schema identifiers and was approved as
+part of the exact release set in [`release-evidence-1.0.md`](release-evidence-1.0.md).
+The accepted implementation boundary is the repository's
+[security policy](../SECURITY.md): callers must add limits, non-execution,
+rendering/filename sanitization, and safe extraction. These limitations are
+release conditions, not claims that hostile imports are safe by default.
 
 ## Method and disposition vocabulary
 
@@ -164,8 +161,8 @@ No reviewed item requires changing the frozen package model. The model has clear
 normative boundaries for path spelling, duplicate keys, restricted YAML,
 non-execution, attachment integrity/resolution, unsupported profiles, untrusted
 content, and non-authority. The release is acceptable only with the limitations
-already stated in [`SECURITY.md`](../SECURITY.md) and the experimental status in
-the [1.0 release notes](../CHANGELOG.md#unreleased):
+already stated in [`SECURITY.md`](../SECURITY.md) and the known limitations in
+the [1.0 release notes](../CHANGELOG.md#100---2026-08-18):
 
 1. archive extraction and transactional import are product responsibilities;
 2. every parser and content class needs deployment-appropriate quotas;

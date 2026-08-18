@@ -1,0 +1,19 @@
+{
+  "vector_version": "1.0",
+  "role": "producer",
+  "cases": [
+    {
+      "id": "PRODUCER-001",
+      "requirement": "REQ-CONF-002",
+      "adapter_operation": "produce",
+      "fixture": {"kind": "directory", "source": "examples/v1.0/basic-engram"},
+      "parameters": {"task": "export-without-logical-edits"},
+      "expected": {
+        "status": "success",
+        "package_artifact_present": true,
+        "declared_profiles": ["core", "graph", "media", "action"],
+        "inventory_preserved": true
+      }
+    }
+  ]
+}

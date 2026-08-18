@@ -1,6 +1,6 @@
 {
     "id": "graph_01J00000000000000000000006",
-    "schema_version": "0.1",
+    "schema_version": "1.0",
     "type": "graph",
     "title": "Portable hosting and backup",
     "nodes": [

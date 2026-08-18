@@ -1,6 +1,6 @@
 {
   "report_version": "1.0",
-  "source": "examples/basic-engram",
+  "source": "examples/v1.0/basic-engram",
   "comparisons": [
     {
       "exchange": "Python producer -> Node consumer/producer",
