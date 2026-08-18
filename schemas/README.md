@@ -9,3 +9,4 @@ validation alone is insufficient: use `python scripts/validate.py` for package
 inventory, reference, cycle, and checksum checks.
 
 `v1.0/graph.schema.json` adds kind-neutral durable-object references, structured external references, qualified relation vocabularies, and extension points at every graph level.
+scope, complete-export closure, inventory, reference, cycle, and checksum checks. These experimental schemas will move to the `v1.0` schema path when the standard reaches 1.0; their current location implies no 1.0 stability.

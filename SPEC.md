@@ -21,11 +21,13 @@ and **MAY** are to be interpreted as described by BCP 14 (RFC 2119 and RFC
 
 ## 3. Terminology
 
-- **Synthetic Engram:** the complete durable knowledge environment.
+- **Synthetic Engram:** a durable logical knowledge environment whose identity persists across exports, package layouts, and storage migrations.
 - **Engram Package:** a directory or archive containing all or part of a
-  Synthetic Engram in this portable representation.
+  Synthetic Engram in this portable representation. A package is a transport instance, not the Engram itself.
 - **Engram Record:** one durable typed object in an Engram.
-- **Engram ID:** a stable identifier for a package object.
+- **Engram ID:** the stable `engram_id` of the Synthetic Engram.
+- **Package ID:** manifest `id`, identifying one serialized package instance. Repacking creates a new Package ID.
+- **Export ID:** manifest `export_id`, identifying the logical export event. Retries retain it but use distinct Package IDs.
 - **Implementation:** software that produces or consumes an Engram Package.
 - **Extension:** namespaced, non-core data preserved alongside core data.
 
@@ -42,7 +44,7 @@ Producers SHOULD emit seconds even when the value has no sub-second precision.
 
 ## 5. Identifiers
 
-Every durable package object MUST have an ID matching:
+Every Synthetic Engram, export event, package instance, and durable object MUST have an ID matching:
 
 ```regex
 ^[a-z][a-z0-9-]{1,31}_[0-9A-HJKMNP-TV-Z]{26}$
@@ -61,7 +63,8 @@ It declares:
 
 - `format`, fixed to `synthetic-engram`;
 - specification `version`;
-- the package `id`;
+- package-instance `id`, stable Synthetic Engram `engram_id`, and export-event `export_id`;
+- `completeness`, either `complete` or `partial`;
 - creation and update timestamps;
 - an owner descriptor;
 - supported conformance `profiles`; and
@@ -72,6 +75,27 @@ path. The path MUST exist and its contained object ID MUST equal the inventory
 ID. Inventory IDs MUST be unique except that an attachment's `blob` entry MUST
 repeat its attachment metadata ID. Producers MUST list every normative object.
 Consumers MUST NOT infer that unlisted files are normative package objects.
+
+
+### 6.1 Package scope
+
+A `partial` package MUST contain `partial` metadata with either a reproducible selection `mechanism` (type and expression) or a non-empty opaque `description`; it MAY contain both. Selection metadata MUST NOT be treated as proof that every matching source object was exported. A `complete` package MUST NOT contain `partial` metadata.
+
+These terms are distinct:
+
+- **Not inventoried** means a file is present in the package but has no `objects` entry. It has no normative object status. In a complete package, a durable artifact in `records/`, `graphs/`, or `attachments/` that is not inventoried is an error.
+- **External to this package** means a durable member of this Synthetic Engram is absent from this package. This is permitted only for a partial package. References express Engram membership with `target_scope`, `parent_scope`, or `record_scope` equal to `synthetic_engram` (the default); inventory presence determines whether it is external to the package.
+- **External to the Synthetic Engram** means the referenced entity is not a durable member of this Engram. Its corresponding scope field MUST be `outside_engram`; it is never required in the inventory.
+
+The obsolete, ambiguous `external` Boolean MUST NOT be emitted. One Boolean MUST NOT represent inventory status, package selection, and Engram membership.
+
+### 6.2 Complete export closure
+
+With `completeness: complete`, `objects` MUST inventory and the package MUST contain every current durable record and normative Markdown body, every current durable graph, every attachment's normative metadata, every attachment payload, and every other current durable artifact owned by the Synthetic Engram at the export snapshot. Normative extension data MUST appear. References to Engram members MUST resolve. Deleted, superseded, or historical revisions need not appear unless retained as current durable artifacts.
+
+A complete export MUST NOT include transient caches, search indexes, lock files, sessions, credentials, access tokens, telemetry, temporary files, or unfinished writes as normative objects. It need not include thumbnails, previews, embeddings, rendered HTML, compiled views, query results, model outputs, or other reproducible derivative artifacts. If one is deliberately adopted as durable owner-controlled knowledge, it is no longer merely operational or derivative and MUST be inventoried under an applicable profile or namespaced extension.
+
+Completeness is a claim about the producer's source snapshot, not merely archive self-consistency. A producer MUST compare the inventory with that snapshot. A consumer can verify packaged evidence, but cannot prove disclosure of an object for which the package contains no evidence.
 
 ## 7. Records
 
@@ -85,9 +109,7 @@ The core envelope requires `id`, `schema_version`, `type`, `title`,
 in v1.0. An action additionally MUST provide `status`; it MAY provide `due_at`.
 
 A `parent` denotes hierarchy. Each `links` entry denotes a typed directed link.
-A target MAY be external to a partial package only when the link sets
-`external: true`; otherwise it MUST resolve to an inventoried object. A package
-MUST NOT contain a cycle formed by `parent` references.
+A `synthetic_engram` target MAY be absent only from a partial package. An `outside_engram` target need not resolve. A package MUST NOT contain a cycle formed by included `parent` references.
 
 ## 8. Graphs
 
@@ -138,6 +160,12 @@ silently interpret it as a core relation. An undeclared prefix is invalid.
 Vocabulary owners define non-core term semantics.
 
 The v1.0 graph format describes interoperable topology and optional labels. It
+[`schemas/v0.1/graph.schema.json`](schemas/v0.1/graph.schema.json). Nodes have
+local IDs and MAY reference Engram IDs. Directed edges reference local node IDs.
+Referenced Engram IDs MUST resolve in a complete package unless their `record_scope` is `outside_engram`. Node and
+edge IDs MUST each be unique within their graph.
+
+The v0.1 graph format describes interoperable topology and optional labels. It
 does not standardize layout, rendering, or an application-specific graph DSL.
 
 ## 9. Attachments
