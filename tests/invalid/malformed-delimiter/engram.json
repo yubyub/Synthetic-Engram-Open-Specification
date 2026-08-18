@@ -1,12 +1,6 @@
 {
   "format": "synthetic-engram",
   "version": "0.1.0",
-  "id": "engram_01ARZ3NDEKTSV4RRFFQ69G5FAV",
-  "created_at": "2025-01-01T00:00:00Z",
-  "updated_at": "2025-01-01T00:00:00Z",
-  "owner": {
-    "type": "person",
-    "name": "Test"
   "id": "engram_01J00000000000000000000009",
   "created_at": "2026-08-18T09:00:00Z",
   "updated_at": "2026-08-18T09:00:00Z",
@@ -19,10 +13,6 @@
   ],
   "objects": [
     {
-      "id": "note_01ARZ3NDEKTSV4RRFFQ69G5FAW",
-      "kind": "record",
-      "media_type": "text/markdown",
-      "path": "records/note.md"
       "id": "note_01J00000000000000000000008",
       "kind": "record",
       "media_type": "text/markdown",

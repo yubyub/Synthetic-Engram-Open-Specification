@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Validate Synthetic Engram v0.1 packages and repository fixtures."""
+
 from __future__ import annotations
 
 import argparse
@@ -12,6 +13,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 import yaml
+from yaml import tokens as yaml_tokens
 from jsonschema import Draft202012Validator, FormatChecker
 from referencing import Registry, Resource
 
@@ -24,6 +26,7 @@ OBJECT_SCHEMA = {
 }
 PROFILE_FOR = {"graph": "graph", "attachment": "media"}
 
+
 # PyYAML normally converts timestamps to datetime objects. The data model treats
 # timestamps as RFC 3339 strings, so retain scalar text for schema validation.
 class EngramLoader(yaml.SafeLoader):
@@ -34,6 +37,36 @@ def _unique_yaml_mapping(loader: EngramLoader, node: yaml.MappingNode, deep: boo
     result: dict[str, Any] = {}
     for key_node, value_node in node.value:
         key = loader.construct_object(key_node, deep=deep)
+
+EngramLoader.yaml_implicit_resolvers = {}
+EngramLoader.add_implicit_resolver(
+    "tag:yaml.org,2002:null", re.compile(r"^null$"), ["n"]
+)
+EngramLoader.add_implicit_resolver(
+    "tag:yaml.org,2002:bool", re.compile(r"^(?:true|false)$"), ["t", "f"]
+)
+EngramLoader.add_implicit_resolver(
+    "tag:yaml.org,2002:int", re.compile(r"^-?(?:0|[1-9][0-9]*)$"), list("-0123456789")
+)
+EngramLoader.add_implicit_resolver(
+    "tag:yaml.org,2002:float",
+    re.compile(
+        r"^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+(?:[eE][+-]?[0-9]+)?|[eE][+-]?[0-9]+)$"
+    ),
+    list("-0123456789"),
+)
+
+
+def _unique_mapping(
+    loader: EngramLoader, node: yaml.MappingNode, deep: bool = False
+) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key_node, value_node in node.value:
+        key = loader.construct_object(key_node, deep=deep)
+        if not isinstance(key, str):
+            fail("front matter mapping keys must be strings")
+        if key == "<<":
+            fail("YAML merge keys are not permitted")
         if key in result:
             fail(f"duplicate YAML key {key!r}")
         result[key] = loader.construct_object(value_node, deep=deep)
@@ -48,17 +81,25 @@ EngramLoader.yaml_implicit_resolvers = {
     for key, values in yaml.SafeLoader.yaml_implicit_resolvers.items()
 }
 
+EngramLoader.add_constructor("tag:yaml.org,2002:map", _unique_mapping)
+
+
 class ValidationError(Exception):
     pass
+
 
 def fail(message: str) -> None:
     raise ValidationError(message)
 
+
 def load_json(path: Path) -> Any:
     try:
-        return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=_unique_object)
+        return json.loads(
+            path.read_text(encoding="utf-8"), object_pairs_hook=_unique_object
+        )
     except (OSError, UnicodeError, json.JSONDecodeError, ValidationError) as exc:
         fail(f"{path}: {exc}")
+
 
 def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     result: dict[str, Any] = {}
@@ -68,37 +109,89 @@ def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
         result[key] = value
     return result
 
+
 def schema_registry() -> Registry:
     registry = Registry()
     for path in SCHEMA_DIR.glob("*.schema.json"):
         contents = load_json(path)
-        registry = registry.with_resource(contents["$id"], Resource.from_contents(contents))
+        registry = registry.with_resource(
+            contents["$id"], Resource.from_contents(contents)
+        )
     return registry
+
 
 def validator(name: str, registry: Registry) -> Draft202012Validator:
     schema = load_json(SCHEMA_DIR / name)
     Draft202012Validator.check_schema(schema)
-    return Draft202012Validator(schema, registry=registry, format_checker=FormatChecker())
+    return Draft202012Validator(
+        schema, registry=registry, format_checker=FormatChecker()
+    )
+
 
 def check_schema(instance: Any, name: str, registry: Registry, label: Path) -> None:
-    errors = sorted(validator(name, registry).iter_errors(instance), key=lambda e: list(e.absolute_path))
+    errors = sorted(
+        validator(name, registry).iter_errors(instance),
+        key=lambda e: list(e.absolute_path),
+    )
     if errors:
         err = errors[0]
         location = "/".join(str(part) for part in err.absolute_path) or "<root>"
         fail(f"{label}: schema error at {location}: {err.message}")
 
+
 def read_record(path: Path) -> dict[str, Any]:
-    text = path.read_text(encoding="utf-8")
-    match = re.match(r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|\Z)", text, re.DOTALL)
-    if not match:
-        fail(f"{path}: record must begin with YAML front matter")
     try:
-        value = yaml.load(match.group(1), Loader=EngramLoader)
-    except yaml.YAMLError as exc:
+        text = path.read_bytes().decode("utf-8")
+    except (OSError, UnicodeError) as exc:
+        fail(f"{path}: {exc}")
+    if text.startswith("\ufeff"):
+        fail(f"{path}: UTF-8 byte-order mark is not permitted")
+    if re.search(r"\r(?!\n)", text):
+        fail(f"{path}: bare CR line ending is not permitted")
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0] not in ("---\n", "---\r\n"):
+        fail(f"{path}: opening delimiter must be exactly '---' on the first line")
+    closing = next(
+        (
+            index
+            for index, line in enumerate(lines[1:], 1)
+            if line.removesuffix("\n").removesuffix("\r") == "---"
+        ),
+        None,
+    )
+    if closing is None:
+        fail(f"{path}: missing exact front matter closing delimiter")
+    front_matter = "".join(lines[1:closing])
+    try:
+        for token in yaml.scan(front_matter, Loader=EngramLoader):
+            if isinstance(
+                token,
+                (yaml_tokens.TagToken, yaml_tokens.AnchorToken, yaml_tokens.AliasToken),
+            ):
+                fail(f"{path}: YAML tags, anchors, and aliases are not permitted")
+            if isinstance(
+                token,
+                (
+                    yaml_tokens.DirectiveToken,
+                    yaml_tokens.DocumentStartToken,
+                    yaml_tokens.DocumentEndToken,
+                ),
+            ):
+                fail(f"{path}: YAML directives and document markers are not permitted")
+            if isinstance(
+                token,
+                (yaml_tokens.FlowMappingStartToken, yaml_tokens.FlowSequenceStartToken),
+            ):
+                fail(f"{path}: YAML flow collections are not permitted")
+        value = yaml.load(front_matter, Loader=EngramLoader)
+    except (yaml.YAMLError, ValidationError) as exc:
+        if isinstance(exc, ValidationError):
+            raise
         fail(f"{path}: invalid YAML: {exc}")
     if not isinstance(value, dict):
         fail(f"{path}: front matter must be a mapping")
     return value
+
 
 def safe_path(root: Path, value: str) -> Path:
     if "\\" in value:
@@ -112,6 +205,7 @@ def safe_path(root: Path, value: str) -> Path:
     except ValueError:
         fail(f"inventory path escapes package: {value}")
     return path
+
 
 def validate_package(root: Path) -> None:
     registry = schema_registry()
@@ -149,24 +243,43 @@ def validate_package(root: Path) -> None:
         required_profile = PROFILE_FOR.get(kind)
         if required_profile and required_profile not in manifest["profiles"]:
             fail(f"{kind} object requires profile {required_profile}")
-        if kind == "record" and value["type"] == "action" and "action" not in manifest["profiles"]:
+        if (
+            kind == "record"
+            and value["type"] == "action"
+            and "action" not in manifest["profiles"]
+        ):
             fail("action record requires profile action")
+
+    # In a directory package, every file in a normative durable-artifact
+    # directory is observable. A complete package cannot hide one by merely
+    # leaving it out of the manifest.
+    if manifest["completeness"] == "complete":
+        durable_paths = {
+            path.relative_to(root).as_posix()
+            for directory in ("records", "graphs", "attachments")
+            if (root / directory).is_dir()
+            for path in (root / directory).rglob("*")
+            if path.is_file()
+        }
+        omitted = sorted(durable_paths - paths)
+        if omitted:
+            fail(f"complete package has un-inventoried durable artifact: {omitted[0]}")
 
     for object_id, entries in entries_by_id.items():
         kinds = sorted(entry["kind"] for entry in entries)
         if len(entries) > 1 and kinds != ["attachment", "blob"]:
             fail(f"duplicate inventory ID: {object_id}")
 
-    def resolve(target: str, external: bool, source: Path) -> None:
-        if not external and target not in objects:
-            fail(f"{source}: unresolved reference {target}")
+    def resolve(target: str, target_scope: str, source: Path) -> None:
+        if target_scope == "synthetic_engram" and target not in objects and manifest["completeness"] == "complete":
+            fail(f"{source}: complete package omits Engram member {target}")
 
     for object_id, (kind, value, path) in objects.items():
         if kind == "record":
             if "parent" in value:
-                resolve(value["parent"], False, path)
+                resolve(value["parent"], value.get("parent_scope", "synthetic_engram"), path)
             for link in value.get("links", []):
-                resolve(link["target"], link.get("external", False), path)
+                resolve(link["target"], link.get("target_scope", "synthetic_engram"), path)
         elif kind == "graph":
             node_ids = [node["id"] for node in value["nodes"]]
             edge_ids = [edge["id"] for edge in value["edges"]]
@@ -176,13 +289,17 @@ def validate_package(root: Path) -> None:
                 fail(f"{path}: duplicate graph edge ID")
             for node in value["nodes"]:
                 if "record" in node:
-                    resolve(node["record"], node.get("external", False), path)
+                    resolve(node["record"], node.get("record_scope", "synthetic_engram"), path)
             for edge in value["edges"]:
                 if edge["from"] not in node_ids or edge["to"] not in node_ids:
                     fail(f"{path}: graph edge has unresolved endpoint")
         elif kind == "attachment":
             payload = safe_path(root, value["path"])
-            blob_entries = [entry for entry in entries_by_id[object_id] if entry["kind"] == "blob" and entry["path"] == value["path"]]
+            blob_entries = [
+                entry
+                for entry in entries_by_id[object_id]
+                if entry["kind"] == "blob" and entry["path"] == value["path"]
+            ]
             if not blob_entries:
                 fail(f"{path}: attachment payload is not inventoried as a blob")
             data = payload.read_bytes()
@@ -193,6 +310,7 @@ def validate_package(root: Path) -> None:
 
     visiting: set[str] = set()
     visited: set[str] = set()
+
     def visit(object_id: str) -> None:
         if object_id in visiting:
             fail(f"hierarchy cycle at {object_id}")
@@ -203,13 +321,19 @@ def validate_package(root: Path) -> None:
             visit(parent[object_id])
         visiting.remove(object_id)
         visited.add(object_id)
+
     for object_id in parent:
         visit(object_id)
+
 
 def repository_suite() -> None:
     check_local_markdown_links()
     check_traceability_and_vectors()
     targets = [ROOT / "examples" / "basic-engram", *sorted((ROOT / "tests" / "valid").iterdir())]
+    targets = [
+        ROOT / "examples" / "basic-engram",
+        *sorted((ROOT / "tests" / "valid").iterdir()),
+    ]
     for target in targets:
         validate_package(target)
         print(f"PASS {target.relative_to(ROOT)}")
@@ -223,6 +347,7 @@ def repository_suite() -> None:
             print(f"PASS {target.relative_to(ROOT)} (rejected: {expected})")
         else:
             fail(f"{target}: invalid fixture was accepted")
+
 
 def check_local_markdown_links() -> None:
     link_pattern = re.compile(r"(?<!!)\[[^]]+\]\(([^)]+)\)")
@@ -279,6 +404,7 @@ def main() -> int:
         print(f"ERROR {exc}", file=sys.stderr)
         return 1
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
