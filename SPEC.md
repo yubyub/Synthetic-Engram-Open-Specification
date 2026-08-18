@@ -82,110 +82,79 @@ It declares:
 
 ### 6.1 Package scope
 
-A `partial` package MUST contain `partial` metadata with either a reproducible selection `mechanism` (type and expression) or a non-empty opaque `description`; it MAY contain both. Selection metadata MUST NOT be treated as proof that every matching source object was exported. A `complete` package MUST NOT contain `partial` metadata.
+<a id="req-scope-partial-metadata"></a> **REQ-SCOPE-001:** A package whose `completeness` is `partial` MUST contain `partial` metadata with either a reproducible selection `mechanism` (a `type` and non-empty `expression`) or a non-empty opaque `description`; it MAY contain both.
+<a id="req-scope-selection-proof"></a> **REQ-SCOPE-002:** An implementation MUST NOT treat selection metadata as proof that every matching source object was exported.
+<a id="req-scope-complete-metadata"></a> **REQ-SCOPE-003:** A package whose `completeness` is `complete` MUST NOT contain `partial` metadata.
 
 These terms are distinct:
 
-- **Not inventoried** means a file is present in the package but has no `objects` entry. It has no normative object status. In a complete package, a durable artifact in `records/`, `graphs/`, or `attachments/` that is not inventoried is an error.
-- **External to this package** means a durable member of this Synthetic Engram is absent from this package. This is permitted only for a partial package. References express Engram membership with `target_scope`, `parent_scope`, or `record_scope` equal to `synthetic_engram` (the default); inventory presence determines whether it is external to the package.
-- **External to the Synthetic Engram** means the referenced entity is not a durable member of this Engram. Its corresponding scope field MUST be `outside_engram`; it is never required in the inventory.
+- **Not inventoried** means a file is present in the package but has no `objects` entry. It has no normative object status.
+- **External to this package** means a durable member of this Synthetic Engram is absent from this package. This is permitted only for a partial package. Inventory presence, rather than a reference flag, determines this status.
+- **External to the Synthetic Engram** means the referenced entity is not a durable member of this Engram. It is never required in the inventory.
 
-The obsolete, ambiguous `external` Boolean MUST NOT be emitted. One Boolean MUST NOT represent inventory status, package selection, and Engram membership.
+<a id="req-scope-fields"></a> **REQ-SCOPE-004:** A reference MUST express Engram membership with its context-specific scope field: `target_scope` for a record link, `parent_scope` for a record parent, or `record_scope` for a graph-node record. For each field, omission has the schema-defined default `synthetic_engram`; `outside_engram` denotes a non-member.
 
 ### 6.2 Complete export closure
 
-With `completeness: complete`, `objects` MUST inventory and the package MUST contain every current durable record and normative Markdown body, every current durable graph, every attachment's normative metadata, every attachment payload, and every other current durable artifact owned by the Synthetic Engram at the export snapshot. Normative extension data MUST appear. References to Engram members MUST resolve. Deleted, superseded, or historical revisions need not appear unless retained as current durable artifacts.
+<a id="req-closure-inventory"></a> **REQ-CLOSE-001:** With `completeness: complete`, `objects` MUST inventory every current durable record (including its normative Markdown body), graph, attachment metadata object, attachment payload, and other current durable artifact owned by the Synthetic Engram at the export snapshot, and the package MUST contain each one.
+<a id="req-closure-extensions"></a> **REQ-CLOSE-002:** Normative extension data owned at that snapshot MUST appear in a complete package. Deleted, superseded, or historical revisions need not appear unless retained as current durable artifacts.
 
-A complete export MUST NOT include transient caches, search indexes, lock files, sessions, credentials, access tokens, telemetry, temporary files, or unfinished writes as normative objects. It need not include thumbnails, previews, embeddings, rendered HTML, compiled views, query results, model outputs, or other reproducible derivative artifacts. If one is deliberately adopted as durable owner-controlled knowledge, it is no longer merely operational or derivative and MUST be inventoried under an applicable profile or namespaced extension.
+<a id="req-closure-transient"></a> **REQ-CLOSE-003:** A complete export MUST NOT classify transient caches, search indexes, lock files, sessions, credentials, access tokens, telemetry, temporary files, or unfinished writes as normative objects. It need not include thumbnails, previews, embeddings, rendered HTML, compiled views, query results, model outputs, or other reproducible derivative artifacts.
+<a id="req-closure-adopted"></a> **REQ-CLOSE-004:** A derivative artifact deliberately adopted as durable owner-controlled knowledge MUST be inventoried under an applicable profile or namespaced extension.
 
-Completeness is a claim about the producer's source snapshot, not merely archive self-consistency. A producer MUST compare the inventory with that snapshot. A consumer can verify packaged evidence, but cannot prove disclosure of an object for which the package contains no evidence.
+Completeness is a claim about the producer's source snapshot, not merely archive self-consistency. <a id="req-closure-compare"></a> **REQ-CLOSE-005:** A producer of a complete package MUST compare the inventory with that snapshot. A consumer can verify packaged evidence, but cannot prove disclosure of an object for which the package contains no evidence.
 
 ## 7. Records
 
 <a id="req-record-envelope"></a> **REQ-REC-001:** A record MUST be a `.md` file consisting of YAML 1.2 front matter followed by Markdown content; front matter begins with `---` on the first line and ends with `---` on a line by itself.
-<a id="req-record-schema"></a> **REQ-REC-002:** It MUST conform to
-[`schemas/v0.1/record.schema.json`](schemas/v0.1/record.schema.json).
+<a id="req-record-schema"></a> **REQ-REC-002:** Its front matter MUST conform to [`schemas/v0.1/record.schema.json`](schemas/v0.1/record.schema.json).
 
 ### 7.1 Serialization
 
-Records MUST be UTF-8 without a byte-order mark. Lines MAY end with either LF
-or CRLF; a bare CR is not a line ending. Unicode text is compared as encoded:
-consumers MUST NOT require or silently apply a normalization form. Producers
-SHOULD emit Unicode Normalization Form C (NFC).
+<a id="req-record-no-bom"></a> **REQ-REC-003:** A record MUST be UTF-8 without a byte-order mark. Lines MAY end with LF or CRLF; a bare CR is not a line ending.
+<a id="req-record-normalization"></a> **REQ-REC-004:** A consumer MUST NOT require or silently apply a Unicode normalization form. Producers SHOULD emit NFC.
 
-The opening delimiter is exactly the three ASCII characters `---`, followed by
-LF or CRLF, at byte zero. The closing delimiter is the next line whose content
-is exactly `---`; spaces, comments, or other characters are not permitted on a
-delimiter line. It MAY be followed by LF, CRLF, or end of file. Everything
-after that delimiter and its optional line ending is record content. Record
-content MAY be empty. Thus, the delimiter is structural and is not found by
-parsing YAML or by searching for a prefix.
+<a id="req-record-delimiters"></a> **REQ-REC-005:** The opening delimiter MUST be exactly the three ASCII characters `---`, followed by LF or CRLF, at byte zero; the closing delimiter MUST be the next line containing exactly `---`, followed by LF, CRLF, or end of file. Everything after the closing delimiter and its optional line ending is record content, which MAY be empty.
 
-Front matter MUST use the following restricted YAML 1.2 subset:
+<a id="req-record-yaml-document"></a> **REQ-REC-006:** Front matter MUST contain exactly one mapping in exactly one YAML 1.2 document.
+<a id="req-record-yaml-keys"></a> **REQ-REC-007:** Every front-matter mapping key MUST be a string and MUST be unique within its mapping.
+<a id="req-record-yaml-features"></a> **REQ-REC-008:** Front matter MUST NOT use directives, explicit tags, anchors, aliases, merge keys (`<<`), explicit document markers, or flow collections. Block sequences, block mappings, and JSON-compatible scalar values are permitted.
 
-- it is exactly one mapping in exactly one YAML document;
-- mapping keys MUST be strings and MUST be unique within their mapping;
-  consumers MUST reject duplicate keys rather than select a value;
-- sequences, mappings, and JSON-compatible scalar values are permitted;
-- directives, explicit tags, anchors, aliases, merge keys (`<<`), and explicit
-  YAML document-start or document-end markers are prohibited; and
-- only block collections are permitted; flow collections are prohibited.
+<a id="req-record-yaml-typing"></a> **REQ-REC-009:** A parser MUST type plain scalars deterministically: the exact lowercase tokens `null`, `true`, and `false` are null and booleans; JSON-number syntax produces finite numbers; every other plain scalar is a string; and all quoted scalars are strings. Producers SHOULD quote strings whose plain spelling would otherwise receive another type.
 
-Plain scalars use this deterministic typing rule. The exact lowercase tokens
-`null`, `true`, and `false` are null and booleans. JSON-number syntax produces
-numbers (with no non-finite values); every other plain scalar is a string.
-Single-quoted and double-quoted scalars are always strings. In particular,
-timestamps, Engram IDs, schema versions, and values such as `yes`, `no`, `on`,
-and `off` are strings. Schema constraints still determine where numbers,
-booleans, null, or strings are valid. Producers SHOULD quote strings when their
-plain spelling would otherwise be typed as null, a boolean, or a number.
+The content is Markdown, but v0.1 does not select a Markdown dialect and body rendering is implementation-defined. Raw HTML is allowed as record text. See [REQ-SEC-003](#req-security-execution) for the authoritative non-execution rule.
+<a id="req-record-render"></a> **REQ-REC-010:** A renderer MUST sanitize or escape unsafe constructs for its output context.
 
-The content is Markdown, but v0.1 does not select a Markdown dialect and body
-rendering is implementation-defined. Raw HTML is allowed as record text, but
-no consumer is required to render it. As required by Section 13, Markdown and
-raw HTML are untrusted input: consumers MUST NOT execute them and renderers
-MUST sanitize or escape unsafe constructs for their output context.
+The core envelope fields and allowed record types are defined by the record schema. <a id="req-action-status"></a> **REQ-REC-011:** An action record MUST provide `status`; it MAY provide `due_at`.
 
-The core envelope requires `id`, `schema_version`, `type`, `title`,
-`created_at`, and `updated_at`. `type` is one of `note`, `project`, or `action`
-in v0.1. <a id="req-action-status"></a> **REQ-REC-003:** An action additionally MUST provide `status`; it MAY provide `due_at`.
+### 7.2 References and hierarchy
 
-A `parent` denotes hierarchy. Each `links` entry denotes a typed directed link.
-A target MAY be external to a partial package only when the link sets
-`external: true`; otherwise <a id="req-link-resolve"></a> **REQ-REF-001:** it MUST resolve to an inventoried object.
-<a id="req-hierarchy-acyclic"></a> **REQ-REF-002:** A package MUST NOT contain a cycle formed by `parent` references.
-A `synthetic_engram` target MAY be absent only from a partial package. An `outside_engram` target need not resolve. A package MUST NOT contain a cycle formed by included `parent` references.
+A `parent` denotes hierarchy. Each `links` entry denotes a typed directed link. The authoritative resolution rule for all record and graph references is:
+
+<a id="req-reference-resolution"></a> **REQ-REF-001:** For a record `parent`, record-link `target`, or graph-node `record`, a reference whose applicable scope (`parent_scope`, `target_scope`, or `record_scope`) is `synthetic_engram` MUST resolve to an inventoried object in a complete package and MAY be absent only from a partial package; a reference scoped `outside_engram` is not required to resolve.
+
+<a id="req-hierarchy-acyclic"></a> **REQ-REF-002:** The directed relation from each included record to its `parent` MUST NOT contain a cycle among included records.
 
 ## 8. Graphs
 
-A graph is a JSON object conforming to
-[`schemas/v0.1/graph.schema.json`](schemas/v0.1/graph.schema.json). Nodes have
-local IDs and MAY reference Engram IDs. Directed edges reference local node IDs.
-<a id="req-graph-resolve"></a> **REQ-GRAPH-001:** Referenced Engram IDs MUST resolve unless explicitly marked external.
-<a id="req-graph-ids"></a> **REQ-GRAPH-002:** Node and edge IDs MUST each be unique within their graph.
-Referenced Engram IDs MUST resolve in a complete package unless their `record_scope` is `outside_engram`. Node and
-edge IDs MUST each be unique within their graph.
+A graph is a JSON object conforming to [`schemas/v0.1/graph.schema.json`](schemas/v0.1/graph.schema.json). Nodes have local IDs and MAY reference Engram record IDs. Directed edges reference local node IDs. Graph-node record references use [REQ-REF-001](#req-reference-resolution).
 
-The v0.1 graph format describes interoperable topology and optional labels. It
-does not standardize layout, rendering, or an application-specific graph DSL.
+<a id="req-graph-node-ids"></a> **REQ-GRAPH-001:** Node IDs MUST be unique within their graph.
+<a id="req-graph-edge-ids"></a> **REQ-GRAPH-002:** Edge IDs MUST be unique within their graph.
+<a id="req-graph-endpoints"></a> **REQ-GRAPH-003:** Each edge's `from` and `to` values MUST resolve to node IDs in the same graph.
+
+The v0.1 graph format describes interoperable topology and optional labels. It does not standardize layout, rendering, or an application-specific graph DSL.
 
 ## 9. Attachments
 
-Attachment metadata is a JSON object conforming to
-[`schemas/v0.1/attachment.schema.json`](schemas/v0.1/attachment.schema.json).
-It identifies a separate payload by relative `path`, media type, byte size, and
-lowercase SHA-256 digest. <a id="req-media-integrity"></a> **REQ-MEDIA-001:** The payload MUST exist and match both declared size and digest.
-<a id="req-media-inventory"></a> **REQ-MEDIA-002:** The metadata and payload MUST both be listed in the manifest; the payload inventory entry uses kind `blob` and the attachment ID.
+Attachment metadata is a JSON object conforming to [`schemas/v0.1/attachment.schema.json`](schemas/v0.1/attachment.schema.json). It identifies a separate payload by relative `path`, media type, byte size, and lowercase SHA-256 digest.
 
-Markdown MAY refer to an attachment with
-`engram-attachment:<attachment-id>`. <a id="req-media-uri"></a> **REQ-MEDIA-003:** Consumers MUST resolve that URI by ID and MUST NOT treat an embedded path or remote URL as authoritative.
-`engram-attachment:<attachment-id>`. Consumers MUST resolve that URI by ID and
-MUST NOT treat an embedded path or remote URL as authoritative. The text is a
-URI with the `engram-attachment` scheme and is discovered only when it is the
-destination of a normal Markdown link or image. Consumers MUST NOT scan
-arbitrary body text for attachment references. Because Markdown parsing is
-implementation-defined, implementations MAY recognize link and image syntax
-in their chosen dialect, but MUST apply this discovery rule consistently.
+<a id="req-media-integrity"></a> **REQ-MEDIA-001:** The payload MUST exist at the metadata object's `path`, and its bytes MUST match both the declared `size` and `sha256` digest.
+<a id="req-media-inventory"></a> **REQ-MEDIA-002:** Attachment metadata and its payload MUST both be listed in the manifest; the payload entry MUST use kind `blob`, the attachment ID, and the metadata object's payload `path`.
+
+Markdown MAY refer to an attachment with `engram-attachment:<attachment-id>`.
+<a id="req-media-uri-resolve"></a> **REQ-MEDIA-003:** A consumer MUST resolve an `engram-attachment` URI by its attachment ID and MUST NOT treat a path or remote URL suggested elsewhere in the record as authoritative.
+<a id="req-media-uri-discovery"></a> **REQ-MEDIA-004:** A consumer MUST discover attachment URIs only as destinations of Markdown links or images and MUST NOT scan arbitrary body text for attachment references. An implementation MAY recognize link and image syntax in its chosen Markdown dialect.
 
 ## 10. Extensions
 
@@ -207,7 +176,8 @@ v0.1 defines these profiles:
 <a id="req-conformance-claim"></a> **REQ-CONF-001:** An implementation MUST state whether it is a producer, consumer, or round-trip processor and which profiles it supports.
 
 <a id="req-producer-valid"></a> **REQ-CONF-002:** A conforming producer MUST create schema-valid packages satisfying all cross-file requirements.
-<a id="req-consumer-profile"></a> **REQ-CONF-003:** A conforming consumer MUST either process a declared profile or report it as unsupported; it MUST NOT silently claim successful support. A round-trip processor SHOULD preserve unsupported inventoried objects
+<a id="req-consumer-profile"></a> **REQ-CONF-003:** A conforming consumer MUST either process a declared profile or report it as unsupported.
+<a id="req-consumer-claim"></a> **REQ-CONF-004:** A consumer MUST NOT report successful support for a profile it did not process. A round-trip processor SHOULD preserve unsupported inventoried objects
 and unknown extensions byte-for-byte when it claims preservation.
 
 See [docs/conformance.md](docs/conformance.md) for the testable checklist.
@@ -224,9 +194,12 @@ Schema paths are versioned by major and minor version. Package data uses
 
 ## 13. Security and privacy
 
-Package content is untrusted input. <a id="req-security-input"></a> **REQ-SEC-001:** Implementations MUST prevent path traversal, MUST enforce resource limits, and MUST NOT execute record content.
-<a id="req-security-untrusted"></a> **REQ-SEC-002:** Media types, filenames, links, extensions, Markdown, and graph labels MUST be treated as untrusted. Hashes provide integrity checks, not authenticity. Encryption,
-signing, identity proof, and authorization are outside v0.1; <a id="req-security-permission"></a> **REQ-SEC-003:** Applications MUST NOT infer permission merely from possession of a package. See [SECURITY.md](SECURITY.md).
+Package content is untrusted input.
+<a id="req-security-path"></a> **REQ-SEC-001:** Implementations MUST prevent path traversal.
+<a id="req-security-limits"></a> **REQ-SEC-002:** Implementations MUST enforce resource limits.
+<a id="req-security-execution"></a> **REQ-SEC-003:** Implementations MUST NOT execute record content.
+<a id="req-security-untrusted"></a> **REQ-SEC-004:** Media types, filenames, links, extensions, Markdown, and graph labels MUST be treated as untrusted. Hashes provide integrity checks, not authenticity. Encryption, signing, identity proof, and authorization are outside v0.1.
+<a id="req-security-permission"></a> **REQ-SEC-005:** Applications MUST NOT infer permission merely from possession of a package. See [SECURITY.md](SECURITY.md).
 
 ## 14. Non-goals and future work
 

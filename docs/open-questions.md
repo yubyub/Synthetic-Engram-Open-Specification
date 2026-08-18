@@ -58,7 +58,7 @@ objects, unknown extensions, and references outside partial packages.
 - A fixture exists for every legal combination of declared optional profiles.
 - Unsupported data produces a testable report and is never silently reported
   as successfully processed.
-- Partial-package absence, an explicitly external target, and a deleted target
+- Partial-package absence, a target scoped `outside_engram`, and a deleted target
   cannot be confused by any normative rule.
 
 ## 3. Set namespace, fragment, and lens scope

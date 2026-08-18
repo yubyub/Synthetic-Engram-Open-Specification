@@ -5,7 +5,8 @@ checklist. In a conflict, `SPEC.md` wins.
 
 Normative clauses have stable `REQ-*` identifiers. See the complete
 [requirement-to-test matrix](traceability.md) and the
-[machine-readable requirement catalog](requirements.json).
+[machine-readable requirement catalog](requirements.json). The independent
+[clean-room review](clean-room-review.md) records pseudocode and unresolved ambiguities.
 
 ## Package checks
 
@@ -22,7 +23,7 @@ Normative clauses have stable `REQ-*` identifiers. See the complete
 - In a complete package, references scoped `synthetic_engram` resolve.
 - A missing `synthetic_engram` target is external to a partial package; `outside_engram` means external to the Engram.
 - Parent relationships are acyclic.
-- Graph node references resolve unless explicitly external.
+- Graph-node `record` references follow `record_scope`; complete-package `synthetic_engram` references resolve.
 - Graph edge endpoints resolve to nodes in the same graph.
 
 ## Media checks
@@ -40,4 +41,3 @@ they fail for the intended reason. The suite also checks catalog/traceability
 coverage and the structure of the consumer and round-trip vectors in
 `tests/vectors`. Unlike producer fixtures, vectors name an operation and an
 observable `expected` result so implementations can report behavioral evidence.
-they fail for the intended reason. `complete-omits-durable-object` proves a package cannot claim a complete backup while leaving a durable object out of its inventory.
