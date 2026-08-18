@@ -5,12 +5,11 @@ checklist. In a conflict, `SPEC.md` wins.
 
 Normative clauses have stable `REQ-*` identifiers. See the complete
 [requirement-to-test matrix](traceability.md) and the
-[machine-readable requirement catalog](requirements.json). The independent
-[clean-room review](clean-room-review.md) records pseudocode and unresolved ambiguities.
+[machine-readable requirement catalog](requirements.json).
 
 ## Package checks
 
-- `engram.json` exists and validates against the 1.0 manifest schema.
+- `engram.json` exists and validates against the 0.2 manifest schema.
 - Every inventory path is safe, unique, and exists.
 - Every normative object appears in the inventory.
 - `id`, `engram_id`, and `export_id` identify the package instance, durable Engram, and export event.
@@ -137,21 +136,25 @@ and audit the result:
 ## Repository fixtures
 
 Run `python scripts/validate.py`. It validates the complete example and every
-fixture in `tests/v1.0/valid`, then asserts that every fixture in `tests/v1.0/invalid` is
+fixture in `tests/v0.2/valid`, then asserts that every fixture in `tests/v0.2/invalid` is
 rejected. Invalid fixtures contain an `expected-error.txt` substring to ensure
 they fail for the intended reason. The suite also checks catalog/traceability
-coverage and concrete fixture recipes in `tests/v1.0/vectors`.
+coverage and concrete fixture recipes in `tests/v0.2/vectors`.
 
 Behavioral results are executed, not inferred from vector shape. Run the
 [language-neutral harness](harness-protocol.md) against an implementation
-adapter; the included adapter is a protocol smoke-test implementation:
+adapter. The repository includes two repository-maintained pilot processors:
 
 ```sh
-python scripts/conformance_harness.py --adapter scripts/reference_adapter.py
+python scripts/conformance_harness.py --adapter implementations/python-engram/engram_adapter.py
+python scripts/conformance_harness.py --adapter implementations/node-engram/engram-adapter.js
 ```
 
 The harness materializes every synthetic input in an isolated directory,
 invokes the adapter, and recursively asserts every `expected` member for every
 `CONSUMER-*` and `ROUNDTRIP-*` case. `tests/requirements-coverage.json` is the
 machine-readable coverage gate: every cataloged `REQ-*` must name an executable
-assertion or a manual procedure with an owner and evidence location.
+assertion or a manual procedure with an owner and evidence location. Passing
+these repository tests supports a scoped conformance claim; it does not make
+the processors independent implementations, production SDKs, or security
+certifications.

@@ -1,0 +1,48 @@
+name: Validator or schema bug
+description: Report a reproducible defect in the specification tooling or examples.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Please remove private knowledge and credentials from all examples.
+  - type: input
+    id: version
+    attributes:
+      label: Synthetic Engram version
+      placeholder: 0.2.0
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Specification
+        - Schema
+        - Validator
+        - Conformance harness
+        - Pilot processor
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproduction
+      description: Include the command, a sanitized fixture, and the observed result.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result and requirement
+      description: Cite a REQ identifier when one applies.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Runtime and operating-system versions.
+

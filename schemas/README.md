@@ -1,21 +1,20 @@
 # JSON Schemas
 
-The frozen 1.0 schemas use JSON Schema Draft 2020-12. Their permanent base URI
-is `https://synthetic-engram.org/schema/v1.0/`. `manifest.schema.json`,
-`record.schema.json`, `graph.schema.json`, and `attachment.schema.json` are
-entry points; `definitions.schema.json` contains shared definitions. The
-archived experimental schemas remain under [`v0.1`](v0.1/) and are not accepted
-as 1.0 input.
+The 0.2 pilot schemas use JSON Schema Draft 2020-12 and live under `v0.2`.
+`manifest.schema.json`, `record.schema.json`, `graph.schema.json`, and
+`attachment.schema.json` are entry points; `definitions.schema.json` contains
+shared definitions.
 
-Published schema URIs and their bytes are immutable. Errata never replace a
-released schema in place; see the [normative version and support
-policy](../docs/versioning.md) for publication and compatibility rules.
-Repository validation checks the published
-[v1.0 SHA-256 manifest](../docs/releases/v1.0-schema-sha256.txt). Independent
-hosts should follow the [schema mirroring procedure](../docs/schema-mirroring.md)
-and publish their own dated fixity and recovery reports.
+The schema identifiers use tag-addressed URLs beneath
+`https://raw.githubusercontent.com/yubyub/Synthetic-Engram-Open-Standard/v0.2.0/schemas/v0.2/`.
+They resolve after this repository is public and the `v0.2.0` tag is published.
+Implementations should still bundle the schemas and resolve references locally
+when offline. The tag must point to the same bytes as the distributed release.
 
-Record schemas validate parsed YAML front matter, not the Markdown body. Schema
-validation alone is insufficient: use `python scripts/validate.py` for package
-scope, complete-export closure, inventory, reference, cycle, and checksum
-checks.
+The manifest requires the package, Engram, and export identities plus an explicit
+`completeness` value. Schema validation alone is insufficient: run
+`python3 scripts/validate.py` for inventory, reference, profile, cycle, closure,
+and attachment-integrity checks.
+
+Because the specification is pre-1.0, later 0.x versions may introduce breaking
+changes under a new versioned directory and schema URI.

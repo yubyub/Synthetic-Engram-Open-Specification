@@ -4,7 +4,7 @@
 transport binding is standardized
 
 A live Engram implementation can let a human interface or AI client discover a
-broad structural view and retrieve only relevant durable content. Core 1.0
+broad structural view and retrieve only relevant durable content. Core 0.2
 interoperability still begins with a conforming package; this pattern helps
 implementations use consistent concepts without claiming mutually compatible
 APIs.

@@ -1,0 +1,49 @@
+name: Adoption or pilot feedback
+description: Report mapping friction, data loss, ambiguity, or a missing portable capability.
+title: "[Pilot] "
+labels: ["pilot-feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: Do not attach private knowledge, credentials, or proprietary data. Use reduced examples.
+  - type: input
+    id: application
+    attributes:
+      label: Application or project
+      description: A public link is welcome but not required.
+  - type: dropdown
+    id: role
+    attributes:
+      label: Implementation role
+      options:
+        - Producer
+        - Consumer
+        - Round-trip processor
+        - Evaluating only
+    validations:
+      required: true
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use case and profiles
+      description: Describe the workflow and the core, graph, media, or action profiles involved.
+    validations:
+      required: true
+  - type: textarea
+    id: mapping
+    attributes:
+      label: Mapping, loss, or ambiguity
+      description: Explain what could not be represented, preserved, or interpreted consistently.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Reproduction or evidence
+      description: Provide a reduced fixture, round-trip result, measurements, or implementation link.
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested response
+      description: Say whether documentation, tooling, an extension, or a future core change seems appropriate.
+

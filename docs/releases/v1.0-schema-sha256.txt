@@ -1,6 +1,0 @@
-# Immutable Synthetic Engram v1.0 schema bytes
-b051480b98ba2b6bca1fd37fd109c83d24dd1a37340a780329ace8af7cb3d07f  schemas/v1.0/attachment.schema.json
-81c934bc301ffc8ad3facdda8e2663b28f66298ba79fe88dcb09922001b3f32e  schemas/v1.0/definitions.schema.json
-95b4e30ec88afa233995dbba8b00b5d9a24c74f60e1b5ce3e4c41409e868a4e1  schemas/v1.0/graph.schema.json
-a4384d26ec099940c9aa86ade6916bd42358470826b98acf25ded737f3d578f9  schemas/v1.0/manifest.schema.json
-5f828068925d05914394235da305fd87dfb318846cc899e71f0b5944053f078d  schemas/v1.0/record.schema.json

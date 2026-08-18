@@ -10,7 +10,7 @@ an Engram object ID. The namespace is part of the key; `123` from two systems is
 not one identity. Store the map transactionally with imported objects and reuse
 it on re-import. Do not derive identity from a title, path, or mutable type.
 
-Core 1.0 has no alias field. An implementation may retain mappings in its live
+Core 0.2 has no alias field. An implementation may retain mappings in its live
 store or a documented namespaced extension. A round trip must not invent aliases
 or claim that an external URI and Engram ID are globally equivalent without an
 explicit mapping policy.
@@ -48,7 +48,7 @@ assuming equal Export IDs imply equal bytes.
 - For a merge, choose a surviving logical object deliberately. Retain its ID,
   retire the other IDs without reassigning them, and redirect native aliases only
   under an explicit application policy. Report merged meaning as loss because
-  Core 1.0 has no tombstones or merge history.
+  Core 0.2 has no tombstones or merge history.
 - For a split, retain the old ID for at most one result with clear continuity and
   issue new IDs for the others. If no result has primary continuity, retire the
   old ID and issue new IDs for every result. Never reuse the retired ID later.

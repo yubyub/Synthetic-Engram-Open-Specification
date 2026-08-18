@@ -1,7 +1,7 @@
 # Language-neutral conformance harness protocol
 
 This protocol is the portable execution contract for the behavioral vectors in
-`tests/vectors`.  An implementation under test is an **adapter executable**;
+`tests/v0.2/vectors`. An implementation under test is an **adapter executable**;
 the adapter does not import repository Python code and may be written in any
 language.
 

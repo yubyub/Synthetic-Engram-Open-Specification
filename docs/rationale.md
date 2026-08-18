@@ -1,108 +1,56 @@
 # Design rationale
 
-> [!IMPORTANT]
-> This document is non-normative. It explains the reasoning behind the current
-> core and records the disposition of broader ideas from the original proposal.
-> It contains no requirements.
->
-> [`SPEC.md`](../SPEC.md) and its referenced schemas are the only sources of
-> format requirements. The disposition of the original proposal is recorded in
-> the [design-decision matrix](design-decisions.md).
+> This document is non-normative. [`SPEC.md`](../SPEC.md) and its referenced
+> schemas are the sources of format requirements.
 
-## Interoperability rationale
+## Why this exists
 
-The project began from a desire to separate durable knowledge ownership from
-application ownership. The proposed interchange layer covered human-facing
-applications, AI systems, graph tools, task tools, search systems, and backup
-tools. AI memory was one consumer, not the definition of the format.
+Synthetic Engram separates durable, owner-controlled knowledge from the
+application that currently stores or presents it. The interchange layer is
+intended for human-facing knowledge tools, graph and task tools, backup tools,
+and AI systems. It is not itself a database, user interface, search engine,
+agent protocol, or synchronization service.
 
-The surviving 1.0 direction is deliberately smaller: a portable package of
-stable, typed records, links, graph topology, and attachments. Live storage,
-user interfaces, retrieval, and protocols remain implementation concerns.
+Core 0.2 deliberately stays small: an explicit package inventory, stable
+identities, typed Markdown records, scoped links, optional graph topology,
+attachments, and namespaced extensions. Live storage and retrieval remain
+application concerns.
 
-## Vocabulary rationale
+## Main design choices
 
-“Synthetic Engram” distinguished the complete portable knowledge environment
-from projects that use “engram” for one atomic learned memory. “Record” named a
-durable object, “Package” named its portable serialization, and “Store” and
-“Service” described non-portable implementation roles.
+- Stable IDs, rather than titles, filenames, paths, or database keys, identify
+  durable knowledge.
+- A package is one serialized export; `engram_id`, `export_id`, and package
+  `id` distinguish the enduring knowledge base, export event, and physical
+  package instance.
+- Explicit complete/partial scope avoids pretending that a selected view is a
+  full backup.
+- Declared profiles let a consumer reject capabilities it cannot safely
+  process instead of silently losing governed data.
+- Markdown keeps narrative content accessible to humans and common tools;
+  restricted YAML provides a readable structured envelope.
+- Graphs and attachments are optional profiles so a simple notes consumer does
+  not need to implement every feature.
+- Extensions retain application-specific data without allowing it to redefine
+  core fields.
 
-The draft also proposed Namespace, Lens, Surface, Fragment, Trace, Pulse,
-Anchor, Capsule, Shard, Echo, Ghost, Cortex, Mesh, Gate, Thread, and Vault.
-Only terms present in the normative terminology section form part of core 1.0.
-The matrix records the disposition of every proposed term.
+## Boundaries
 
-## User authority and surface-boundary rationale
+Core 0.2 exports current state. It does not standardize revision history,
+conflict resolution, synchronization, provenance chains, authentication,
+authorization, encryption, canonical archive serialization, retrieval ranking,
+or a live AI tool API. Those features should only enter the standard after
+pilot evidence shows a portable contract is needed and at least two consumers
+can implement it consistently.
 
-The concept separated portable knowledge from credentials, caches, UI state,
-indexes, embeddings, generated context, and other runtime state. It also
-distinguished a description of granted authority from authentication and
-enforcement. Core 1.0 retains security boundaries and partial packages, but it
-does not serialize access grants or surface capabilities.
+An adapter is not a lossless migration merely because it can read and write a
+package. A preservation claim requires a round trip that retains the
+information and semantics claimed by that adapter.
 
-## Package and record-model rationale
+## Pilot posture
 
-The original model used stable identifiers rather than paths or titles,
-Markdown records with structured metadata, explicit hierarchy and typed links,
-inventoried attachments, namespaced extensions, and declared capability
-profiles. These choices allow partial consumers to detect unsupported content
-without requiring live stores to resemble exports.
-
-Projects and actions became core record types. Generic reminders remain
-representable as action extensions. Graph topology received an optional
-profile; graph layout and application graph languages did not.
-
-## References, provenance, and non-narrative-data rationale
-
-The concept distinguished a link to authoritative external data, a portable
-snapshot, and a native deterministic data record. Core 1.0 only standardizes
-typed links, explicit unresolved external targets, attachments, and extension
-hooks. Rich source descriptors, provenance chains, tabular/numeric snapshots,
-units, and operational-data semantics remain future work.
-
-## Current-state, history, and migration rationale
-
-The draft explored revision snapshots, deltas, deletion markers, supersession,
-conflicts, change feeds, and the difference between current state and history.
-Core 1.0 exports current state only. Stable IDs and extensions leave room for a
-future History and Synchronization Specification.
-
-Migration originally meant transferring portable knowledge between different
-stores through a package, with an explicit loss and preservation report. Core
-1.0 defines import/export conformance but no standardized migration report.
-
-## Partial consumption, AI, and remote-use rationale
-
-Notes, graphs, tasks, search, backup tools, and AI consumers were expected to
-read only the profiles they understand. That premise survives as declared
-profiles and explicit unsupported-profile reporting. Query lenses, bounded AI
-context, remote APIs, and protocol bindings are outside core 1.0.
-
-## Adapters and related-work rationale
-
-The draft compared EngramSpec, PLUR Engram Specification, ly-wang19/engram,
-Infinite Brain OS, Model Context Protocol, and general open-data standards.
-The lasting design principle is that an adapter is not a lossless migration
-unless a round trip preserves the claimed information and semantics.
-Cross-standard mapping and provenance metadata remain future work.
-
-## Governance, conformance, and naming rationale
-
-The repository now contains governance, licensing, schemas, fixtures, and a
-validator rather than leaving them as aspirations. Certification branding is
-not part of core conformance. The optional cyberpunk vocabulary was rejected
-as standards terminology except where a future specification explicitly
-adopts a term.
-
-## Historical examples
-
-The original examples depicted application-to-application package migration,
-several services consuming different record types, and an AI receiving a
-permission-limited subset. They motivated package portability, profiles, and
-partial-package links; they never defined wire formats or authorization rules.
-
-## Remaining decisions
-
-Questions that can block a stable 1.0, each with closure criteria, are tracked
-in [`open-questions.md`](open-questions.md). Historical possibilities not
-listed there are not implicitly planned features.
+The 0.2 line is suitable for controlled application pilots and format
+experiments. It is expected to change after real use. Stable 1.0 should wait for
+real application round trips, independently maintained implementation evidence,
+a hosted and immutable schema release, and resolution of material feedback
+captured through the public issue tracker.

@@ -1,14 +1,14 @@
-# Immutable schema and release mirroring procedure
+# Schema and release mirroring procedure
 
 This procedure lets an independent institution mirror released artifacts without
-changing their identity or implying governance authority.
+changing their content or implying governance authority.
 
 ## Mirror set
 
 For each release, copy the tagged source archive, normative specification,
 versioning policy, every schema beneath its released URI path, schema checksums,
-validator and conformance-harness source, fixtures/vectors, licenses, changelog,
-and release evidence. Preserve original filenames and bytes.
+validator and conformance-harness source, fixtures/vectors, licenses, and
+changelog. Preserve original filenames and bytes.
 
 ## Verification
 
@@ -18,8 +18,8 @@ and release evidence. Preserve original filenames and bytes.
    manifest alongside, not inside, the mirrored release tree.
 3. Compare schema checksums with the originating release and at least one other
    mirror when available. A mismatch is an incident; never "repair" it silently.
-4. Serve immutable cache-controlled bytes. Schema identifiers continue to name
-   the original exact content even when resolved through a mirror catalogue.
+4. Serve immutable cache-controlled bytes. A mirror URL is an alternate
+   retrieval location; it does not replace the schema's tag-addressed `$id`.
 5. Perform a quarterly fixity check and an annual restore exercise into an empty
    location. Retain dated reports and software/runtime information.
 
@@ -30,6 +30,5 @@ open format, and retain at least two geographically and administratively distinc
 copies. If a mirror closes, transfer exact bytes and audit history; do not redirect
 a released schema URI to different content.
 
-An institutional mirror becomes adoption evidence only when administered outside
-this repository and its public fixity and recovery reports satisfy the execution
-backlog gate.
+An institutional mirror is meaningful adoption evidence only when administered
+outside this repository and accompanied by public fixity and recovery reports.

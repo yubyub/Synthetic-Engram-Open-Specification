@@ -1,8 +1,8 @@
 # Production SDK release criteria
 
-The current Python and Node processors are reference interoperability
-implementations. They must not be described as production SDKs until a release
-meets every criterion below.
+The current Python and Node processors are repository-maintained pilot
+exercises. They must not be described as independent implementations or
+production SDKs until a release meets every applicable criterion below.
 
 ## Required release properties
 

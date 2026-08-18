@@ -8,7 +8,7 @@ that knowledge very differently.
 The portable information model can also be part of an application's knowledge-
 management architecture: human interfaces, AI integrations, and package adapters
 may share one conforming live implementation. Only the materialized package is a
-Core 1.0 conformance boundary; its implementation API remains application-specific.
+Core 0.2 conformance boundary; its implementation API remains application-specific.
 
 ## The interoperability boundary
 

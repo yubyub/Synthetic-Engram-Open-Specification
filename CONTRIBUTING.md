@@ -1,29 +1,22 @@
 # Contributing
 
-Contributions are welcome as this candidate open standard builds independent
-implementation and adoption evidence. Core 1.0 is stable; experimental future
-work must not silently alter its frozen schemas or semantics.
+Synthetic Engram 0.2 is seeking pilot feedback, especially from knowledge-base,
+AI-context, and migration implementations.
 
 ## Proposing a change
 
-1. Open an issue describing the interoperability problem rather than only a
-   preferred representation.
-2. For normative changes, include proposed specification text, valid example
-   data, compatibility and security analysis, and conformance fixtures.
-3. Keep normative requirements in `SPEC.md`; put rationale and tutorials in
+1. Describe the interoperability problem and real implementation evidence.
+2. State whether the change is editorial, compatible within 0.2, or breaking and
+   therefore intended for a later 0.x line.
+3. For normative changes, include specification text, examples, compatibility
+   and security analysis, and valid/invalid conformance fixtures.
+4. Keep normative requirements in `SPEC.md`; keep rationale and tutorials in
    `docs/`.
-4. Check the non-normative
-   [`implementation-feedback` register](docs/development/implementation-feedback.md)
-   for related adoption concerns, and update its evidence/status when the change
-   implements or resolves one of them.
-5. For roadmap work, claim a `ready` item in the
-   [execution backlog](docs/development/implementation-backlog.md) and use its
-   backlog-entry or standards-proposal checklist. Update task status and evidence
-   in the same pull request; do not mark external evidence complete yourself.
-6. Run `python scripts/validate.py` before opening a pull request.
-7. Add a changelog entry for user-visible changes.
+5. Run the commands in the README and add a changelog entry.
 
-Use one logical change per pull request. Normative language must use the BCP 14
-keywords consistently. JSON Schemas and prose must not contradict one another.
-By contributing, you agree that documentation contributions are available under
-CC BY-SA 4.0 and code, schemas, and examples under MPL 2.0.
+One logical change per pull request is preferred. JSON Schemas and normative
+prose must agree. Do not describe repository-local adapters or self-review as
+independent evidence.
+
+By contributing, you agree that your contributions are available under the
+repository's [MIT License](LICENSE).

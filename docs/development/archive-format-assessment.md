@@ -2,7 +2,7 @@
 
 **Status:** decision input; no archive format or media type is selected
 
-Core 1.0 standardizes a directory. This assessment defines the questions an
+Core 0.2 standardizes a directory. This assessment defines the questions an
 Archive Binding decision must answer before implementations or fixtures claim
 archive conformance.
 

@@ -77,7 +77,7 @@ def main() -> int:
     args=parser.parse_args(); cases=[]
     # Preserve the published report order for reproducible evidence artifacts.
     for name in ("round-trip.json", "consumer.json", "producer.json"):
-        cases += json.loads((ROOT/"tests/v1.0/vectors"/name).read_text())["cases"]
+        cases += json.loads((ROOT/"tests/v0.2/vectors"/name).read_text())["cases"]
     try:
         with tempfile.TemporaryDirectory(prefix="engram-harness-") as tmp:
             adapter = shlex.split(args.adapter)

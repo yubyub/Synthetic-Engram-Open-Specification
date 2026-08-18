@@ -1,0 +1,25 @@
+{
+  "format": "synthetic-engram",
+  "version": "0.2.0",
+  "id": "package_01ARZ3NDEKTSV4RRFFQ69G5FAV",
+  "engram_id": "engram_01K00000000000000000000001",
+  "export_id": "export_01K00000000000000000000002",
+  "completeness": "complete",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-01T00:00:00Z",
+  "owner": {
+    "type": "person",
+    "name": "Test"
+  },
+  "profiles": [
+    "core"
+  ],
+  "objects": [
+    {
+      "id": "note_01ARZ3NDEKTSV4RRFFQ69G5FAW",
+      "kind": "record",
+      "media_type": "text/markdown",
+      "path": "/records/note.md"
+    }
+  ]
+}

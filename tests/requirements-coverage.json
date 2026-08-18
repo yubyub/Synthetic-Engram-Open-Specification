@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "0.2.0",
   "default_executable_assertion": "repository-package-and-schema-suite",
   "overrides": {
     "REQ-ID-003": [

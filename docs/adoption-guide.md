@@ -16,7 +16,7 @@ Synthetic Engram is both a portable knowledge structure and its interchange
 representation. The standard defines the meaning that survives interchange; it
 does not require an application to store its live state in that representation.
 Two components may access one live service without moving a package, but that
-service API is application-specific in Core 1.0. Standard interoperability begins
+service API is application-specific in Core 0.2. Standard interoperability begins
 when a conforming package is produced or consumed.
 
 ## Benefit versus burden
@@ -43,15 +43,16 @@ when a conforming package is produced or consumed.
 | Media support | Metadata/payload pairing, size and SHA-256 verification, safe filenames, and attachment-URI resolution |
 | Production deployment | Authentication and authorization outside the package, quotas, transactional commit, rendering sanitization, link policy, monitoring, and recovery tests |
 
-Use the included adapters to learn the contract and exercise the harness. They
-are interoperability evidence, not a substitute for product-specific security,
+Use the included processors to learn the contract and exercise the harness.
+They are repository-maintained implementation feedback, not independent
+interoperability evidence or a substitute for product-specific security,
 storage, transaction, and user-experience work.
 
 ## Does the data have to move?
 
 Not always. Several user-facing tools may talk to one application or service that
 stores the knowledge once. Those tools can change independently if the service
-offers a stable API, but Core 1.0 does not standardize that API. Synthetic Engram
+offers a stable API, but Core 0.2 does not standardize that API. Synthetic Engram
 guarantees a common boundary only when data is materialized as a package for
 import, export, validation, backup, migration, or bounded delivery.
 
@@ -93,7 +94,7 @@ or transformation, and never be confused with the durable source.
 ## Long-term archive caveats
 
 The textual records, explicit inventory, stable IDs, and attachment hashes make
-the package promising for preservation, but Core 1.0 alone is not a complete
+the package promising for preservation, but Core 0.2 alone is not a complete
 long-term preservation system:
 
 - only a directory representation is standardized, not a deterministic archive;

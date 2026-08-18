@@ -1,10 +1,10 @@
 # Namespaced profile negotiation exploration
 
-**Status:** non-normative compatibility proposal; Core 1.0 is unchanged
+**Status:** non-normative compatibility proposal; Core 0.2 is unchanged
 
 ## Problem
 
-The Core 1.0 manifest enumerates `core`, `graph`, `media`, and `action`. This makes
+The Core 0.2 manifest enumerates `core`, `graph`, `media`, and `action`. This makes
 processing obligations clear but cannot name third-party profiles, and it has no
 place for advisory metadata that may be ignored safely.
 
@@ -41,7 +41,7 @@ immutability require an approved decision before release.
 Tests must cover old consumer/new package, new consumer/old package, supported
 and unsupported required profiles, unknown advisory declarations, mixed
 declarations, partial operations, preservation round trips, collisions, and
-newer-minor behavior. Current v1.0 consumers and schemas remain valid for v1.0
+newer-minor behavior. Current v0.2 consumers and schemas remain valid for v0.2
 bytes and are not silently taught new meanings.
 
 The proposal advances only with a versioning classification, immutable new

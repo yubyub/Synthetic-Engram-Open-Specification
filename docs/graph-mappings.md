@@ -1,6 +1,6 @@
 # Loss-aware graph mapping contracts
 
-Core 1.0 graphs are **portable directed topology with optional labels and record
+Core 0.2 graphs are **portable directed topology with optional labels and record
 references**. They are not an ontology, RDF dataset, query language, layout
 format, or general property-graph model.
 

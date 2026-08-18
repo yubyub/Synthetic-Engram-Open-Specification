@@ -1,66 +1,98 @@
 #!/usr/bin/env python3
-"""Reproduce the 1.0 two-implementation exchange evidence."""
-import hashlib, json, shutil, subprocess
+"""Exercise a bidirectional exchange between the repository's 0.2 pilot processors."""
+from __future__ import annotations
+
+import hashlib
+import json
+import subprocess
+import tempfile
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[1]; BASE=ROOT/'docs/interoperability/1.0/artifacts'
-ADAPTERS={'python':[str(ROOT/'implementations/python-engram/engram_adapter.py')], 'node':[str(ROOT/'implementations/node-engram/engram-adapter.js')]}
 
-def invoke(name, operation, source, output, case):
-    output.mkdir(parents=True,exist_ok=True); request=output/'request.json'; artifact=output/'adapter-artifacts'; artifact.mkdir()
-    request.write_text(json.dumps({'protocol_version':'1.0','case_id':case,'operation':operation,'fixture':str(source.resolve()),'artifact_directory':str(artifact.resolve()),'parameters':{'edits':[]},'supported_profiles':['core','graph','media','action']},indent=2)+'\n')
-    result=subprocess.run(ADAPTERS[name]+[operation,str(request)],check=True,text=True,capture_output=True)
-    published=json.loads(request.read_text())
-    workspace=Path('/workspace/Synthetic-Engram-Open-Standard')
-    for field in ('fixture','artifact_directory'):
-        try: published[field]=str(workspace/Path(published[field]).relative_to(ROOT))
-        except ValueError: pass
-    request.write_text(json.dumps(published,indent=2)+'\n')
-    parsed=json.loads(result.stdout); (output/'result.json').write_text(json.dumps(parsed,indent=2)+'\n'); return artifact/'package'
+ROOT = Path(__file__).resolve().parents[1]
+ADAPTERS = {
+    "python": [str(ROOT / "implementations/python-engram/engram_adapter.py")],
+    "node": [str(ROOT / "implementations/node-engram/engram-adapter.js")],
+}
 
-def digest(path): return hashlib.sha256(path.read_bytes()).hexdigest()
-def jsons(package): return {str(p.relative_to(package)):json.loads(p.read_text()) for p in package.rglob('*.json')}
-def snapshot(package):
-    manifest=json.loads((package/'engram.json').read_text()); graph=next((v for k,v in jsons(package).items() if k.startswith('graphs/')),None)
-    markdown={str(p.relative_to(package)):digest(p) for p in package.rglob('*.md')}
-    attachments={o['id']:{'descriptor':json.loads((package/o['path']).read_text()) if o['kind']=='attachment' else None,
-              'payload_sha256':digest(package/o['path']) if o['kind']=='blob' else None} for o in manifest['objects'] if o['kind'] in ('attachment','blob')}
-    all_json=jsons(package)
-    def values(key,obj):
-        found=[]
-        if isinstance(obj,dict):
-            for k,v in obj.items():
-                if k==key: found.append(v)
-                found.extend(values(key,v))
-        elif isinstance(obj,list):
-            for v in obj: found.extend(values(key,v))
-        return found
-    return {'engram_id':manifest.get('engram_id'),'package_id':manifest['id'],'object_id_kinds':[[o['id'],o['kind']] for o in manifest['objects']],
-      'profiles':manifest['profiles'],'markdown_sha256':markdown,
-      'graph_topology':{'nodes':[[n['id'],n.get('record')] for n in graph['nodes']], 'edges':[[e['id'],e['from'],e['to'],e['relation']] for e in graph['edges']]} if graph else None,
-      'attachments':attachments,'extensions':values('extensions',all_json),'reference_scopes':values('scope',all_json)}
 
-def compare(label,left,right):
-    a,b=snapshot(left),snapshot(right); fields={k:a[k]==b[k] for k in a}; semantic=all(fields.values())
-    byte_differences=[]
-    for p in sorted(set(x.relative_to(left) for x in left.rglob('*') if x.is_file()) & set(x.relative_to(right) for x in right.rglob('*') if x.is_file())):
-        if (left/p).read_bytes() != (right/p).read_bytes(): byte_differences.append(str(p))
-    return {'exchange':label,'semantic_equal':semantic,'comparisons':fields,'intentional_serialization_differences':byte_differences,
-            'semantic_or_normative_content_loss':[] if semantic else [k for k,v in fields.items() if not v]}
+def invoke(name: str, operation: str, source: Path, output: Path, case: str) -> Path:
+    output.mkdir(parents=True)
+    artifacts = output / "artifacts"
+    artifacts.mkdir()
+    request = output / "request.json"
+    request.write_text(json.dumps({
+        "protocol_version": "1.0",
+        "case_id": case,
+        "operation": operation,
+        "fixture": str(source.resolve()),
+        "artifact_directory": str(artifacts.resolve()),
+        "parameters": {"edits": []},
+        "supported_profiles": ["core", "graph", "media", "action"],
+    }, indent=2) + "\n", encoding="utf-8")
+    completed = subprocess.run(
+        ADAPTERS[name] + [operation, str(request)],
+        check=True,
+        text=True,
+        capture_output=True,
+    )
+    result = json.loads(completed.stdout)
+    if result.get("outcome") != "completed":
+        raise RuntimeError(f"{name} did not complete {case}")
+    return artifacts / "package"
 
-def main():
-    BASE.mkdir(parents=True,exist_ok=True)
-    for name in ('python','node'):
-        directory=BASE/name; directory.mkdir(exist_ok=True)
-        for child in directory.iterdir():
-            if child.name == 'conformance.json': continue
-            shutil.rmtree(child) if child.is_dir() else child.unlink()
-    exchange=BASE/'exchange'
-    if exchange.exists(): shutil.rmtree(exchange)
-    exchange.mkdir()
-    source=ROOT/'examples/v1.0/basic-engram'
-    py=invoke('python','produce',source,BASE/'python','PY-PRODUCE-BASIC'); node=invoke('node','produce',source,BASE/'node','NODE-PRODUCE-BASIC')
-    node_from_py=invoke('node','round-trip',py,BASE/'exchange/node-import-python','NODE-IMPORT-PYTHON')
-    py_from_node=invoke('python','round-trip',node,BASE/'exchange/python-import-node','PYTHON-IMPORT-NODE')
-    report={'report_version':'1.0','source':'examples/v1.0/basic-engram','comparisons':[compare('Python producer -> Node consumer/producer',py,node_from_py),compare('Node producer -> Python consumer/producer',node,py_from_node)]}
-    (BASE/'exchange/comparison.json').write_text(json.dumps(report,indent=2)+'\n')
-if __name__=='__main__': main()
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def snapshot(package: Path):
+    values = {}
+    for item in sorted(path for path in package.rglob("*") if path.is_file()):
+        relative = str(item.relative_to(package))
+        values[relative] = (
+            {"json": json.loads(item.read_text(encoding="utf-8"))}
+            if item.suffix == ".json"
+            else {"sha256": sha256(item)}
+        )
+    return values
+
+
+def comparison(label: str, before: Path, after: Path):
+    left = snapshot(before)
+    right = snapshot(after)
+    changed = sorted(path for path in set(left) | set(right) if left.get(path) != right.get(path))
+    return {
+        "exchange": label,
+        "normative_content_equal": not changed,
+        "changed_or_missing_paths": changed,
+    }
+
+
+def main() -> int:
+    source = ROOT / "examples/v0.2/basic-engram"
+    with tempfile.TemporaryDirectory(prefix="engram-interoperability-") as temporary:
+        base = Path(temporary)
+        python_export = invoke("python", "produce", source, base / "python", "PY-PRODUCE-BASIC")
+        node_export = invoke("node", "produce", source, base / "node", "NODE-PRODUCE-BASIC")
+        node_after_python = invoke(
+            "node", "round-trip", python_export, base / "node-after-python", "NODE-IMPORT-PYTHON"
+        )
+        python_after_node = invoke(
+            "python", "round-trip", node_export, base / "python-after-node", "PYTHON-IMPORT-NODE"
+        )
+        report = {
+            "report_version": "0.2",
+            "status": "repository-pilot-exercise",
+            "independent_implementation_evidence": False,
+            "source": "examples/v0.2/basic-engram",
+            "comparisons": [
+                comparison("Python export -> Node round trip", python_export, node_after_python),
+                comparison("Node export -> Python round trip", node_export, python_after_node),
+            ],
+        }
+    print(json.dumps(report, indent=2))
+    return 0 if all(item["normative_content_equal"] for item in report["comparisons"]) else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

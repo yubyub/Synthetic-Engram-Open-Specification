@@ -1,7 +1,7 @@
 # AI and retrieval integration
 
 This non-normative guide describes how an AI-enabled application can use a
-Synthetic Engram without turning Core 1.0 into a model-memory or retrieval
+Synthetic Engram without turning Core 0.2 into a model-memory or retrieval
 standard.
 
 ## Recommended boundary
@@ -61,6 +61,37 @@ filters or application retrieval, enforce authorization at every traversal and
 fetch, report omissions, and retain source IDs through projections. The
 [remote delivery pattern](remote-delivery-pattern.md) names common operations
 without defining a Core API.
+
+## Recommended live-service discovery contract
+
+A package already has a top-level discovery document: `engram.json`. A live
+application needs an equivalent help operation so an AI client does not have to
+guess endpoint names or retrieval order. Until a protocol binding is
+standardized, applications SHOULD expose one read-only operation such as
+`describe_capabilities` that returns:
+
+- service and Synthetic Engram version information;
+- supported profiles and operations;
+- the caller's authorized scope;
+- result-size and traversal limits;
+- whether overview, graph, search, record, and attachment retrieval are
+  available; and
+- stable identifiers or links for the next permitted operations.
+
+An AI-oriented client can then follow this default sequence:
+
+1. call `describe_capabilities`;
+2. obtain an authorized overview (the manifest/inventory equivalent);
+3. inspect available top-level graphs when they are useful;
+4. search or traverse within an explicit budget;
+5. fetch selected records in batches by stable ID;
+6. fetch attachments only when needed and permitted; and
+7. retain source IDs and report omitted or transformed content.
+
+This discovery operation is a strong candidate for a future HTTP, MCP, or local
+library binding. It is guidance rather than Core 0.2 conformance: naming one
+wire-level function now, before application pilots, would create a protocol
+claim without interoperability evidence.
 
 ## Why Core should remain retrieval-agnostic
 

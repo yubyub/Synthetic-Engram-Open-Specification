@@ -1,6 +1,6 @@
 # Engram Front Matter grammar and parser test contract
 
-This document extracts Core 1.0 record-envelope behavior into a standalone,
+This document extracts Core 0.2 record-envelope behavior into a standalone,
 non-normative implementation guide. [`SPEC.md`](../SPEC.md) remains authoritative.
 
 ## Restricted grammar
@@ -88,5 +88,5 @@ parsers, compares their result to the expected JSON value or diagnostic code,
 and runs deterministic generated scalar and resource-limit properties.
 
 `max_record_bytes` is a caller-selected safety control of this test contract,
-not a Core 1.0 package limit. Production software must expose limits appropriate
+not a Core 0.2 package limit. Production software must expose limits appropriate
 to its deployment.

@@ -1,25 +1,22 @@
 # Governance
 
-Synthetic Engram is currently a **candidate open standard**, not an established
-multi-vendor industry standard. It uses a maintainer-led, public proposal process
-while independent implementations, adopters, and contributors emerge. Repository
-maintainers merge editorial changes after review.
-Normative changes require a public issue, compatibility analysis, examples and
-tests, and approval from at least one maintainer who did not author the change.
+Synthetic Engram 0.2 is a maintainer-led pilot specification. It is not an
+established multi-vendor standard and currently has no independent adopter or
+external implementation evidence.
 
-Releases follow `docs/versioning.md`. Breaking changes require an explicit
-version change and migration notes. Before 1.0, maintainers may revise the model
-more freely, but must not silently reinterpret an already tagged format.
+The maintainer may merge editorial, tooling, and pilot changes after public
+review. Normative changes require a public issue or pull request that describes
+the interoperability problem, compatibility impact, security impact, examples,
+and conformance fixtures. The author and approving maintainer may be the same
+person while the project has only one active maintainer; the change record must
+state that fact and must not be described as independent approval.
 
-Project governance is expected to evolve to the structure most appropriate for
-actual adoption. Material governance changes must be proposed publicly and
-recorded in `CHANGELOG.md`.
+Before 1.0, minor versions may contain breaking changes. Already tagged versions
+remain identifiable and are not silently rewritten. Releases follow
+`docs/versioning.md` and record known limitations in `CHANGELOG.md`.
 
-Governance reviews should occur when the project gains an independently
-maintained implementation, an external production adopter, or a second active
-maintainer organization. Reviews should consider maintainer representation from
-adopters, documented recusals for conflicts of interest, a compatibility review
-group, release-signoff independence, and—if the ecosystem warrants it—transfer to
-a neutral standards or open-source home. Until those milestones are met, release
-evidence must distinguish cross-language implementations in this repository from
-independent organizational adoption.
+Governance must be reviewed when the project gains an independently maintained
+implementation, a production adopter, or a second active maintainer. That review
+should add representative maintainers, conflict-of-interest and recusal rules,
+independent release review, and—if adoption warrants it—a neutral organizational
+home. Repository-maintained adapters never count as independent adoption.

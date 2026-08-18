@@ -1,6 +1,6 @@
 # Governance for future profiles
 
-**Status:** non-normative process; Core 1.0 profiles are unchanged
+**Status:** non-normative process; Core 0.2 profiles are unchanged
 
 A profile exists to preserve independently useful semantics without enlarging
 core for every domain. A proposal starts from repeated interoperability loss,

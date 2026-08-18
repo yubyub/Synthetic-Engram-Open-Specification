@@ -1,12 +1,12 @@
 # Archive Binding Specification
 
 **Status:** Future work placeholder; no archive binding is standardized by
-Synthetic Engram core 1.0.
+Synthetic Engram core 0.2.
 
 The non-normative [archive format and threat assessment](development/archive-format-assessment.md)
 records decision inputs but deliberately selects no binding.
 
-The canonical core 1.0 interchange representation is the directory form
+The canonical core 0.2 interchange representation is the directory form
 defined by [`SPEC.md`](../SPEC.md#41-canonical-directory-representation).
 ZIP, tar, and other archives are transport wrappers unless and until a future
 version of this document defines a binding for one or more formats. This

@@ -1,9 +1,9 @@
-# Synthetic Engram Open Standard 1.0
+# Synthetic Engram Open Standard 0.2
 
-**Status:** Stable release
+**Status:** Pilot specification
 
-**Version:** 1.0.0
-**Schema base:** `https://synthetic-engram.org/schema/v1.0/`
+**Version:** 0.2.0
+**Schema base:** `https://raw.githubusercontent.com/yubyub/Synthetic-Engram-Open-Standard/v0.2.0/schemas/v0.2/`
 
 ## 1. Scope
 
@@ -46,14 +46,14 @@ inspection and extraction.
 
 ### 4.1 Canonical directory representation
 
-The canonical core 1.0 interchange representation of an Engram Package is the
+The canonical core 0.2 interchange representation of an Engram Package is the
 directory tree rooted at `engram.json`. Package paths describe locations in
 that directory tree.
 
 ZIP, tar, and other archive formats MAY carry a directory-form Engram Package
-as transport wrappers. Core 1.0 does not select an archive format, media type,
+as transport wrappers. Core 0.2 does not select an archive format, media type,
 entry model, or serialization. Consequently, an archive wrapper cannot
-independently claim standardized archive conformance under core 1.0. A core
+independently claim standardized archive conformance under core 0.2. A core
 conformance claim applies to the represented directory package after any
 implementation-defined, security-constrained extraction.
 
@@ -73,15 +73,21 @@ package instance, and durable object MUST have an ID matching:
 ^[a-z][a-z0-9-]{1,31}_[0-9A-HJKMNP-TV-Z]{26}$
 ```
 
-The prefix communicates an object kind (for example `engram_`, `note_`, or
-`attachment_`); the suffix is a canonical uppercase ULID. <a id="req-id-unique"></a> **REQ-ID-002:** IDs MUST be unique within a package.
+The prefix communicates an object kind; the suffix is a canonical uppercase
+ULID. Manifest package, Engram, and export IDs MUST use `package_`, `engram_`,
+and `export_` respectively. Record implementations SHOULD use a meaningful
+type prefix such as `note_`, `project_`, or `action_`; attachments use
+`attachment_` for both metadata and its payload inventory entry.
+<a id="req-id-unique"></a> **REQ-ID-002:** IDs MUST be unique within a package,
+except that the attachment metadata entry and its required `blob` entry share
+one attachment ID as specified by REQ-INV-004.
 <a id="req-id-stable"></a> **REQ-ID-003:** IDs MUST NOT be reassigned to a different logical object.
 <a id="req-id-independent"></a> **REQ-ID-004:** Identity MUST NOT depend on a title, filename, path, or storage key.
 
 ## 6. Package manifest
 
 <a id="req-manifest-root"></a> **REQ-MAN-001:** The package root MUST contain `engram.json`, conforming to
-[`schemas/v1.0/manifest.schema.json`](schemas/v1.0/manifest.schema.json).
+[`schemas/v0.2/manifest.schema.json`](schemas/v0.2/manifest.schema.json).
 It declares:
 
 - `format`, fixed to `synthetic-engram`;
@@ -129,7 +135,7 @@ self-consistency. <a id="req-closure-compare"></a> **REQ-CLOSE-005:** A producer
 ## 7. Records
 
 <a id="req-record-envelope"></a> **REQ-REC-001:** A record MUST be a `.md` file consisting of YAML 1.2 front matter followed by Markdown content; front matter begins with `---` on the first line and ends with `---` on a line by itself.
-<a id="req-record-schema"></a> **REQ-REC-002:** Its front matter MUST conform to [`schemas/v1.0/record.schema.json`](schemas/v1.0/record.schema.json).
+<a id="req-record-schema"></a> **REQ-REC-002:** Its front matter MUST conform to [`schemas/v0.2/record.schema.json`](schemas/v0.2/record.schema.json).
 
 ### 7.1 Serialization
 
@@ -144,7 +150,10 @@ self-consistency. <a id="req-closure-compare"></a> **REQ-CLOSE-005:** A producer
 
 <a id="req-record-yaml-typing"></a> **REQ-REC-009:** A parser MUST type plain scalars deterministically: the exact lowercase tokens `null`, `true`, and `false` are null and booleans; JSON-number syntax produces finite numbers; every other plain scalar is a string; and all quoted scalars are strings. Producers SHOULD quote strings whose plain spelling would otherwise receive another type.
 
-The content is Markdown, but 1.0 does not select a Markdown dialect and body rendering is implementation-defined. Raw HTML is allowed as record text. See [REQ-SEC-003](#req-security-execution) for the authoritative non-execution rule.
+The content is Markdown, but 0.2 does not select a Markdown dialect and body
+rendering is implementation-defined. Raw HTML is allowed as record text. See
+[REQ-SEC-003](#req-security-execution) for the authoritative non-execution
+rule.
 <a id="req-record-render"></a> **REQ-REC-010:** A renderer MUST sanitize or escape unsafe constructs for its output context.
 
 The core envelope fields and allowed record types are defined by the record schema. <a id="req-action-status"></a> **REQ-REC-011:** An action record MUST provide `status`; it MAY provide `due_at`.
@@ -159,17 +168,18 @@ A `parent` denotes hierarchy. Each `links` entry denotes a typed directed link. 
 
 ## 8. Graphs
 
-A graph is a JSON object conforming to [`schemas/v1.0/graph.schema.json`](schemas/v1.0/graph.schema.json). Nodes have local IDs and MAY reference Engram record IDs. Directed edges reference local node IDs. Graph-node record references use [REQ-REF-001](#req-reference-resolution).
+A graph is a JSON object conforming to [`schemas/v0.2/graph.schema.json`](schemas/v0.2/graph.schema.json). Nodes have local IDs and MAY reference Engram record IDs. Directed edges reference local node IDs. Graph-node record references use [REQ-REF-001](#req-reference-resolution).
 
 <a id="req-graph-node-ids"></a> **REQ-GRAPH-001:** Node IDs MUST be unique within their graph.
 <a id="req-graph-edge-ids"></a> **REQ-GRAPH-002:** Edge IDs MUST be unique within their graph.
 <a id="req-graph-endpoints"></a> **REQ-GRAPH-003:** Each edge's `from` and `to` values MUST resolve to node IDs in the same graph.
 
-The 1.0 graph format describes interoperable topology and optional labels. It does not standardize layout, rendering, or an application-specific graph DSL.
+The 0.2 graph format describes interoperable topology and optional labels. It
+does not standardize layout, rendering, or an application-specific graph DSL.
 
 ## 9. Attachments
 
-Attachment metadata is a JSON object conforming to [`schemas/v1.0/attachment.schema.json`](schemas/v1.0/attachment.schema.json). It identifies a separate payload by relative `path`, media type, byte size, and lowercase SHA-256 digest.
+Attachment metadata is a JSON object conforming to [`schemas/v0.2/attachment.schema.json`](schemas/v0.2/attachment.schema.json). It identifies a separate payload by relative `path`, media type, byte size, and lowercase SHA-256 digest.
 
 <a id="req-media-integrity"></a> **REQ-MEDIA-001:** The payload MUST exist at the metadata object's `path`, and its bytes MUST match both the declared `size` and `sha256` digest.
 <a id="req-media-inventory"></a> **REQ-MEDIA-002:** Attachment metadata and its payload MUST both be listed in the manifest; the payload entry MUST use kind `blob`, the attachment ID, and the metadata object's payload `path`.
@@ -186,7 +196,7 @@ object SHOULD preserve unknown extensions unchanged. <a id="req-extension-core">
 
 ## 11. Profiles and conformance
 
-Version 1.0 defines these profiles:
+Version 0.2 defines these profiles:
 
 - **core:** manifest, records, stable IDs, hierarchy, links, import, and export;
 - **graph:** graph objects and referenced-record preservation;
@@ -206,19 +216,21 @@ See [docs/conformance.md](docs/conformance.md) for the testable checklist.
 
 ## 12. Versioning
 
-`version` uses Semantic Versioning. The [normative version and support
-policy](docs/versioning.md) defines release classification, negotiation,
-profile evolution, immutable schema URIs, extension ownership and promotion,
-the supported release window, and the v0.1/v1.0 boundary.
+`version` has three numeric components and follows the pre-1.0 policy in
+[docs/versioning.md](docs/versioning.md). In the pilot series, a new minor
+version may be incompatible; patch versions within the same minor line are
+compatible corrections.
 
 <a id="req-version-major"></a> **REQ-VERS-001:** A consumer MUST reject a
 package with an unsupported major version and MUST NOT report successful
 consumption.
 
-<a id="req-version-capability"></a> **REQ-VERS-002:** A consumer MUST NOT
-reject a package solely because it has a newer minor version in a supported
-major, but MUST report a non-success result for every unknown declared profile
-or other required capability rather than silently discard its governed data.
+<a id="req-version-capability"></a> **REQ-VERS-002:** A consumer MUST reject a
+package whose major/minor line it does not support. For a supported major/minor
+line, it MUST accept any patch version that satisfies the schemas and other
+requirements, but MUST report a non-success result for every unsupported
+declared profile or other required capability rather than silently discard its
+governed data.
 
 <a id="req-version-preservation"></a> **REQ-VERS-003:** A round-trip processor
 claiming unknown-data preservation MUST preserve unknown extension keys and
@@ -226,7 +238,7 @@ values with deep structural equality and MUST report namespace collisions
 rather than merge or reinterpret them.
 
 Schema paths are versioned by major and minor version. Package data uses
-`schema_version: "1.0"`; it does not include the patch version.
+`schema_version: "0.2"`; it does not include the patch version.
 
 ## 13. Security and privacy
 
@@ -234,15 +246,15 @@ Package content is untrusted input.
 <a id="req-security-path"></a> **REQ-SEC-001:** Implementations MUST prevent path traversal.
 <a id="req-security-limits"></a> **REQ-SEC-002:** Implementations MUST enforce resource limits.
 <a id="req-security-execution"></a> **REQ-SEC-003:** Implementations MUST NOT execute record content.
-<a id="req-security-untrusted"></a> **REQ-SEC-004:** Media types, filenames, links, extensions, Markdown, and graph labels MUST be treated as untrusted. Hashes provide integrity checks, not authenticity. Encryption, signing, identity proof, and authorization are outside core 1.0.
+<a id="req-security-untrusted"></a> **REQ-SEC-004:** Media types, filenames, links, extensions, Markdown, and graph labels MUST be treated as untrusted. Hashes provide integrity checks, not authenticity. Encryption, signing, identity proof, and authorization are outside core 0.2.
 <a id="req-security-permission"></a> **REQ-SEC-005:** Applications MUST NOT infer permission merely from possession of a package. See [SECURITY.md](SECURITY.md).
 
 ## 14. Non-goals and future work
 
-Core 1.0 does not define synchronization, conflict resolution, access-control
+Core 0.2 does not define synchronization, conflict resolution, access-control
 descriptors, certification branding, query lenses, AI context selection, or
-portable revision deltas. These subjects remain documented in
-[docs/open-questions.md](docs/open-questions.md).
+portable revision deltas. Pilot feedback may justify future specifications,
+but applications must not infer these capabilities from 0.2 conformance.
 
-Standardized archive serialization is also outside core 1.0 and is reserved
+Standardized archive serialization is also outside core 0.2 and is reserved
 for the future [Archive Binding Specification](docs/archive-binding.md).

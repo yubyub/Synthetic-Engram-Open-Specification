@@ -1,12 +1,23 @@
 # Security policy
 
+## Supported versions
+
+| Version | Status |
+| --- | --- |
+| 0.2.x | Pilot; security fixes are accepted on the active line |
+| Earlier drafts | Unsupported |
+
+Because 0.2 is pre-stable and has no production SDK, response times and private
+patch delivery are best effort. Public advisories should distinguish format
+weaknesses from vulnerabilities in a particular application.
+
 Do not publicly disclose a validator or parser vulnerability that could cause
 code execution, path traversal, arbitrary file overwrite, or resource
 exhaustion. Report it privately through the repository host's security advisory
 feature. If that feature is unavailable, contact a maintainer through a private
 channel listed on their profile.
 
-The current repository supplies an experimental validator, not a hardened
+The current repository supplies a pilot validator and processors, not a hardened
 archive extractor. Packages are untrusted input. Implementations must constrain
 archive paths and sizes, parsing depth, decompressed bytes, record counts, and
 attachment sizes; must not execute content; and must sanitize rendered Markdown

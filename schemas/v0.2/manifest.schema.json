@@ -1,0 +1,210 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/yubyub/Synthetic-Engram-Open-Standard/v0.2.0/schemas/v0.2/manifest.schema.json",
+  "title": "Synthetic Engram package manifest",
+  "type": "object",
+  "required": [
+    "format",
+    "version",
+    "id",
+    "engram_id",
+    "export_id",
+    "completeness",
+    "created_at",
+    "updated_at",
+    "owner",
+    "profiles",
+    "objects"
+  ],
+  "properties": {
+    "format": {
+      "const": "synthetic-engram"
+    },
+    "version": {
+      "const": "0.2.0"
+    },
+    "id": {
+      "$ref": "definitions.schema.json#/$defs/id",
+      "pattern": "^package_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "created_at": {
+      "$ref": "definitions.schema.json#/$defs/timestamp"
+    },
+    "updated_at": {
+      "$ref": "definitions.schema.json#/$defs/timestamp"
+    },
+    "owner": {
+      "type": "object",
+      "required": [
+        "type",
+        "name"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "person",
+            "organization",
+            "other"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "profiles": {
+      "type": "array",
+      "contains": {
+        "const": "core"
+      },
+      "items": {
+        "enum": [
+          "core",
+          "graph",
+          "media",
+          "action"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "media_type",
+          "path"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "definitions.schema.json#/$defs/id"
+          },
+          "kind": {
+            "enum": [
+              "record",
+              "graph",
+              "attachment",
+              "blob"
+            ]
+          },
+          "media_type": {
+            "type": "string",
+            "pattern": "^[^/\\s]+/[^/\\s]+$"
+          },
+          "path": {
+            "$ref": "definitions.schema.json#/$defs/safePath"
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "extensions": {
+      "$ref": "definitions.schema.json#/$defs/extensions"
+    },
+    "engram_id": {
+      "$ref": "definitions.schema.json#/$defs/id",
+      "pattern": "^engram_[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "Stable identity of the durable Synthetic Engram."
+    },
+    "export_id": {
+      "$ref": "definitions.schema.json#/$defs/id",
+      "pattern": "^export_[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "Identity of the export event; packages retried from the same event retain this value."
+    },
+    "completeness": {
+      "enum": [
+        "complete",
+        "partial"
+      ]
+    },
+    "partial": {
+      "type": "object",
+      "description": "Selection that produced a partial package.",
+      "properties": {
+        "mechanism": {
+          "type": "object",
+          "required": [
+            "type",
+            "expression"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "query",
+                "id-list",
+                "time-range",
+                "application-defined"
+              ]
+            },
+            "expression": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "mechanism"
+          ]
+        },
+        {
+          "required": [
+            "description"
+          ]
+        }
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "completeness": {
+            "const": "partial"
+          }
+        },
+        "required": [
+          "completeness"
+        ]
+      },
+      "then": {
+        "required": [
+          "partial"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "completeness": {
+            "const": "complete"
+          }
+        },
+        "required": [
+          "completeness"
+        ]
+      },
+      "then": {
+        "not": {
+          "required": [
+            "partial"
+          ]
+        }
+      }
+    }
+  ]
+}
