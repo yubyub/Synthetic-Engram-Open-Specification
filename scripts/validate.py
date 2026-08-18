@@ -278,6 +278,19 @@ def validate_package(root: Path) -> None:
             for edge in value["edges"]:
                 if edge["from"] not in node_ids or edge["to"] not in node_ids:
                     fail(f"{path}: graph edge has unresolved endpoint")
+            if value["scope"] == "complete_records":
+                represented = {
+                    node["record"] for node in value["nodes"]
+                    if "record" in node and not node.get("external", False)
+                }
+                records = {
+                    candidate_id
+                    for candidate_id, (candidate_kind, _, _) in objects.items()
+                    if candidate_kind == "record"
+                }
+                missing = sorted(records - represented)
+                if missing:
+                    fail(f"{path}: complete_records graph omits inventoried record {missing[0]}")
         elif kind == "attachment":
             payload = safe_path(root, value["path"])
             blob_entries = [

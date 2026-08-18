@@ -159,8 +159,64 @@ local IDs and MAY reference Engram IDs. Directed edges reference local node IDs.
 Referenced Engram IDs MUST resolve in a complete package unless their `record_scope` is `outside_engram`. Node and
 edge IDs MUST each be unique within their graph.
 
+Graphs are optional, non-authoritative views. A package MAY contain no graphs,
+even when it declares relationships between records. No record, attachment,
+blob, graph, or other inventoried artifact is required to appear as a graph
+node. The manifest inventory, not graph membership, defines package contents.
+A graph MAY therefore be an application-specific diagram or a projection of
+some package relationships, but it is not an authoritative relationship set.
+
+Every graph MUST declare its coverage with `scope`:
+
+- `curated` means that its nodes and edges are a selected or partial view. It
+  MAY omit any inventoried record and MAY contain application-specific nodes;
+- `complete_records` claims complete record coverage. It MUST contain at least
+  one non-external node whose `record` is each inventoried record ID. It MAY
+  also contain application-specific or external nodes. Complete coverage does
+  not require attachments, blobs, or other graphs to be nodes and does not make
+  the graph authoritative for relationships.
+
+Record `parent` and `links` fields are authoritative package relationships.
+Graph edges are independent, descriptive topology: they are not required to be
+projections of record relationships, and records are not required to repeat
+graph edges in `links` or `parent`. A graph edge that appears to contradict or
+omit a record relationship does not create a validation conflict; consumers
+MUST use the record field when determining record hierarchy or typed record
+links. Producers SHOULD choose graph relations and labels that avoid misleading
+users, but validators MUST NOT infer agreement from similarly named relations.
+
 The v0.1 graph format describes interoperable topology and optional labels. It
 does not standardize layout, rendering, or an application-specific graph DSL.
+
+These abbreviated examples show the coverage rules (the other required graph
+and manifest fields are omitted here for clarity). Complete, validated versions
+are provided by the [no-graph](tests/valid/no-graphs),
+[curated-graph](tests/valid/basic-engram), and
+[complete-record-graph](tests/valid/complete-record-graph) fixtures:
+
+```json
+{"profiles":["core"], "objects":[{"id":"note_...", "kind":"record", "path":"records/note.md"}]}
+```
+
+The package above has no graph; the record remains a package member because it
+is inventoried. A curated graph can select two of several records:
+
+```json
+{"scope":"curated", "nodes":[
+  {"id":"first", "record":"note_01J00000000000000000000003"},
+  {"id":"second", "record":"note_01J00000000000000000000004"}
+]}
+```
+
+A graph claiming complete coverage must reference every inventoried record:
+
+```json
+{"scope":"complete_records", "nodes":[
+  {"id":"project", "record":"project_01J00000000000000000000002"},
+  {"id":"first", "record":"note_01J00000000000000000000003"},
+  {"id":"second", "record":"note_01J00000000000000000000004"}
+]}
+```
 
 ## 9. Attachments
 
