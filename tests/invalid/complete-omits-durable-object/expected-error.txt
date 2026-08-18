@@ -1,1 +1,1 @@
-complete package has un-inventoried durable artifact
+complete package omits Engram member

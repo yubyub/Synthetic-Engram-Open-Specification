@@ -1,11 +1,17 @@
 ---
 id: note_01ARZ3NDEKTSV4RRFFQ69G5FAW
-schema_version: 0.1
+schema_version: "0.1"
 type: note
 title: Note
 created_at: 2025-01-01T00:00:00Z
 updated_at: 2025-01-01T00:00:00Z
-extensions: {"org.example.payload": {"unicode": "\u96ea", "nested": [1, true, null]}}
+extensions:
+  org.example.payload:
+    unicode: 雪
+    nested:
+      - 1
+      - true
+      - null
 ---
 
 Body.

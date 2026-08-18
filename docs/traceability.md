@@ -45,7 +45,6 @@ conformance result SHOULD be a JSON object with `spec_version`, `implementation`
 | REQ-SEC-002 | `CONSUMER-006` |
 | REQ-SEC-003 | `CONSUMER-007` |
 
-The repository suite also asserts that every normative `MUST`/`MUST NOT` line
-has an identifier, every catalog ID occurs in this matrix, vector IDs are
-unique, vector requirements exist, and each vector defines an `expected`
-observable result.
+The repository suite also asserts that every catalog ID occurs in this matrix,
+vector IDs are unique, vector requirements exist, and each vector defines an
+`expected` observable result.

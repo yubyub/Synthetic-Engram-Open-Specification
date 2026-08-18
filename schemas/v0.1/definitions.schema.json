@@ -3,12 +3,8 @@
   "$id": "https://synthetic-engram.org/schema/v0.1/definitions.schema.json",
   "title": "Synthetic Engram common definitions",
   "$defs": {
-    "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,31}_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "timestamp": {"type": "string", "format": "date-time", "pattern": "Z$"},
-    "safePath": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)(?!.*[\\\\\\u0000]).+$"},
     "id": {
       "type": "string",
-      "pattern": "^(?:engram|package|note|project|action|graph|attachment|node|edge)_[0-9A-HJKMNP-TV-Z]{26}$"
       "pattern": "^[a-z][a-z0-9-]{1,31}_[0-9A-HJKMNP-TV-Z]{26}$"
     },
     "timestamp": {
@@ -40,9 +36,6 @@
           "type": "string",
           "pattern": "^[a-z][a-z0-9_]{0,63}$"
         },
-        "external": {
-          "type": "boolean",
-          "default": false
         "target_scope": {
           "enum": [
             "synthetic_engram",
@@ -53,34 +46,6 @@
         }
       },
       "additionalProperties": false
-    },
-    "engramId": {
-      "type": "string",
-      "pattern": "^engram_[0-9A-HJKMNP-TV-Z]{26}$"
-    },
-    "packageId": {
-      "type": "string",
-      "pattern": "^package_[0-9A-HJKMNP-TV-Z]{26}$"
-    },
-    "recordId": {
-      "type": "string",
-      "pattern": "^(?:note|project|action)_[0-9A-HJKMNP-TV-Z]{26}$"
-    },
-    "graphId": {
-      "type": "string",
-      "pattern": "^graph_[0-9A-HJKMNP-TV-Z]{26}$"
-    },
-    "attachmentId": {
-      "type": "string",
-      "pattern": "^attachment_[0-9A-HJKMNP-TV-Z]{26}$"
-    },
-    "nodeId": {
-      "type": "string",
-      "pattern": "^node_[0-9A-HJKMNP-TV-Z]{26}$"
-    },
-    "edgeId": {
-      "type": "string",
-      "pattern": "^edge_[0-9A-HJKMNP-TV-Z]{26}$"
     }
   }
 }

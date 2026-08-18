@@ -19,8 +19,5 @@ All notable specification changes are recorded here.
 
 ### Changed
 
-- Defined graphs as optional, non-authoritative views with explicit `curated` or
-  `complete_records` scope and complete-record coverage validation.
-
 - Replaced the monolithic project README with a concise entry point.
 - Retained the original document as a non-normative concept draft.
