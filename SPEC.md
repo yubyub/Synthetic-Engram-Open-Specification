@@ -1,9 +1,9 @@
-# Synthetic Engram Open Standard v0.1
+# Synthetic Engram Open Standard v1.0
 
 **Status:** Experimental draft
 
-**Version:** 0.1.0
-**Schema base:** `https://synthetic-engram.org/schema/v0.1/`
+**Version:** 1.0.0
+**Schema base:** `https://synthetic-engram.org/schema/v1.0/`
 
 ## 1. Scope
 
@@ -56,7 +56,7 @@ Identity MUST NOT depend on a title, filename, path, or storage key.
 ## 6. Package manifest
 
 The package root MUST contain `engram.json`, conforming to
-[`schemas/v0.1/manifest.schema.json`](schemas/v0.1/manifest.schema.json).
+[`schemas/v1.0/manifest.schema.json`](schemas/v1.0/manifest.schema.json).
 It declares:
 
 - `format`, fixed to `synthetic-engram`;
@@ -78,11 +78,11 @@ Consumers MUST NOT infer that unlisted files are normative package objects.
 A record MUST be a `.md` file consisting of YAML 1.2 front matter followed by
 Markdown content. Front matter begins with `---` on the first line and ends
 with `---` on a line by itself. It MUST conform to
-[`schemas/v0.1/record.schema.json`](schemas/v0.1/record.schema.json).
+[`schemas/v1.0/record.schema.json`](schemas/v1.0/record.schema.json).
 
 The core envelope requires `id`, `schema_version`, `type`, `title`,
 `created_at`, and `updated_at`. `type` is one of `note`, `project`, or `action`
-in v0.1. An action additionally MUST provide `status`; it MAY provide `due_at`.
+in v1.0. An action additionally MUST provide `status`; it MAY provide `due_at`.
 
 A `parent` denotes hierarchy. Each `links` entry denotes a typed directed link.
 A target MAY be external to a partial package only when the link sets
@@ -92,18 +92,58 @@ MUST NOT contain a cycle formed by `parent` references.
 ## 8. Graphs
 
 A graph is a JSON object conforming to
-[`schemas/v0.1/graph.schema.json`](schemas/v0.1/graph.schema.json). Nodes have
-local IDs and MAY reference Engram IDs. Directed edges reference local node IDs.
-Referenced Engram IDs MUST resolve unless explicitly marked external. Node and
-edge IDs MUST each be unique within their graph.
+[`schemas/v1.0/graph.schema.json`](schemas/v1.0/graph.schema.json). A node's
+`id` is local to that graph and is only an edge endpoint; it is not an Engram
+ID. A node MAY be a local annotation or grouping node with no durable-object
+reference. Such a node exists only in its containing graph, MUST NOT be treated
+as a package object, and MAY carry a `label` and `extensions`.
 
-The v0.1 graph format describes interoperable topology and optional labels. It
+A node that represents an inventoried durable object MUST provide both its
+kind-neutral `object_id` and `object_kind`. The ID MUST resolve in the package
+inventory and the declared kind MUST match; records, graphs, and attachments
+are permitted. A node MUST NOT use `object_id` for an object absent from the
+package. An external node instead MUST contain `external_ref`, a structured
+reference whose required absolute `uri` supplies its identity. An
+`engram:<Engram-ID>` URI MAY identify an Engram object outside this package;
+other URI schemes MAY identify non-Engram resources. `external_ref` and
+`object_id` are mutually exclusive. A bare Engram ID or an `external: true`
+flag does not represent an external node in v1.0.
+
+Edges are directed ordered pairs of local node IDs, and direction is always
+semantically meaningful: reversing an edge creates a different assertion.
+Self-edges (`from` equal to `to`) are permitted. Multiple edges, including
+edges with identical endpoints and relation, are permitted when their edge IDs
+differ; they are distinct assertions and consumers MUST preserve them rather
+than deduplicate them. Node IDs and edge IDs MUST each be unique within their
+own sets and every endpoint MUST resolve. Empty `nodes` and `edges` arrays are
+valid; a graph with edges and no nodes cannot satisfy endpoint resolution.
+
+Core relations use the reserved `core:` vocabulary:
+
+- `core:related_to`: the source is generally associated with the target; it
+  makes no stronger claim and its reverse is not implied;
+- `core:depends_on`: the source requires or relies on the target;
+- `core:contains`: the source logically includes the target (not ownership or
+  package inventory containment);
+- `core:references`: the source cites or points to the target without claiming
+  dependency; and
+- `core:annotates`: the source supplies commentary or metadata about the target.
+
+Non-core relations MUST be qualified as `prefix:term`. The prefix MUST be
+declared in `relation_namespaces` as an absolute vocabulary URI. `core` is
+reserved and MUST NOT be redeclared. A consumer that does not support a
+declared vocabulary MUST report it as unsupported and preserve the relation
+and its edge unchanged when claiming round-trip preservation; it MUST NOT
+silently interpret it as a core relation. An undeclared prefix is invalid.
+Vocabulary owners define non-core term semantics.
+
+The v1.0 graph format describes interoperable topology and optional labels. It
 does not standardize layout, rendering, or an application-specific graph DSL.
 
 ## 9. Attachments
 
 Attachment metadata is a JSON object conforming to
-[`schemas/v0.1/attachment.schema.json`](schemas/v0.1/attachment.schema.json).
+[`schemas/v1.0/attachment.schema.json`](schemas/v1.0/attachment.schema.json).
 It identifies a separate payload by relative `path`, media type, byte size, and
 lowercase SHA-256 digest. The payload MUST exist and match both declared size
 and digest. The metadata and payload MUST both be listed in the manifest; the
@@ -115,18 +155,20 @@ MUST NOT treat an embedded path or remote URL as authoritative.
 
 ## 10. Extensions
 
-Core schema objects are closed except for the `extensions` member. Extension
-keys MUST use reverse-DNS form (for example `org.example.priority`). Values MAY
+Core schema objects are closed except for the `extensions` member. Graphs,
+nodes, edges, and structured external references each consistently allow this
+member. Extension keys MUST use reverse-DNS form (for example `org.example.priority`). Values MAY
 be any JSON-compatible YAML value. An implementation that reads and rewrites an
 object SHOULD preserve unknown extensions unchanged. An extension MUST NOT
 change the meaning or validity of a core field.
 
 ## 11. Profiles and conformance
 
-v0.1 defines these profiles:
+v1.0 defines these profiles:
 
 - **core:** manifest, records, stable IDs, hierarchy, links, import, and export;
-- **graph:** graph objects and referenced-record preservation;
+- **graph:** graph objects, local nodes, and durable-object reference
+  preservation;
 - **media:** attachment metadata, payloads, hashes, and attachment URIs;
 - **action:** action status and due-date semantics.
 
@@ -151,7 +193,7 @@ a package with an unsupported major version and SHOULD report unsupported minor
 features rather than silently discard them.
 
 Schema paths are versioned by major and minor version. Package data uses
-`schema_version: "0.1"`; it does not include the patch version.
+`schema_version: "1.0"`; it does not include the patch version.
 
 ## 13. Security and privacy
 
@@ -159,12 +201,12 @@ Package content is untrusted input. Implementations MUST prevent path traversal,
 MUST enforce resource limits, and MUST NOT execute record content. Media types,
 filenames, links, extensions, Markdown, and graph labels MUST be treated as
 untrusted. Hashes provide integrity checks, not authenticity. Encryption,
-signing, identity proof, and authorization are outside v0.1; applications MUST
+signing, identity proof, and authorization are outside v1.0; applications MUST
 not infer permission merely from possession of a package. See [SECURITY.md](SECURITY.md).
 
 ## 14. Non-goals and future work
 
-v0.1 does not define synchronization, conflict resolution, access-control
+v1.0 does not define synchronization, conflict resolution, access-control
 descriptors, certification branding, query lenses, AI context selection, or
 portable revision deltas. These subjects remain documented in
 [docs/open-questions.md](docs/open-questions.md).
