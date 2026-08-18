@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Language-neutral executor for consumer and round-trip vectors."""
+"""Language-neutral executor for producer, consumer, and round-trip vectors."""
 from __future__ import annotations
 
 import argparse, copy, json, os, shlex, shutil, subprocess, sys, tarfile, tempfile
