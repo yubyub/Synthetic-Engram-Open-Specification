@@ -1,0 +1,21 @@
+{
+  "id": "graph_01J00000000000000000000006",
+  "schema_version": "1.0",
+  "type": "graph",
+  "title": "Graph 1.0 feature coverage",
+  "relation_namespaces": {"example": "https://example.org/relations/"},
+  "nodes": [
+    {"id": "annotation", "label": "Local annotation", "extensions": {"org.example.position": {"x": 1}}},
+    {"id": "record", "object_id": "note_01J00000000000000000000003", "object_kind": "record"},
+    {"id": "graph", "object_id": "graph_01J00000000000000000000006", "object_kind": "graph"},
+    {"id": "attachment", "object_id": "attachment_01J00000000000000000000007", "object_kind": "attachment"},
+    {"id": "external", "label": "Remote source", "external_ref": {"uri": "engram:note_01J00000000000000000000099", "extensions": {"org.example.cached": false}}}
+  ],
+  "edges": [
+    {"id": "self", "from": "annotation", "to": "annotation", "relation": "core:related_to"},
+    {"id": "multi_one", "from": "annotation", "to": "record", "relation": "core:annotates"},
+    {"id": "multi_two", "from": "annotation", "to": "record", "relation": "core:annotates", "extensions": {"org.example.confidence": 0.9}},
+    {"id": "custom", "from": "record", "to": "external", "relation": "example:derived_from"}
+  ],
+  "extensions": {"org.example.layout": "freeform"}
+}

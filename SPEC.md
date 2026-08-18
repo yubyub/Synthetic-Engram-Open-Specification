@@ -1,9 +1,9 @@
-# Synthetic Engram Open Standard v0.1
+# Synthetic Engram Open Standard v1.0
 
 **Status:** Experimental draft
 
-**Version:** 0.1.0
-**Schema base:** `https://synthetic-engram.org/schema/v0.1/`
+**Version:** 1.0.0
+**Schema base:** `https://synthetic-engram.org/schema/v1.0/`
 
 ## 1. Scope
 
@@ -21,10 +21,16 @@ and **MAY** are to be interpreted as described by BCP 14 (RFC 2119 and RFC
 
 ## 3. Terminology
 
+- **Synthetic Engram:** a portable collection of the record, graph, and
+  attachment forms defined by this specification. It is not a universal data
+  model for every kind of durable information.
 - **Synthetic Engram:** a durable logical knowledge environment whose identity persists across exports, package layouts, and storage migrations.
 - **Engram Package:** a directory or archive containing all or part of a
   Synthetic Engram in this portable representation. A package is a transport instance, not the Engram itself.
 - **Engram Record:** one durable typed object in an Engram.
+- **Synthetic Engram ID:** the stable identity of the knowledge environment,
+  independent of any particular export.
+- **Package ID:** the identity of one package/export of a Synthetic Engram.
 - **Engram ID:** the stable `engram_id` of the Synthetic Engram.
 - **Package ID:** manifest `id`, identifying one serialized package instance. Repacking creates a new Package ID.
 - **Export ID:** manifest `export_id`, identifying the logical export event. Retries retain it but use distinct Package IDs.
@@ -44,6 +50,35 @@ Producers SHOULD emit seconds even when the value has no sub-second precision.
 
 ## 5. Identifiers
 
+IDs are semantic. Every durable ID MUST have a canonical uppercase ULID suffix,
+and its prefix MUST agree with its role:
+
+| Role | Required prefix |
+| --- | --- |
+| Synthetic Engram | `engram_` |
+| package/export | `package_` |
+| note record | `note_` |
+| project record | `project_` |
+| action record | `action_` |
+| graph | `graph_` |
+| attachment metadata and its blob inventory alias | `attachment_` |
+| graph node fragment | `node_` |
+| graph edge fragment | `edge_` |
+
+The complete identifier matches the role prefix followed by
+`[0-9A-HJKMNP-TV-Z]{26}`. The prefix is normative, not decorative. A producer
+MUST NOT use an ID whose prefix disagrees with its manifest kind or record type.
+
+The uniqueness domain is one Synthetic Engram, including its Synthetic Engram
+ID, every package/export ID, every durable object ID, every attachment metadata
+ID, and every graph node or edge fragment ID in every export. No two logical
+entities in that domain may share an ID. The sole permitted repetition is the
+attachment metadata ID on its `blob` inventory alias; both entries identify the
+same logical attachment. IDs are only guaranteed unique within one Synthetic
+Engram, not globally unique by construction. Producers SHOULD nevertheless use
+ULID generation practices that make cross-Engram collisions negligible and
+MUST NOT reassign an ID to a different logical entity. Identity MUST NOT depend
+on a title, filename, path, or storage key.
 Every Synthetic Engram, export event, package instance, and durable object MUST have an ID matching:
 
 ```regex
@@ -58,15 +93,20 @@ Identity MUST NOT depend on a title, filename, path, or storage key.
 ## 6. Package manifest
 
 The package root MUST contain `engram.json`, conforming to
-[`schemas/v0.1/manifest.schema.json`](schemas/v0.1/manifest.schema.json).
+[`schemas/v1.0/manifest.schema.json`](schemas/v1.0/manifest.schema.json).
 It declares:
 
 - `format`, fixed to `synthetic-engram`;
+- data-model `data_model_version` (major and minor only);
+- optional minor-version `features`, when used;
+- the package `id`;
 - specification `version`;
+- the Synthetic Engram `engram_id` and this package/export's `id`;
 - package-instance `id`, stable Synthetic Engram `engram_id`, and export-event `export_id`;
 - `completeness`, either `complete` or `partial`;
 - creation and update timestamps;
-- an owner descriptor;
+- an owner descriptor containing a stable opaque `id` and optional
+  `display_name`;
 - supported conformance `profiles`; and
 - an explicit inventory of package objects.
 
@@ -76,6 +116,49 @@ ID. Inventory IDs MUST be unique except that an attachment's `blob` entry MUST
 repeat its attachment metadata ID. Producers MUST list every normative object.
 Consumers MUST NOT infer that unlisted files are normative package objects.
 
+The owner ID is stable attribution or ownership metadata only. It does not
+represent a public key, signature, authenticated principal, authorization
+grant, or other cryptographic authority, and consumers MUST NOT treat it as
+proof of identity or control. `display_name` is presentation metadata and MAY
+change without changing the owner ID.
+
+Ownership MAY be transferred by changing `owner.id` (and, if desired,
+`owner.type` and `owner.display_name`) while retaining `engram_id`. A transfer
+therefore does not create a new Synthetic Engram identity. Producers SHOULD
+update `updated_at`; v0.1 does not define a transfer history, consent protocol,
+signature, or authorization mechanism. A policy that requires a transfer to
+create a distinct Engram MUST issue a new `engram_id` and treat it as a new
+Engram rather than describing that operation as a v0.1 ownership transfer.
+The inventory `media_type`, not the path or filename extension, is the
+authoritative representation discriminator. A consumer MUST select a parser
+using `media_type` and MUST NOT infer or override an object's format from its
+filename extension. In v0.1, the media type of a `record` MUST be
+`text/markdown`; the media types of `graph` and `attachment` objects MUST be
+`application/vnd.synthetic-engram.graph+json` and
+`application/vnd.synthetic-engram.attachment+json`, respectively. A `blob`
+MAY use any valid media type and remains attachment content, not a record.
+
+A consumer that encounters an inventoried media type it does not support MUST
+still retain the inventory entry and MUST report the object as unsupported; it
+MUST NOT parse it as another format or silently claim to have consumed it. If
+the consumer emits a package while claiming round-trip preservation, it MUST
+copy the unsupported object's bytes and its inventory fields unchanged. A
+processor that cannot do so MUST report a lossy operation before emitting the
+package and MUST NOT claim round-trip preservation.
+
+## 7. Records and the 1.0 representation decision
+
+Markdown with YAML front matter is the sole canonical core record
+representation for 1.0. Representation negotiation does not apply to core
+records: a manifest entry with kind `record` and any media type other than
+`text/markdown` is not a core-conforming record. This explicit restriction is
+intentional; the 1.0 core does not include JSON records, binary records, or a
+format-independent record envelope.
+
+A record MUST consist of YAML 1.2 front matter followed by Markdown content.
+Front matter begins with `---` on the first line and ends with `---` on a line
+by itself. The inventory path conventionally ends in `.md`, but the extension
+has no role in representation detection. The front matter MUST conform to
 
 ### 6.1 Package scope
 
@@ -102,7 +185,7 @@ Completeness is a claim about the producer's source snapshot, not merely archive
 A record MUST be a `.md` file consisting of YAML 1.2 front matter followed by
 Markdown content. Front matter begins with `---` on the first line and ends
 with `---` on a line by itself. It MUST conform to
-[`schemas/v0.1/record.schema.json`](schemas/v0.1/record.schema.json).
+[`schemas/v1.0/record.schema.json`](schemas/v1.0/record.schema.json).
 
 ### 7.1 Serialization
 
@@ -157,25 +240,148 @@ has not started, `in_progress` means work has started, `done` means it was
 completed, and `cancelled` means no completion is intended. Producers MAY make
 any transition among these values, including reopening a terminal state;
 consumers MUST NOT infer a restricted transition graph or transition time.
+in v1.0. An action additionally MUST provide `status`; it MAY provide `due_at`.
 
 A `parent` denotes hierarchy. Each `links` entry denotes a typed directed link.
 A `synthetic_engram` target MAY be absent only from a partial package. An `outside_engram` target need not resolve. A package MUST NOT contain a cycle formed by included `parent` references.
 
+Structured or binary information that does not map losslessly to this envelope
+and Markdown body MUST be carried as a typed attachment, or in an `extensions`
+value governed by a named extension profile declared in the manifest. The
+attachment's media type identifies its payload format; an extension profile
+defines the schema and semantics of its namespaced values. Neither mechanism
+turns that data into a core record or gives core-only consumers knowledge of
+its application semantics.
+
+Consequently, converting a structured object into a core record can lose data
+types, ordering, numeric precision, validation constraints, binary fidelity,
+or application-specific semantics. Producers requiring exact fidelity MUST
+preserve the original bytes as an attachment (including its media type, size,
+and digest) rather than treating a Markdown rendering as lossless. A Markdown
+summary MAY link to that attachment; the summary is a human-readable projection
+and is not an authoritative replacement for the payload.
+
 ## 8. Graphs
 
 A graph is a JSON object conforming to
+[`schemas/v1.0/graph.schema.json`](schemas/v1.0/graph.schema.json). A node's
+`id` is local to that graph and is only an edge endpoint; it is not an Engram
+ID. A node MAY be a local annotation or grouping node with no durable-object
+reference. Such a node exists only in its containing graph, MUST NOT be treated
+as a package object, and MAY carry a `label` and `extensions`.
+
+A node that represents an inventoried durable object MUST provide both its
+kind-neutral `object_id` and `object_kind`. The ID MUST resolve in the package
+inventory and the declared kind MUST match; records, graphs, and attachments
+are permitted. A node MUST NOT use `object_id` for an object absent from the
+package. An external node instead MUST contain `external_ref`, a structured
+reference whose required absolute `uri` supplies its identity. An
+`engram:<Engram-ID>` URI MAY identify an Engram object outside this package;
+other URI schemes MAY identify non-Engram resources. `external_ref` and
+`object_id` are mutually exclusive. A bare Engram ID or an `external: true`
+flag does not represent an external node in v1.0.
+
+Edges are directed ordered pairs of local node IDs, and direction is always
+semantically meaningful: reversing an edge creates a different assertion.
+Self-edges (`from` equal to `to`) are permitted. Multiple edges, including
+edges with identical endpoints and relation, are permitted when their edge IDs
+differ; they are distinct assertions and consumers MUST preserve them rather
+than deduplicate them. Node IDs and edge IDs MUST each be unique within their
+own sets and every endpoint MUST resolve. Empty `nodes` and `edges` arrays are
+valid; a graph with edges and no nodes cannot satisfy endpoint resolution.
+
+Core relations use the reserved `core:` vocabulary:
+
+- `core:related_to`: the source is generally associated with the target; it
+  makes no stronger claim and its reverse is not implied;
+- `core:depends_on`: the source requires or relies on the target;
+- `core:contains`: the source logically includes the target (not ownership or
+  package inventory containment);
+- `core:references`: the source cites or points to the target without claiming
+  dependency; and
+- `core:annotates`: the source supplies commentary or metadata about the target.
+
+Non-core relations MUST be qualified as `prefix:term`. The prefix MUST be
+declared in `relation_namespaces` as an absolute vocabulary URI. `core` is
+reserved and MUST NOT be redeclared. A consumer that does not support a
+declared vocabulary MUST report it as unsupported and preserve the relation
+and its edge unchanged when claiming round-trip preservation; it MUST NOT
+silently interpret it as a core relation. An undeclared prefix is invalid.
+Vocabulary owners define non-core term semantics.
+
+The v1.0 graph format describes interoperable topology and optional labels. It
 [`schemas/v0.1/graph.schema.json`](schemas/v0.1/graph.schema.json). Nodes have
+fragment IDs and MAY reference Engram IDs. Directed edges reference node fragment
+IDs. Referenced Engram IDs MUST resolve unless explicitly marked external. Node
+and edge IDs participate in the Engram-wide uniqueness domain described in
+Section 5; they are not merely local to a graph.
 local IDs and MAY reference Engram IDs. Directed edges reference local node IDs.
 Referenced Engram IDs MUST resolve in a complete package unless their `record_scope` is `outside_engram`. Node and
 edge IDs MUST each be unique within their graph.
 
+Graphs are optional, non-authoritative views. A package MAY contain no graphs,
+even when it declares relationships between records. No record, attachment,
+blob, graph, or other inventoried artifact is required to appear as a graph
+node. The manifest inventory, not graph membership, defines package contents.
+A graph MAY therefore be an application-specific diagram or a projection of
+some package relationships, but it is not an authoritative relationship set.
+
+Every graph MUST declare its coverage with `scope`:
+
+- `curated` means that its nodes and edges are a selected or partial view. It
+  MAY omit any inventoried record and MAY contain application-specific nodes;
+- `complete_records` claims complete record coverage. It MUST contain at least
+  one non-external node whose `record` is each inventoried record ID. It MAY
+  also contain application-specific or external nodes. Complete coverage does
+  not require attachments, blobs, or other graphs to be nodes and does not make
+  the graph authoritative for relationships.
+
+Record `parent` and `links` fields are authoritative package relationships.
+Graph edges are independent, descriptive topology: they are not required to be
+projections of record relationships, and records are not required to repeat
+graph edges in `links` or `parent`. A graph edge that appears to contradict or
+omit a record relationship does not create a validation conflict; consumers
+MUST use the record field when determining record hierarchy or typed record
+links. Producers SHOULD choose graph relations and labels that avoid misleading
+users, but validators MUST NOT infer agreement from similarly named relations.
+
 The v0.1 graph format describes interoperable topology and optional labels. It
 does not standardize layout, rendering, or an application-specific graph DSL.
+
+These abbreviated examples show the coverage rules (the other required graph
+and manifest fields are omitted here for clarity). Complete, validated versions
+are provided by the [no-graph](tests/valid/no-graphs),
+[curated-graph](tests/valid/basic-engram), and
+[complete-record-graph](tests/valid/complete-record-graph) fixtures:
+
+```json
+{"profiles":["core"], "objects":[{"id":"note_...", "kind":"record", "path":"records/note.md"}]}
+```
+
+The package above has no graph; the record remains a package member because it
+is inventoried. A curated graph can select two of several records:
+
+```json
+{"scope":"curated", "nodes":[
+  {"id":"first", "record":"note_01J00000000000000000000003"},
+  {"id":"second", "record":"note_01J00000000000000000000004"}
+]}
+```
+
+A graph claiming complete coverage must reference every inventoried record:
+
+```json
+{"scope":"complete_records", "nodes":[
+  {"id":"project", "record":"project_01J00000000000000000000002"},
+  {"id":"first", "record":"note_01J00000000000000000000003"},
+  {"id":"second", "record":"note_01J00000000000000000000004"}
+]}
+```
 
 ## 9. Attachments
 
 Attachment metadata is a JSON object conforming to
-[`schemas/v0.1/attachment.schema.json`](schemas/v0.1/attachment.schema.json).
+[`schemas/v1.0/attachment.schema.json`](schemas/v1.0/attachment.schema.json).
 It identifies a separate payload by relative `path`, media type, byte size, and
 lowercase SHA-256 digest. The payload MUST exist and match both declared size
 and digest. The metadata and payload MUST both be listed in the manifest; the
@@ -192,8 +398,9 @@ in their chosen dialect, but MUST apply this discovery rule consistently.
 
 ## 10. Extensions
 
-Core schema objects are closed except for the `extensions` member. Extension
-keys MUST use reverse-DNS form (for example `org.example.priority`). Values MAY
+Core schema objects are closed except for the `extensions` member. Graphs,
+nodes, edges, and structured external references each consistently allow this
+member. Extension keys MUST use reverse-DNS form (for example `org.example.priority`). Values MAY
 be any JSON-compatible YAML value. An implementation that reads and rewrites an
 object SHOULD preserve unknown extensions unchanged. An extension MUST NOT
 change the meaning or validity of a core field.
@@ -256,9 +463,83 @@ profile, any of `producer`, `consumer`, and `round-trip`. Claiming `round-trip`
 also entails the producer and consumer requirements even if those strings are
 omitted. Branding or certification programs MUST test the claimed matrix and
 MUST NOT infer capabilities from a package's `profiles` array.
+A named extension profile uses the same reverse-DNS form and MUST appear in the
+manifest `profiles` array when a package relies on that profile's schema or
+semantics. The profile definition MUST identify the extension keys it governs.
+Declaring a profile does not make its values core fields, and consumers that do
+not support it follow the unsupported-profile preservation rules below.
+
+## 11. Profiles and conformance
+
+v1.0 defines these profiles:
+
+- **core:** manifest, records, stable IDs, hierarchy, links, import, and export;
+- **graph:** graph objects, local nodes, and durable-object reference
+  preservation;
+- **media:** attachment metadata, payloads, hashes, and attachment URIs;
+- **action:** action status and due-date semantics.
+
+Additional reverse-DNS profile names designate extension profiles; their
+schemas and semantics are defined outside the core specification.
+
+Every package MUST declare `core`. It MUST declare each optional profile whose
+objects it contains. An implementation MUST state whether it is a producer,
+consumer, or round-trip processor and which profiles it supports.
+
+A conforming producer MUST create schema-valid packages satisfying all
+cross-file requirements. A conforming consumer MUST either process a declared
+profile or report it as unsupported; it MUST NOT silently claim successful
+support. A round-trip processor SHOULD preserve unsupported inventoried objects
+and unknown extensions byte-for-byte when it claims preservation.
+
+See [docs/conformance.md](docs/conformance.md) for the testable checklist.
 
 ## 12. Versioning
 
+Four different concepts MUST NOT be conflated:
+
+- The **specification release version** (the `Version` displayed by this
+  document and recorded in `CHANGELOG.md`) is Semantic Versioning. It versions
+  the prose, schemas, tests, and release bundle, but is not package data.
+- The **data-model version** identifies the package's core data language.
+  Manifests use `data_model_version: "MAJOR.MINOR"`; it has no patch component.
+- A **schema version** is a concrete validation artifact for one data-model
+  major/minor, identified by its `$id` under `schema/vMAJOR.MINOR/`. Corrected
+  schemas may ship in multiple specification patch releases without changing
+  their `$id` or the package's data-model version, because a patch release MUST
+  NOT change which package data is valid. Object `schema_version` fields record
+  the schema language used for that object and likewise contain major/minor.
+- **Declared optional features** are identifiers in the manifest's optional
+  `features` array. They advertise semantics introduced by a minor release;
+  they are not version numbers or conformance profiles.
+
+Before full schema validation, a consumer MUST parse only a minimal manifest
+envelope: `format`, `data_model_version`, and `features` (treating an absent
+`features` as empty). It MUST reject malformed values and an unsupported major.
+It then MUST select the highest schema it supports with the same major and a
+minor no greater than the package minor. If none exists, it MUST reject the
+package. Finally it validates the entire package with that schema and performs
+the cross-file conformance checks. Schema selection MUST NOT begin by applying
+an exact-version full manifest schema: that would prevent compatibility
+negotiation.
+
+A later minor MUST retain the earlier minor's closed core schema. New optional
+feature payloads MUST therefore be stored beneath the existing `extensions`
+member, keyed by the same reverse-DNS feature identifier; they MUST NOT add a
+property to a closed core object, change a core field's meaning, or make
+previously valid core data invalid. Producers MUST list every such feature in
+`features`. A consumer that does not implement a declared feature MAY ignore
+its extension payload while reading the understood core, but MUST report the
+feature as unsupported. A round-trip processor MUST preserve the feature's
+declaration and payload unchanged or reject the package; it MUST NOT silently
+discard either. Features whose semantics cannot satisfy these rules require a
+new major version.
+
+Thus specification releases `0.1.0` and `0.1.1`, for example, both produce
+`data_model_version: "0.1"`. Patch numbers never appear in package version
+fields, and validators MUST NOT use an exact specification-release constant.
+See [docs/versioning.md](docs/versioning.md) for the normative decision table
+and fixtures.
 `version` uses Semantic Versioning. Patch releases clarify text or tighten tests
 without changing valid data. Minor releases add backward-compatible optional
 features. Major releases may make incompatible changes. A consumer MUST reject
@@ -266,7 +547,7 @@ a package with an unsupported major version and SHOULD report unsupported minor
 features rather than silently discard them.
 
 Schema paths are versioned by major and minor version. Package data uses
-`schema_version: "0.1"`; it does not include the patch version.
+`schema_version: "1.0"`; it does not include the patch version.
 
 ## 13. Security and privacy
 
@@ -274,12 +555,16 @@ Package content is untrusted input. Implementations MUST prevent path traversal,
 MUST enforce resource limits, and MUST NOT execute record content. Media types,
 filenames, links, extensions, Markdown, and graph labels MUST be treated as
 untrusted. Hashes provide integrity checks, not authenticity. Encryption,
-signing, identity proof, and authorization are outside v0.1; applications MUST
+signing, identity proof, and authorization are outside v1.0; applications MUST
 not infer permission merely from possession of a package. See [SECURITY.md](SECURITY.md).
 
 ## 14. Non-goals and future work
 
-v0.1 does not define synchronization, conflict resolution, access-control
+v1.0 does not define synchronization, conflict resolution, access-control
 descriptors, certification branding, query lenses, AI context selection, or
-portable revision deltas. These subjects remain documented in
+portable revision deltas. Non-Markdown structured records and binary core
+records are explicitly deferred beyond 1.0; adding them requires a future
+specification to define a format-independent envelope and normative recovery
+mappings rather than relying on filename extensions. These subjects remain
+documented in
 [docs/open-questions.md](docs/open-questions.md).

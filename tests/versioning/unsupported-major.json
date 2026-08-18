@@ -1,0 +1,4 @@
+{
+  "manifest": {"format": "synthetic-engram", "data_model_version": "1.0"},
+  "expected_outcome": "REJECT_UNSUPPORTED_MAJOR"
+}
