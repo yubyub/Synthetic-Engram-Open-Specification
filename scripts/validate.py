@@ -22,7 +22,7 @@ OBJECT_SCHEMA = {
     "graph": "graph.schema.json",
     "attachment": "attachment.schema.json",
 }
-PROFILE_FOR = {"graph": "graph", "attachment": "media"}
+PROFILE_FOR = {"graph": "graph", "attachment": "media", "blob": "media"}
 
 # PyYAML normally converts timestamps to datetime objects. The data model treats
 # timestamps as RFC 3339 strings, so retain scalar text for schema validation.
@@ -120,6 +120,8 @@ def validate_package(root: Path) -> None:
             fail(f"missing inventory path: {entry['path']}")
         kind = entry["kind"]
         if kind == "blob":
+            if "media" not in manifest["profiles"]:
+                fail("blob object requires profile media")
             continue
         value = read_record(path) if kind == "record" else load_json(path)
         check_schema(value, OBJECT_SCHEMA[kind], registry, path)
@@ -135,6 +137,15 @@ def validate_package(root: Path) -> None:
             fail(f"{kind} object requires profile {required_profile}")
         if kind == "record" and value["type"] == "action" and "action" not in manifest["profiles"]:
             fail("action record requires profile action")
+
+    present_profiles = {"core"}
+    present_profiles.update(PROFILE_FOR[kind] for kind, _, _ in objects.values() if kind in PROFILE_FOR)
+    if any(kind == "record" and value["type"] == "action" for kind, value, _ in objects.values()):
+        present_profiles.add("action")
+    declared_profiles = set(manifest["profiles"])
+    extra_profiles = declared_profiles - present_profiles
+    if extra_profiles:
+        fail(f"profile declared without corresponding object: {', '.join(sorted(extra_profiles))}")
 
     for object_id, entries in entries_by_id.items():
         kinds = sorted(entry["kind"] for entry in entries)
@@ -190,8 +201,35 @@ def validate_package(root: Path) -> None:
     for object_id in parent:
         visit(object_id)
 
+def check_conformance_fixtures() -> None:
+    fixture_root = ROOT / "tests" / "conformance"
+    capabilities = load_json(fixture_root / "capabilities.json")
+    check_schema(capabilities, "capabilities.schema.json", schema_registry(), fixture_root / "capabilities.json")
+    index = load_json(fixture_root / "cases.json")
+    if index.get("format") != "synthetic-engram-conformance-fixtures-1":
+        fail("unknown conformance fixture index format")
+    expected = {(profile, role) for profile in ("core", "graph", "media", "action") for role in ("producer", "consumer", "round-trip")}
+    actual = {(case.get("profile"), case.get("role")) for case in index.get("cases", [])}
+    if actual != expected or len(index["cases"]) != len(expected):
+        fail("conformance fixtures must contain exactly one case for each profile and role")
+    for case in index["cases"]:
+        package = (fixture_root / case["package"]).resolve()
+        validate_package(package)
+        if case["profile"] not in load_json(package / "engram.json")["profiles"]:
+            fail(f"fixture package does not declare {case['profile']}")
+        if case["role"] == "consumer" and case.get("unsupported") != f"reject-and-report:{case['profile']}":
+            fail("consumer fixture lacks machine-readable unsupported outcome")
+        for relative, expected_hash in case.get("preserve", {}).items():
+            path = safe_path(package, relative)
+            if not path.is_file():
+                fail(f"round-trip preservation fixture missing {relative}")
+            if hashlib.sha256(path.read_bytes()).hexdigest() != expected_hash:
+                fail(f"round-trip preservation fixture hash mismatch for {relative}")
+    print("PASS tests/conformance (profile/role matrix and capabilities)")
+
 def repository_suite() -> None:
     check_local_markdown_links()
+    check_conformance_fixtures()
     targets = [ROOT / "examples" / "basic-engram", *sorted((ROOT / "tests" / "valid").iterdir())]
     for target in targets:
         validate_package(target)

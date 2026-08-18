@@ -18,6 +18,10 @@
     "due_at": {"$ref": "definitions.schema.json#/$defs/timestamp"},
     "extensions": {"$ref": "definitions.schema.json#/$defs/extensions"}
   },
-  "allOf": [{"if": {"properties": {"type": {"const": "action"}}, "required": ["type"]}, "then": {"required": ["status"]}}],
+  "allOf": [{
+    "if": {"properties": {"type": {"const": "action"}}, "required": ["type"]},
+    "then": {"required": ["status"]},
+    "else": {"not": {"anyOf": [{"required": ["status"]}, {"required": ["due_at"]}]}}
+  }],
   "additionalProperties": false
 }
