@@ -1,0 +1,10 @@
+{
+  "id": "attachment_01J00000000000000000000007",
+  "schema_version": "0.1",
+  "type": "attachment",
+  "filename": "display-name.txt",
+  "media_type": "text/plain",
+  "size": 37,
+  "sha256": "5ecf6577016d2b93d899a2133ac7d4b8df5678bc0383c4ee93e1b64899c6e955",
+  "path": "attachments/package-overview.txt"
+}

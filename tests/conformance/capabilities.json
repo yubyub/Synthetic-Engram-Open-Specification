@@ -1,0 +1,11 @@
+{
+  "format": "synthetic-engram-capabilities",
+  "implementation": {"name": "fixture implementation", "version": "1.0.0"},
+  "spec_versions": ["0.1.0"],
+  "profiles": {
+    "core": ["producer", "consumer", "round-trip"],
+    "graph": ["consumer"],
+    "media": ["round-trip"],
+    "action": ["producer"]
+  }
+}

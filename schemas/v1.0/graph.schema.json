@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synthetic-engram.org/schema/v1.0/graph.schema.json",
+  "title": "Synthetic Engram graph",
+  "type": "object",
+  "required": ["id", "schema_version", "type", "title", "nodes", "edges"],
+  "properties": {
+    "id": {"$ref": "definitions.schema.json#/$defs/id"},
+    "schema_version": {"const": "1.0"},
+    "type": {"const": "graph"},
+    "title": {"type": "string", "minLength": 1},
+    "relation_namespaces": {
+      "type": "object",
+      "propertyNames": {"pattern": "^(?!core$)[a-z][a-z0-9_-]{0,31}$"},
+      "additionalProperties": {"type": "string", "format": "uri", "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:"}
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object", "required": ["id"],
+        "properties": {
+          "id": {"$ref": "#/$defs/localId"},
+          "object_id": {"$ref": "definitions.schema.json#/$defs/id"},
+          "object_kind": {"enum": ["record", "graph", "attachment"]},
+          "external_ref": {"$ref": "#/$defs/externalRef"},
+          "label": {"type": "string"},
+          "extensions": {"$ref": "definitions.schema.json#/$defs/extensions"}
+        },
+        "oneOf": [
+          {"required": ["object_id", "object_kind"], "not": {"required": ["external_ref"]}},
+          {"required": ["external_ref"], "not": {"anyOf": [{"required": ["object_id"]}, {"required": ["object_kind"]}]}},
+          {"not": {"anyOf": [{"required": ["object_id"]}, {"required": ["object_kind"]}, {"required": ["external_ref"]}]}}
+        ],
+        "additionalProperties": false
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object", "required": ["id", "from", "to", "relation"],
+        "properties": {
+          "id": {"$ref": "#/$defs/localId"}, "from": {"$ref": "#/$defs/localId"}, "to": {"$ref": "#/$defs/localId"},
+          "relation": {"type": "string", "pattern": "^(?:core:(?:related_to|depends_on|contains|references|annotates)|[a-z][a-z0-9_-]{0,31}:[a-z][a-z0-9._-]{0,63})$"},
+          "extensions": {"$ref": "definitions.schema.json#/$defs/extensions"}
+        }, "additionalProperties": false
+      }
+    },
+    "extensions": {"$ref": "definitions.schema.json#/$defs/extensions"}
+  },
+  "$defs": {
+    "localId": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"},
+    "externalRef": {
+      "type": "object", "required": ["uri"],
+      "properties": {"uri": {"type": "string", "format": "uri", "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:"}, "media_type": {"type": "string", "pattern": "^[^/\\s]+/[^/\\s]+$"}, "extensions": {"$ref": "definitions.schema.json#/$defs/extensions"}},
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
