@@ -368,7 +368,7 @@ def check_traceability_and_vectors() -> None:
     vector_ids: set[str] = set()
     for path in sorted((ROOT / "tests" / "vectors").glob("*.json")):
         vector = load_json(path)
-        if vector.get("role") not in {"consumer", "round-trip"}:
+        if vector.get("role") not in {"producer", "consumer", "round-trip"}:
             fail(f"{path}: invalid vector role")
         for case in vector.get("cases", []):
             if case.get("id") in vector_ids:

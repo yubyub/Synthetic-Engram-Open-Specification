@@ -1,0 +1,48 @@
+{
+  "report_version": "1.0",
+  "source": "examples/basic-engram",
+  "comparisons": [
+    {
+      "exchange": "Python producer -> Node consumer/producer",
+      "semantic_equal": true,
+      "comparisons": {
+        "engram_id": true,
+        "package_id": true,
+        "object_id_kinds": true,
+        "profiles": true,
+        "markdown_sha256": true,
+        "graph_topology": true,
+        "attachments": true,
+        "extensions": true,
+        "reference_scopes": true
+      },
+      "intentional_serialization_differences": [
+        "attachments/package-overview.json",
+        "engram.json",
+        "graphs/architecture.json"
+      ],
+      "semantic_or_normative_content_loss": []
+    },
+    {
+      "exchange": "Node producer -> Python consumer/producer",
+      "semantic_equal": true,
+      "comparisons": {
+        "engram_id": true,
+        "package_id": true,
+        "object_id_kinds": true,
+        "profiles": true,
+        "markdown_sha256": true,
+        "graph_topology": true,
+        "attachments": true,
+        "extensions": true,
+        "reference_scopes": true
+      },
+      "intentional_serialization_differences": [
+        "attachments/package-overview.json",
+        "engram.json",
+        "graphs/architecture.json"
+      ],
+      "semantic_or_normative_content_loss": []
+    }
+  ]
+}

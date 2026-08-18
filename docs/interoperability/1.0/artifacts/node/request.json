@@ -1,0 +1,16 @@
+{
+  "protocol_version": "1.0",
+  "case_id": "NODE-PRODUCE-BASIC",
+  "operation": "produce",
+  "fixture": "/workspace/Synthetic-Engram-Open-Standard/examples/basic-engram",
+  "artifact_directory": "/workspace/Synthetic-Engram-Open-Standard/docs/interoperability/1.0/artifacts/node/adapter-artifacts",
+  "parameters": {
+    "edits": []
+  },
+  "supported_profiles": [
+    "core",
+    "graph",
+    "media",
+    "action"
+  ]
+}

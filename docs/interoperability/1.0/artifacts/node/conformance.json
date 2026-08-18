@@ -1,0 +1,238 @@
+{
+  "protocol_version": "1.0",
+  "adapter": "implementations/node-engram/engram-adapter.js",
+  "passed": 16,
+  "results": [
+    {
+      "protocol_version": "1.0",
+      "case_id": "PRODUCER-001",
+      "outcome": "completed",
+      "observed": {
+        "status": "success",
+        "package_artifact_present": true,
+        "declared_profiles": [
+          "core",
+          "graph",
+          "media",
+          "action"
+        ],
+        "inventory_preserved": true
+      },
+      "diagnostics": [],
+      "artifacts": [
+        {
+          "path": "package/engram.json",
+          "media_type": "application/json"
+        }
+      ]
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "CONSUMER-001",
+      "outcome": "completed",
+      "observed": {
+        "status": "success",
+        "normative_object_ids_exclude_unlisted": true
+      },
+      "diagnostics": [],
+      "artifacts": []
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "CONSUMER-002",
+      "outcome": "completed",
+      "observed": {
+        "status": "unsupported-profile",
+        "profile": "graph",
+        "must_not_report_success": true
+      },
+      "diagnostics": [],
+      "artifacts": []
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "CONSUMER-003",
+      "outcome": "completed",
+      "observed": {
+        "resolved_inventory_id": "attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1",
+        "suggested_path_ignored": true
+      },
+      "diagnostics": [],
+      "artifacts": []
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "CONSUMER-004",
+      "outcome": "completed",
+      "observed": {
+        "status": "unsupported-major-version",
+        "must_not_report_success": true
+      },
+      "diagnostics": [],
+      "artifacts": []
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "CONSUMER-005",
+      "outcome": "completed",
+      "observed": {
+        "status": "rejected",
+        "outside_root_writes": 0,
+        "record_content_executions": 0,
+        "limits_enforced": true
+      },
+      "diagnostics": [],
+      "artifacts": []
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "CONSUMER-006",
+      "outcome": "completed",
+      "observed": {
+        "content_treated_as_data": true,
+        "record_content_executions": 0
+      },
+      "diagnostics": [],
+      "artifacts": []
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "CONSUMER-007",
+      "outcome": "completed",
+      "observed": {
+        "permission_granted": false
+      },
+      "diagnostics": [],
+      "artifacts": []
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "CONSUMER-008",
+      "outcome": "completed",
+      "observed": {
+        "status": "rejected",
+        "limits_enforced": true
+      },
+      "diagnostics": [],
+      "artifacts": []
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "CONSUMER-009",
+      "outcome": "completed",
+      "observed": {
+        "content_treated_as_data": true,
+        "record_content_executions": 0
+      },
+      "diagnostics": [],
+      "artifacts": []
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "CONSUMER-010",
+      "outcome": "completed",
+      "observed": {
+        "link_destination_discovered": true,
+        "plain_text_ignored": true
+      },
+      "diagnostics": [],
+      "artifacts": []
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "ROUNDTRIP-001",
+      "outcome": "completed",
+      "observed": {
+        "all_object_ids_unchanged": true,
+        "json_compatible_extension_value_deep_equal": true,
+        "core_semantics_unchanged": true,
+        "markdown_utf8_bytes_unchanged": true,
+        "all_normative_inventory_entries_present": true
+      },
+      "diagnostics": [],
+      "artifacts": [
+        {
+          "path": "package/engram.json",
+          "media_type": "application/json"
+        }
+      ]
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "ROUNDTRIP-002",
+      "outcome": "completed",
+      "observed": {
+        "all_object_ids_unchanged": true,
+        "json_compatible_extension_value_deep_equal": true,
+        "core_semantics_unchanged": true,
+        "markdown_utf8_bytes_unchanged": true,
+        "all_normative_inventory_entries_present": true
+      },
+      "diagnostics": [],
+      "artifacts": [
+        {
+          "path": "package/engram.json",
+          "media_type": "application/json"
+        }
+      ]
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "ROUNDTRIP-003",
+      "outcome": "completed",
+      "observed": {
+        "all_object_ids_unchanged": true,
+        "json_compatible_extension_value_deep_equal": true,
+        "core_semantics_unchanged": true,
+        "markdown_utf8_bytes_unchanged": true,
+        "all_normative_inventory_entries_present": true
+      },
+      "diagnostics": [],
+      "artifacts": [
+        {
+          "path": "package/engram.json",
+          "media_type": "application/json"
+        }
+      ]
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "ROUNDTRIP-004",
+      "outcome": "completed",
+      "observed": {
+        "all_object_ids_unchanged": true,
+        "json_compatible_extension_value_deep_equal": true,
+        "core_semantics_unchanged": true,
+        "markdown_utf8_bytes_unchanged": true,
+        "all_normative_inventory_entries_present": true
+      },
+      "diagnostics": [],
+      "artifacts": [
+        {
+          "path": "package/engram.json",
+          "media_type": "application/json"
+        }
+      ]
+    },
+    {
+      "protocol_version": "1.0",
+      "case_id": "ROUNDTRIP-005",
+      "outcome": "completed",
+      "observed": {
+        "all_object_ids_unchanged": true,
+        "json_compatible_extension_value_deep_equal": true,
+        "core_semantics_unchanged": true,
+        "markdown_utf8_bytes_unchanged": true,
+        "all_normative_inventory_entries_present": true,
+        "payload_size": 0
+      },
+      "diagnostics": [],
+      "artifacts": [
+        {
+          "path": "package/engram.json",
+          "media_type": "application/json"
+        }
+      ]
+    }
+  ]
+}

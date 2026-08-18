@@ -1,0 +1,60 @@
+{
+  "id": "graph_01J00000000000000000000006",
+  "schema_version": "0.1",
+  "type": "graph",
+  "title": "Portable hosting and backup",
+  "nodes": [
+    {
+      "id": "project",
+      "record": "project_01J00000000000000000000002",
+      "label": "Knowledge garden"
+    },
+    {
+      "id": "hosting",
+      "record": "note_01J00000000000000000000003",
+      "label": "Hosting"
+    },
+    {
+      "id": "backup",
+      "record": "note_01J00000000000000000000004",
+      "label": "Backup"
+    },
+    {
+      "id": "verify-export",
+      "record": "action_01J00000000000000000000005",
+      "label": "Verify the next export"
+    }
+  ],
+  "edges": [
+    {
+      "id": "project-hosting",
+      "from": "project",
+      "to": "hosting",
+      "relation": "contains"
+    },
+    {
+      "id": "project-backup",
+      "from": "project",
+      "to": "backup",
+      "relation": "contains"
+    },
+    {
+      "id": "project-action",
+      "from": "project",
+      "to": "verify-export",
+      "relation": "contains"
+    },
+    {
+      "id": "hosting-requires-backup",
+      "from": "hosting",
+      "to": "backup",
+      "relation": "depends_on"
+    },
+    {
+      "id": "action-informed-by-backup",
+      "from": "verify-export",
+      "to": "backup",
+      "relation": "informed_by"
+    }
+  ]
+}
