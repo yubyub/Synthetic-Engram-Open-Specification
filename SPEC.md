@@ -21,7 +21,9 @@ and **MAY** are to be interpreted as described by BCP 14 (RFC 2119 and RFC
 
 ## 3. Terminology
 
-- **Synthetic Engram:** the complete durable knowledge environment.
+- **Synthetic Engram:** a portable collection of the record, graph, and
+  attachment forms defined by this specification. It is not a universal data
+  model for every kind of durable information.
 - **Engram Package:** a directory or archive containing all or part of a
   Synthetic Engram in this portable representation.
 - **Engram Record:** one durable typed object in an Engram.
@@ -73,11 +75,36 @@ ID. Inventory IDs MUST be unique except that an attachment's `blob` entry MUST
 repeat its attachment metadata ID. Producers MUST list every normative object.
 Consumers MUST NOT infer that unlisted files are normative package objects.
 
-## 7. Records
+The inventory `media_type`, not the path or filename extension, is the
+authoritative representation discriminator. A consumer MUST select a parser
+using `media_type` and MUST NOT infer or override an object's format from its
+filename extension. In v0.1, the media type of a `record` MUST be
+`text/markdown`; the media types of `graph` and `attachment` objects MUST be
+`application/vnd.synthetic-engram.graph+json` and
+`application/vnd.synthetic-engram.attachment+json`, respectively. A `blob`
+MAY use any valid media type and remains attachment content, not a record.
 
-A record MUST be a `.md` file consisting of YAML 1.2 front matter followed by
-Markdown content. Front matter begins with `---` on the first line and ends
-with `---` on a line by itself. It MUST conform to
+A consumer that encounters an inventoried media type it does not support MUST
+still retain the inventory entry and MUST report the object as unsupported; it
+MUST NOT parse it as another format or silently claim to have consumed it. If
+the consumer emits a package while claiming round-trip preservation, it MUST
+copy the unsupported object's bytes and its inventory fields unchanged. A
+processor that cannot do so MUST report a lossy operation before emitting the
+package and MUST NOT claim round-trip preservation.
+
+## 7. Records and the 1.0 representation decision
+
+Markdown with YAML front matter is the sole canonical core record
+representation for 1.0. Representation negotiation does not apply to core
+records: a manifest entry with kind `record` and any media type other than
+`text/markdown` is not a core-conforming record. This explicit restriction is
+intentional; the 1.0 core does not include JSON records, binary records, or a
+format-independent record envelope.
+
+A record MUST consist of YAML 1.2 front matter followed by Markdown content.
+Front matter begins with `---` on the first line and ends with `---` on a line
+by itself. The inventory path conventionally ends in `.md`, but the extension
+has no role in representation detection. The front matter MUST conform to
 [`schemas/v0.1/record.schema.json`](schemas/v0.1/record.schema.json).
 
 The core envelope requires `id`, `schema_version`, `type`, `title`,
@@ -88,6 +115,22 @@ A `parent` denotes hierarchy. Each `links` entry denotes a typed directed link.
 A target MAY be external to a partial package only when the link sets
 `external: true`; otherwise it MUST resolve to an inventoried object. A package
 MUST NOT contain a cycle formed by `parent` references.
+
+Structured or binary information that does not map losslessly to this envelope
+and Markdown body MUST be carried as a typed attachment, or in an `extensions`
+value governed by a named extension profile declared in the manifest. The
+attachment's media type identifies its payload format; an extension profile
+defines the schema and semantics of its namespaced values. Neither mechanism
+turns that data into a core record or gives core-only consumers knowledge of
+its application semantics.
+
+Consequently, converting a structured object into a core record can lose data
+types, ordering, numeric precision, validation constraints, binary fidelity,
+or application-specific semantics. Producers requiring exact fidelity MUST
+preserve the original bytes as an attachment (including its media type, size,
+and digest) rather than treating a Markdown rendering as lossless. A Markdown
+summary MAY link to that attachment; the summary is a human-readable projection
+and is not an authoritative replacement for the payload.
 
 ## 8. Graphs
 
@@ -121,6 +164,12 @@ be any JSON-compatible YAML value. An implementation that reads and rewrites an
 object SHOULD preserve unknown extensions unchanged. An extension MUST NOT
 change the meaning or validity of a core field.
 
+A named extension profile uses the same reverse-DNS form and MUST appear in the
+manifest `profiles` array when a package relies on that profile's schema or
+semantics. The profile definition MUST identify the extension keys it governs.
+Declaring a profile does not make its values core fields, and consumers that do
+not support it follow the unsupported-profile preservation rules below.
+
 ## 11. Profiles and conformance
 
 v0.1 defines these profiles:
@@ -129,6 +178,9 @@ v0.1 defines these profiles:
 - **graph:** graph objects and referenced-record preservation;
 - **media:** attachment metadata, payloads, hashes, and attachment URIs;
 - **action:** action status and due-date semantics.
+
+Additional reverse-DNS profile names designate extension profiles; their
+schemas and semantics are defined outside the core specification.
 
 Every package MUST declare `core`. It MUST declare each optional profile whose
 objects it contains. An implementation MUST state whether it is a producer,
@@ -166,5 +218,9 @@ not infer permission merely from possession of a package. See [SECURITY.md](SECU
 
 v0.1 does not define synchronization, conflict resolution, access-control
 descriptors, certification branding, query lenses, AI context selection, or
-portable revision deltas. These subjects remain documented in
+portable revision deltas. Non-Markdown structured records and binary core
+records are explicitly deferred beyond 1.0; adding them requires a future
+specification to define a format-independent envelope and normative recovery
+mappings rather than relying on filename extensions. These subjects remain
+documented in
 [docs/open-questions.md](docs/open-questions.md).
