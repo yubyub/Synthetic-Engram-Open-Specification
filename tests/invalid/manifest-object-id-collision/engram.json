@@ -9,8 +9,6 @@
     "id": "owner-example-01",
     "type": "person",
     "display_name": "Example Owner"
-    "type": "person",
-    "name": "Example Owner"
   },
   "profiles": [
     "core",
@@ -20,7 +18,7 @@
   ],
   "objects": [
     {
-      "id": "project_01J00000000000000000000002",
+      "id": "engram_01J00000000000000000000001",
       "kind": "record",
       "media_type": "text/markdown",
       "path": "records/projects/knowledge-garden.md"
@@ -62,8 +60,4 @@
       "path": "attachments/package-overview.txt"
     }
   ]
-  ],
-  "engram_id": "engram_01J00000000000000000000001",
-  "export_id": "export_01J00000000000000000000009",
-  "completeness": "complete"
 }

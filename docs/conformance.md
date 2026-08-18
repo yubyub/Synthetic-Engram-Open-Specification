@@ -8,6 +8,12 @@ checklist. In a conflict, `SPEC.md` wins.
 - `engram.json` exists and validates against the v0.1 manifest schema.
 - Every inventory path is safe, unique, and exists.
 - Every normative object appears in the inventory.
+- The Engram ID, package ID, object IDs, attachment IDs, and graph fragment IDs
+  are unique across the Engram, except for the attachment/blob alias.
+- Every semantic ID prefix agrees with its manifest kind or record/fragment
+  type, and contained object IDs agree with their inventory entries.
+- The owner descriptor has a stable opaque ID; no authority or authenticity is
+  inferred from that attribution metadata.
 - `id`, `engram_id`, and `export_id` identify the package instance, durable Engram, and export event.
 - Partial packages supply selection metadata; complete packages close over every current durable source artifact.
 - Object IDs are unique and agree with their inventory entries.

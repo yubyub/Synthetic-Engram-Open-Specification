@@ -22,6 +22,7 @@
   ],
   "properties": {
     "id": {
+      "$ref": "definitions.schema.json#/$defs/graphId"
       "$ref": "definitions.schema.json#/$defs/id"
     },
     "schema_version": {
@@ -43,6 +44,7 @@
         ],
         "properties": {
           "id": {
+            "$ref": "definitions.schema.json#/$defs/nodeId"
             "type": "string",
             "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
           },
@@ -52,6 +54,9 @@
           "label": {
             "type": "string"
           },
+          "external": {
+            "type": "boolean",
+            "default": false
           "record_scope": {
             "enum": [
               "synthetic_engram",
@@ -76,6 +81,7 @@
         ],
         "properties": {
           "id": {
+            "$ref": "definitions.schema.json#/$defs/edgeId"
             "type": "string",
             "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
           },

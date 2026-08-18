@@ -6,6 +6,8 @@
   "required": [
     "format",
     "version",
+    "engram_id",
+    "id",
     "id",
     "engram_id",
     "export_id",
@@ -24,6 +26,7 @@
       "const": "0.1.0"
     },
     "id": {
+      "$ref": "definitions.schema.json#/$defs/packageId"
       "$ref": "definitions.schema.json#/$defs/id"
     },
     "created_at": {
@@ -35,6 +38,15 @@
     "owner": {
       "type": "object",
       "required": [
+        "id",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
         "type",
         "name"
       ],
@@ -46,6 +58,7 @@
             "other"
           ]
         },
+        "display_name": {
         "name": {
           "type": "string",
           "minLength": 1
@@ -126,6 +139,73 @@
             "$ref": "definitions.schema.json#/$defs/safePath"
           }
         },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "record"
+                  ]
+                }
+              },
+              "required": [
+                "kind"
+              ]
+            },
+            "then": {
+              "properties": {
+                "id": {
+                  "$ref": "definitions.schema.json#/$defs/recordId"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "graph"
+                  ]
+                }
+              },
+              "required": [
+                "kind"
+              ]
+            },
+            "then": {
+              "properties": {
+                "id": {
+                  "$ref": "definitions.schema.json#/$defs/graphId"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "attachment",
+                    "blob"
+                  ]
+                }
+              },
+              "required": [
+                "kind"
+              ]
+            },
+            "then": {
+              "properties": {
+                "id": {
+                  "$ref": "definitions.schema.json#/$defs/attachmentId"
+                }
+              }
+            }
+          }
+        ]
         "additionalProperties": false
       },
       "minItems": 1
@@ -134,6 +214,7 @@
       "$ref": "definitions.schema.json#/$defs/extensions"
     },
     "engram_id": {
+      "$ref": "definitions.schema.json#/$defs/engramId"
       "$ref": "definitions.schema.json#/$defs/id",
       "description": "Stable identity of the durable Synthetic Engram."
     },

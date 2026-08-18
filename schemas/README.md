@@ -6,6 +6,10 @@ entry points in each version; `definitions.schema.json` contains shared definiti
 
 Record schemas validate parsed YAML front matter, not the Markdown body. Schema
 validation alone is insufficient: use `python scripts/validate.py` for package
+inventory, Engram-wide identity collision, reference, cycle, and checksum
+checks. The schemas enforce semantic prefixes where the object's kind or type
+is available locally; the validator additionally enforces the cross-file
+uniqueness domain.
 inventory, reference, cycle, and checksum checks.
 
 `v1.0/graph.schema.json` adds kind-neutral durable-object references, structured external references, qualified relation vocabularies, and extension points at every graph level.
