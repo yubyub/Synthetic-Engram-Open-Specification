@@ -9,7 +9,7 @@ A target identity or locator does not prove who controls content or whether it i
 
 ## Affected requirements and schemas
 
-`REQ-REF-001`, `REQ-MEDIA-001`, `REQ-SEC-002`, and `REQ-SEC-003`; [SPEC §§7, 9, and 13](../../SPEC.md#13-security-and-privacy), [record](../../schemas/v0.1/record.schema.json), [attachment](../../schemas/v0.1/attachment.schema.json), and [manifest](../../schemas/v0.1/manifest.schema.json) schemas.
+`REQ-REF-001`, `REQ-MEDIA-001`, `REQ-SEC-004`, and `REQ-SEC-005`; [SPEC §§7, 9, and 13](../../SPEC.md#13-security-and-privacy), [record](../../schemas/v0.1/record.schema.json), [attachment](../../schemas/v0.1/attachment.schema.json), and [manifest](../../schemas/v0.1/manifest.schema.json) schemas.
 
 ## Acceptance criteria and evidence
 

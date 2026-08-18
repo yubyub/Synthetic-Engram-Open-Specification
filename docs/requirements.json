@@ -75,6 +75,42 @@
       "spec_anchor": "#req-inventory-no-infer"
     },
     {
+      "id": "REQ-SCOPE-001",
+      "spec_anchor": "#req-scope-partial-metadata"
+    },
+    {
+      "id": "REQ-SCOPE-002",
+      "spec_anchor": "#req-scope-selection-proof"
+    },
+    {
+      "id": "REQ-SCOPE-003",
+      "spec_anchor": "#req-scope-complete-metadata"
+    },
+    {
+      "id": "REQ-SCOPE-004",
+      "spec_anchor": "#req-scope-fields"
+    },
+    {
+      "id": "REQ-CLOSE-001",
+      "spec_anchor": "#req-closure-inventory"
+    },
+    {
+      "id": "REQ-CLOSE-002",
+      "spec_anchor": "#req-closure-extensions"
+    },
+    {
+      "id": "REQ-CLOSE-003",
+      "spec_anchor": "#req-closure-transient"
+    },
+    {
+      "id": "REQ-CLOSE-004",
+      "spec_anchor": "#req-closure-adopted"
+    },
+    {
+      "id": "REQ-CLOSE-005",
+      "spec_anchor": "#req-closure-compare"
+    },
+    {
       "id": "REQ-REC-001",
       "spec_anchor": "#req-record-envelope"
     },
@@ -84,11 +120,43 @@
     },
     {
       "id": "REQ-REC-003",
+      "spec_anchor": "#req-record-no-bom"
+    },
+    {
+      "id": "REQ-REC-004",
+      "spec_anchor": "#req-record-normalization"
+    },
+    {
+      "id": "REQ-REC-005",
+      "spec_anchor": "#req-record-delimiters"
+    },
+    {
+      "id": "REQ-REC-006",
+      "spec_anchor": "#req-record-yaml-document"
+    },
+    {
+      "id": "REQ-REC-007",
+      "spec_anchor": "#req-record-yaml-keys"
+    },
+    {
+      "id": "REQ-REC-008",
+      "spec_anchor": "#req-record-yaml-features"
+    },
+    {
+      "id": "REQ-REC-009",
+      "spec_anchor": "#req-record-yaml-typing"
+    },
+    {
+      "id": "REQ-REC-010",
+      "spec_anchor": "#req-record-render"
+    },
+    {
+      "id": "REQ-REC-011",
       "spec_anchor": "#req-action-status"
     },
     {
       "id": "REQ-REF-001",
-      "spec_anchor": "#req-link-resolve"
+      "spec_anchor": "#req-reference-resolution"
     },
     {
       "id": "REQ-REF-002",
@@ -96,11 +164,15 @@
     },
     {
       "id": "REQ-GRAPH-001",
-      "spec_anchor": "#req-graph-resolve"
+      "spec_anchor": "#req-graph-node-ids"
     },
     {
       "id": "REQ-GRAPH-002",
-      "spec_anchor": "#req-graph-ids"
+      "spec_anchor": "#req-graph-edge-ids"
+    },
+    {
+      "id": "REQ-GRAPH-003",
+      "spec_anchor": "#req-graph-endpoints"
     },
     {
       "id": "REQ-MEDIA-001",
@@ -112,7 +184,11 @@
     },
     {
       "id": "REQ-MEDIA-003",
-      "spec_anchor": "#req-media-uri"
+      "spec_anchor": "#req-media-uri-resolve"
+    },
+    {
+      "id": "REQ-MEDIA-004",
+      "spec_anchor": "#req-media-uri-discovery"
     },
     {
       "id": "REQ-EXT-001",
@@ -143,19 +219,31 @@
       "spec_anchor": "#req-consumer-profile"
     },
     {
+      "id": "REQ-CONF-004",
+      "spec_anchor": "#req-consumer-claim"
+    },
+    {
       "id": "REQ-VERS-001",
       "spec_anchor": "#req-version-major"
     },
     {
       "id": "REQ-SEC-001",
-      "spec_anchor": "#req-security-input"
+      "spec_anchor": "#req-security-path"
     },
     {
       "id": "REQ-SEC-002",
-      "spec_anchor": "#req-security-untrusted"
+      "spec_anchor": "#req-security-limits"
     },
     {
       "id": "REQ-SEC-003",
+      "spec_anchor": "#req-security-execution"
+    },
+    {
+      "id": "REQ-SEC-004",
+      "spec_anchor": "#req-security-untrusted"
+    },
+    {
+      "id": "REQ-SEC-005",
       "spec_anchor": "#req-security-permission"
     }
   ]

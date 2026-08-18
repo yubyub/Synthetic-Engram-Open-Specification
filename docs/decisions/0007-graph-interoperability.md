@@ -9,7 +9,7 @@ Nodes and directed edges have deterministic validation and useful interchange va
 
 ## Affected requirements and schemas
 
-`REQ-GRAPH-001`, `REQ-GRAPH-002`, `REQ-PROF-002`, and `REQ-EXT-002`; [SPEC §§8, 10, and 11](../../SPEC.md#8-graphs) and [graph schema](../../schemas/v0.1/graph.schema.json).
+`REQ-GRAPH-001` through `REQ-GRAPH-003`, `REQ-PROF-002`, and `REQ-EXT-002`; [SPEC §§8, 10, and 11](../../SPEC.md#8-graphs) and [graph schema](../../schemas/v0.1/graph.schema.json).
 
 ## Acceptance criteria and evidence
 

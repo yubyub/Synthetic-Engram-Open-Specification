@@ -9,7 +9,7 @@ Portable metadata cannot enforce access after export. Without subjects, resource
 
 ## Affected requirements and schemas
 
-`REQ-SEC-001` through `REQ-SEC-003`, `REQ-EXT-002`; [SPEC §§6.2, 10, and 13](../../SPEC.md#13-security-and-privacy), [manifest schema](../../schemas/v0.1/manifest.schema.json), and [SECURITY.md](../../SECURITY.md).
+`REQ-SEC-001` through `REQ-SEC-005`, `REQ-EXT-002`; [SPEC §§6.2, 10, and 13](../../SPEC.md#13-security-and-privacy), [manifest schema](../../schemas/v0.1/manifest.schema.json), and [SECURITY.md](../../SECURITY.md).
 
 ## Acceptance criteria and evidence
 

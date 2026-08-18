@@ -2,12 +2,106 @@
   "vector_version": "1.0",
   "role": "consumer",
   "cases": [
-    {"id":"CONSUMER-001","requirement":"REQ-INV-006","input":"tests/valid/basic-engram","operation":"add an unlisted file scratch.tmp before import","expected":{"status":"success","normative_object_ids_exclude_unlisted":true}},
-    {"id":"CONSUMER-002","requirement":"REQ-CONF-003","input":"tests/valid/empty-graph","operation":"import without graph-profile support","expected":{"status":"unsupported-profile","profile":"graph","must_not_report_success":true}},
-    {"id":"CONSUMER-003","requirement":"REQ-MEDIA-003","input":"tests/valid/zero-byte-attachment","operation":"resolve engram-attachment:attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1 while record text suggests another path","expected":{"resolved_inventory_id":"attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1","suggested_path_ignored":true}},
-    {"id":"CONSUMER-004","requirement":"REQ-VERS-001","input":"manifest version changed to 1.0.0","operation":"import","expected":{"status":"unsupported-major-version","must_not_report_success":true}},
-    {"id":"CONSUMER-005","requirement":"REQ-SEC-001","input":"archive entry ../../escape","operation":"extract with configured byte and object limits","expected":{"status":"rejected","outside_root_writes":0,"record_content_executions":0,"limits_enforced":true}},
-    {"id":"CONSUMER-006","requirement":"REQ-SEC-002","input":"labels and Markdown containing HTML/script text","operation":"import","expected":{"content_treated_as_data":true,"record_content_executions":0}},
-    {"id":"CONSUMER-007","requirement":"REQ-SEC-003","input":"tests/valid/basic-engram","operation":"authorization decision based only on package possession","expected":{"permission_granted":false}}
+    {
+      "id": "CONSUMER-001",
+      "requirement": "REQ-INV-006",
+      "input": "tests/valid/basic-engram",
+      "operation": "add an unlisted file scratch.tmp before import",
+      "expected": {
+        "status": "success",
+        "normative_object_ids_exclude_unlisted": true
+      }
+    },
+    {
+      "id": "CONSUMER-002",
+      "requirement": "REQ-CONF-003",
+      "input": "tests/valid/empty-graph",
+      "operation": "import without graph-profile support",
+      "expected": {
+        "status": "unsupported-profile",
+        "profile": "graph",
+        "must_not_report_success": true
+      }
+    },
+    {
+      "id": "CONSUMER-003",
+      "requirement": "REQ-MEDIA-003",
+      "input": "tests/valid/zero-byte-attachment",
+      "operation": "resolve engram-attachment:attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1 while record text suggests another path",
+      "expected": {
+        "resolved_inventory_id": "attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1",
+        "suggested_path_ignored": true
+      }
+    },
+    {
+      "id": "CONSUMER-004",
+      "requirement": "REQ-VERS-001",
+      "input": "manifest version changed to 1.0.0",
+      "operation": "import",
+      "expected": {
+        "status": "unsupported-major-version",
+        "must_not_report_success": true
+      }
+    },
+    {
+      "id": "CONSUMER-005",
+      "requirement": "REQ-SEC-001",
+      "input": "archive entry ../../escape",
+      "operation": "extract with configured byte and object limits",
+      "expected": {
+        "status": "rejected",
+        "outside_root_writes": 0,
+        "record_content_executions": 0,
+        "limits_enforced": true
+      }
+    },
+    {
+      "id": "CONSUMER-006",
+      "requirement": "REQ-SEC-004",
+      "input": "labels and Markdown containing HTML/script text",
+      "operation": "import",
+      "expected": {
+        "content_treated_as_data": true,
+        "record_content_executions": 0
+      }
+    },
+    {
+      "id": "CONSUMER-007",
+      "requirement": "REQ-SEC-005",
+      "input": "tests/valid/basic-engram",
+      "operation": "authorization decision based only on package possession",
+      "expected": {
+        "permission_granted": false
+      }
+    },
+    {
+      "id": "CONSUMER-008",
+      "requirement": "REQ-SEC-002",
+      "input": "package exceeding configured byte or object limit",
+      "operation": "import",
+      "expected": {
+        "status": "rejected",
+        "limits_enforced": true
+      }
+    },
+    {
+      "id": "CONSUMER-009",
+      "requirement": "REQ-SEC-003",
+      "input": "record containing executable HTML/script text",
+      "operation": "import and render",
+      "expected": {
+        "record_content_executions": 0
+      }
+    },
+    {
+      "id": "CONSUMER-010",
+      "requirement": "REQ-MEDIA-004",
+      "input": "record containing the same engram-attachment URI once as plain text and once as a Markdown link",
+      "operation": "discover attachment references",
+      "expected": {
+        "link_destination_discovered": true,
+        "plain_text_ignored": true
+      }
+    }
   ]
 }
