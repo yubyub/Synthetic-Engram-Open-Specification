@@ -33,6 +33,75 @@ inspection, or a credible exit path matter. It is probably unnecessary when one
 program will always own the data or ordinary Markdown already preserves all
 required meaning.
 
+## Recommended usage patterns
+
+A useful way to think about a Synthetic Engram is that an application **has an
+Engram**: a durable body of owner-controlled knowledge with stable identities
+and relationships. The application may store that knowledge in any suitable
+system. The standard defines the meaning that must remain portable, while the
+package defines how that meaning is exchanged and inspected.
+
+The following patterns are all valid. Choose according to the application's
+size, write behavior, and interoperability needs.
+
+### 1. Package-native local store
+
+Use the package itself as the application's primary store. This is the simplest
+pattern for a local, single-user, or write-light tool. The application must add
+safe and atomic writes, indexing, history, backups, and any required access
+controls because Core 0.2 does not provide them.
+
+```mermaid
+flowchart LR
+    Person[Person] <--> App[Local application]
+    App <--> Package[Synthetic Engram package<br/>live durable knowledge]
+    Package --> Backup[Backup or another application]
+```
+
+### 2. Portable canonical domain model
+
+Use Engram identities and semantics as the durable knowledge contract while a
+database, object store, or graph store provides the operational representation.
+Here, "canonical" describes the meaning and identity of the knowledge, not a
+requirement to mirror the package's files in the database. Search indexes,
+embeddings, graph layout, sessions, and caches remain derived application state.
+
+This is the recommended pattern for a hosted knowledge-base application that
+serves a human interface, an AI integration, and a graph viewer from the same
+logical Engram.
+
+```mermaid
+flowchart TD
+    Person[Person] --> UI[Knowledge interface]
+    AI[AI integration] --> API[Authorized application API]
+    Viewer[Graph viewer] --> API
+    UI --> API
+    API <--> Store[Application store<br/>records, stable IDs, links, media]
+    Store --> Derived[Derived indexes, embeddings,<br/>and graph layout]
+    Store <--> Adapter[Engram import/export adapter]
+    Adapter <--> Package[Portable Synthetic Engram package]
+```
+
+The application should be able to map its durable records, relationships,
+graphs, and attachments to and from the package without silently changing their
+stable IDs or claimed meaning. Its API is still application-specific in Core
+0.2.
+
+### 3. Interchange boundary for an existing application
+
+Keep an application's established internal model and add Engram only at its
+boundary. This is the lowest-risk way to pilot portable backup, migration,
+bounded AI delivery, or exchange with another tool. The adapter must document
+which semantics are preserved, transformed, omitted, or represented by
+namespaced extensions.
+
+```mermaid
+flowchart LR
+    Existing[Existing application model] <--> Mapping[Engram mapping adapter]
+    Mapping <--> Package[Synthetic Engram package]
+    Package <--> Consumer[Another application,<br/>archive, or bounded AI context]
+```
+
 ## Pilot expectations
 
 Pilot implementations should:
