@@ -8,6 +8,7 @@ import json
 import re
 import sys
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -97,6 +98,14 @@ def safe_path(root: Path, value: str) -> Path:
         fail(f"inventory path escapes package: {value}")
     return path
 
+def timestamp(value: str) -> datetime:
+    """Parse a schema-validated UTC RFC 3339 timestamp for comparisons."""
+    return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+def check_timestamp_order(created: str, updated: str, label: Path) -> None:
+    if timestamp(updated) < timestamp(created):
+        fail(f"{label}: updated_at precedes created_at")
+
 def validate_package(root: Path) -> None:
     registry = schema_registry()
     manifest_path = root / "engram.json"
@@ -104,6 +113,7 @@ def validate_package(root: Path) -> None:
         fail(f"{root}: missing engram.json")
     manifest = load_json(manifest_path)
     check_schema(manifest, "manifest.schema.json", registry, manifest_path)
+    check_timestamp_order(manifest["created_at"], manifest["updated_at"], manifest_path)
 
     paths: set[str] = set()
     entries_by_id: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -130,6 +140,14 @@ def validate_package(root: Path) -> None:
         objects[entry["id"]] = (kind, value, path)
         if kind == "record" and "parent" in value:
             parent[entry["id"]] = value["parent"]
+        if kind == "record":
+            check_timestamp_order(value["created_at"], value["updated_at"], path)
+            if "due_at" in value and timestamp(value["due_at"]) < timestamp(value["created_at"]):
+                fail(f"{path}: due_at precedes created_at")
+            if timestamp(value["created_at"]) < timestamp(manifest["created_at"]):
+                fail(f"{path}: record created_at precedes package created_at")
+            if timestamp(value["updated_at"]) > timestamp(manifest["updated_at"]):
+                fail(f"{path}: record updated_at exceeds package updated_at")
         required_profile = PROFILE_FOR.get(kind)
         if required_profile and required_profile not in manifest["profiles"]:
             fail(f"{kind} object requires profile {required_profile}")
@@ -165,6 +183,8 @@ def validate_package(root: Path) -> None:
                 if edge["from"] not in node_ids or edge["to"] not in node_ids:
                     fail(f"{path}: graph edge has unresolved endpoint")
         elif kind == "attachment":
+            if value["filename"] != PurePosixPath(value["path"]).name:
+                fail(f"{path}: attachment filename does not match payload path basename")
             payload = safe_path(root, value["path"])
             blob_entries = [entry for entry in entries_by_id[object_id] if entry["kind"] == "blob" and entry["path"] == value["path"]]
             if not blob_entries:

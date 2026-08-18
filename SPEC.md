@@ -73,6 +73,13 @@ ID. Inventory IDs MUST be unique except that an attachment's `blob` entry MUST
 repeat its attachment metadata ID. Producers MUST list every normative object.
 Consumers MUST NOT infer that unlisted files are normative package objects.
 
+All manifest fields except `extensions` are required. `owner.type` and
+`owner.name` are both required. Every `objects` item requires all four of `id`,
+`kind`, `media_type`, and `path`; `kind` classifies the path as `record`,
+`graph`, `attachment`, or `blob`. The `profiles` array contains one or more
+unique profile names and includes `core`. `extensions` is the only optional
+manifest field.
+
 ## 7. Records
 
 A record MUST be a `.md` file consisting of YAML 1.2 front matter followed by
@@ -83,11 +90,30 @@ with `---` on a line by itself. It MUST conform to
 The core envelope requires `id`, `schema_version`, `type`, `title`,
 `created_at`, and `updated_at`. `type` is one of `note`, `project`, or `action`
 in v0.1. An action additionally MUST provide `status`; it MAY provide `due_at`.
+`status` and `due_at` are action-only fields and MUST NOT occur on a note or
+project. `updated_at` MUST NOT precede `created_at`, and an action's `due_at`
+MUST NOT precede its `created_at`.
+
+The valid field combinations are deliberately closed by record type:
+
+| Field | Note | Project | Action | Meaning |
+| --- | --- | --- | --- | --- |
+| `id`, `schema_version`, `type`, `title`, `created_at`, `updated_at` | required | required | required | Common record envelope |
+| `parent`, `links`, `tags`, `extensions` | optional | optional | optional | Type-independent hierarchy, relationships, classification, and extension data |
+| `status` | prohibited | prohibited | required | Action lifecycle |
+| `due_at` | prohibited | prohibited | optional | Action deadline |
 
 A `parent` denotes hierarchy. Each `links` entry denotes a typed directed link.
 A target MAY be external to a partial package only when the link sets
 `external: true`; otherwise it MUST resolve to an inventoried object. A package
 MUST NOT contain a cycle formed by `parent` references.
+
+Every link requires `target` and `relation`; its `external` qualifier is
+optional and defaults semantically to false. This qualifier has the same
+meaning for links from notes, projects, and actions, so it is deliberately not
+action-specific. Common `id`, timestamp, safe-path, and `extensions`
+definitions only constrain fields that reference them and do not introduce
+fields into an object.
 
 ## 8. Graphs
 
@@ -96,6 +122,14 @@ A graph is a JSON object conforming to
 local IDs and MAY reference Engram IDs. Directed edges reference local node IDs.
 Referenced Engram IDs MUST resolve unless explicitly marked external. Node and
 edge IDs MUST each be unique within their graph.
+
+A node's `external` flag only qualifies its `record` reference: consequently,
+`external: true` MUST be accompanied by `record`. `external: false` (or an
+omitted flag) permits an optional `record`, which must resolve inside the
+package when present. Node `id` is required; `record`, `label`, and `external`
+are otherwise optional. Every edge requires `id`, `from`, `to`, and `relation`.
+At graph level, `id`, `schema_version`, `type`, `title`, `nodes`, and `edges`
+are required and `extensions` is optional.
 
 The v0.1 graph format describes interoperable topology and optional labels. It
 does not standardize layout, rendering, or an application-specific graph DSL.
@@ -108,6 +142,11 @@ It identifies a separate payload by relative `path`, media type, byte size, and
 lowercase SHA-256 digest. The payload MUST exist and match both declared size
 and digest. The metadata and payload MUST both be listed in the manifest; the
 payload inventory entry uses kind `blob` and the attachment ID.
+
+`filename` is the portable payload filename, not independent display metadata;
+it MUST exactly equal the final path segment (basename) of `path`. All attachment
+fields (`id`, `schema_version`, `type`, `filename`, `media_type`, `size`,
+`sha256`, and `path`) are required; only `extensions` is optional.
 
 Markdown MAY refer to an attachment with
 `engram-attachment:<attachment-id>`. Consumers MUST resolve that URI by ID and
@@ -139,6 +178,28 @@ cross-file requirements. A conforming consumer MUST either process a declared
 profile or report it as unsupported; it MUST NOT silently claim successful
 support. A round-trip processor SHOULD preserve unsupported inventoried objects
 and unknown extensions byte-for-byte when it claims preservation.
+
+### 11.1 Cross-object invariants
+
+Some package invariants compare values, filesystem state, or multiple objects
+and therefore cannot be expressed by the per-document JSON Schemas. A
+conforming package MUST satisfy all of the following:
+
+- manifest `updated_at` is not earlier than manifest `created_at`;
+- every record has `updated_at` not earlier than `created_at`, and an action has
+  `due_at` not earlier than `created_at` when a due date is present;
+- the package time interval encloses every record lifetime: a record's
+  `created_at` is not earlier than the manifest `created_at`, and its
+  `updated_at` is not later than the manifest `updated_at`;
+- attachment `filename` exactly equals its payload `path` basename;
+- inventory paths exist and are unique, contained object IDs match inventory
+  IDs, IDs are unique subject to the attachment/blob pair rule, required
+  profiles are declared, internal references and graph endpoints resolve,
+  graph node and edge IDs are unique, parent relations are acyclic, and
+  attachment payload inventory, byte size, and digest agree with the payload.
+
+The normative validator in `scripts/validate.py` enforces these invariants in
+addition to schema validation.
 
 See [docs/conformance.md](docs/conformance.md) for the testable checklist.
 
