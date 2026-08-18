@@ -229,6 +229,17 @@ MUST sanitize or escape unsafe constructs for their output context.
 
 The core envelope requires `id`, `schema_version`, `type`, `title`,
 `created_at`, and `updated_at`. `type` is one of `note`, `project`, or `action`
+in v0.1. An action additionally MUST provide `status`; it MAY provide `due_at`. A
+non-action record MUST NOT contain either field. `due_at` is the instant by
+which the action is intended to be complete (inclusive): an incomplete action
+is overdue when the current instant is later than `due_at`. It is not a start
+time, reminder time, or floating local date.
+
+The portable status state is a snapshot, not a workflow log. `open` means work
+has not started, `in_progress` means work has started, `done` means it was
+completed, and `cancelled` means no completion is intended. Producers MAY make
+any transition among these values, including reopening a terminal state;
+consumers MUST NOT infer a restricted transition graph or transition time.
 in v1.0. An action additionally MUST provide `status`; it MAY provide `due_at`.
 
 A `parent` denotes hierarchy. Each `links` entry denotes a typed directed link.
@@ -394,6 +405,64 @@ be any JSON-compatible YAML value. An implementation that reads and rewrites an
 object SHOULD preserve unknown extensions unchanged. An extension MUST NOT
 change the meaning or validity of a core field.
 
+## 11. Package features and implementation conformance
+
+The manifest `profiles` array declares features present in **that package**; it
+is not a claim about the software that wrote it. Every package MUST declare
+`core`. It MUST declare `graph` when it inventories a graph, `media` when it
+inventories an attachment or blob, and `action` when it contains an action
+record. It MUST NOT declare an optional profile when no corresponding object is
+present. Profile dependencies are only on `core`.
+
+Implementation conformance is separately claimed per profile and role:
+
+- A **producer** serializes packages. It MUST meet the producer requirements of
+  every profile it claims; it need not import packages.
+- A **consumer** reads packages. It MUST meet the consumer requirements of every
+  profile it claims; it need not export packages.
+- A **round-trip processor** reads and subsequently writes a package. It MUST
+  meet both roles and the round-trip requirements of every profile it claims.
+
+Thus `core` describes data required in every package; it does **not** require
+every implementation to implement both import and export. An implementation
+MAY claim different roles for different profiles.
+
+To **process** a profile is to validate its normative data and expose or apply
+the semantics defined here without loss that changes those semantics. To
+**preserve** data is to emit the same normative values and relationships; where
+this specification requires byte preservation, the exact original bytes MUST
+be emitted. To **reject** is to stop processing the package without reporting
+success or returning a partial package as complete. To **report unsupported**
+is to return a distinct, machine-detectable outcome naming every unsupported
+declared profile before processing dependent objects; a warning, log-only
+message, or silent omission is not a report.
+
+A consumer MUST either process every declared package profile or reject the
+package and report all profiles it does not support. It MUST NOT silently drop
+profile data. A round-trip processor MAY accept an unsupported optional profile
+only in preservation mode, in which case it MUST copy every inventory entry
+belonging to that profile byte-for-byte, retain its inventory metadata and
+profile declaration, and report that the profile was preserved rather than
+processed. Unknown extensions on processed objects MUST be preserved as the
+same JSON-compatible value (byte identity is not required).
+
+Normative requirements for each profile are:
+
+| Profile | Producer | Consumer | Round trip |
+| --- | --- | --- | --- |
+| `core` | Emit a valid manifest and records; safe, complete inventory; valid unique IDs, timestamps, hierarchy, and links. | Validate those constraints, resolve internal references, and expose record Markdown and core fields. | Meet both roles; retain record identity, Markdown, hierarchy, links, timestamps, inventory membership, and unknown extensions. |
+| `graph` | Declare `graph`; emit schema-valid graphs with unique local IDs, resolvable endpoints, and resolvable non-external record references. | Validate and expose graph topology, labels, and record references. | Meet both roles and preserve all nodes, edges, labels, references, and unknown extensions. |
+| `media` | Declare `media`; inventory metadata and blob; emit matching path, media type, size, digest, and ID-based attachment URIs. | Verify payload presence, size, SHA-256, inventory pairing, and resolve attachment URIs by ID. | Meet both roles and preserve payload bytes, attachment identity and metadata, and URI targets. |
+| `action` | Declare `action`; emit `status` on actions, optional UTC `due_at`, and neither field on other records. | Interpret status and due time exactly as in Section 7 and expose both without inventing workflow restrictions. | Meet both roles and preserve type, status, due instant, and unknown extensions. |
+
+An implementation making public interoperability or compatibility claims MUST
+publish a JSON capability document conforming to
+[`schemas/v0.1/capabilities.schema.json`](schemas/v0.1/capabilities.schema.json).
+The document lists supported specification versions and, independently for each
+profile, any of `producer`, `consumer`, and `round-trip`. Claiming `round-trip`
+also entails the producer and consumer requirements even if those strings are
+omitted. Branding or certification programs MUST test the claimed matrix and
+MUST NOT infer capabilities from a package's `profiles` array.
 A named extension profile uses the same reverse-DNS form and MUST appear in the
 manifest `profiles` array when a package relies on that profile's schema or
 semantics. The profile definition MUST identify the extension keys it governs.

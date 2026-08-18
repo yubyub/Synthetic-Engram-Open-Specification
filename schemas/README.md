@@ -1,5 +1,10 @@
 # JSON Schemas
 
+The v0.1 schemas use JSON Schema Draft 2020-12. `manifest.schema.json`,
+`record.schema.json`, `graph.schema.json`, `attachment.schema.json`, and
+`capabilities.schema.json` are entry points; `definitions.schema.json` contains
+shared definitions. The capabilities schema describes implementation claims;
+it is not package content and is not referenced by `engram.json`.
 The `v0.1` and `v1.0` schemas use JSON Schema Draft 2020-12. `manifest.schema.json`,
 `record.schema.json`, `graph.schema.json`, and `attachment.schema.json` are
 entry points in each version; `definitions.schema.json` contains shared definitions.

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synthetic-engram.org/schema/v0.1/capabilities.schema.json",
+  "title": "Synthetic Engram implementation capabilities",
+  "type": "object",
+  "required": ["format", "spec_versions", "profiles"],
+  "properties": {
+    "format": {"const": "synthetic-engram-capabilities"},
+    "implementation": {"type": "object", "required": ["name", "version"], "properties": {
+      "name": {"type": "string", "minLength": 1}, "version": {"type": "string", "minLength": 1}
+    }, "additionalProperties": false},
+    "spec_versions": {"type": "array", "items": {"const": "0.1.0"}, "minItems": 1, "uniqueItems": true},
+    "profiles": {"type": "object", "required": ["core"], "properties": {
+      "core": {"$ref": "#/$defs/profile"}, "graph": {"$ref": "#/$defs/profile"},
+      "media": {"$ref": "#/$defs/profile"}, "action": {"$ref": "#/$defs/profile"}
+    }, "additionalProperties": false}
+  },
+  "$defs": {"profile": {"type": "array", "items": {"enum": ["producer", "consumer", "round-trip"]}, "minItems": 1, "uniqueItems": true}},
+  "additionalProperties": false
+}
