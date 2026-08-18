@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synthetic-engram.org/schema/v0.1/manifest.schema.json",
+  "title": "Synthetic Engram package manifest",
+  "type": "object",
+  "required": ["format", "version", "id", "created_at", "updated_at", "owner", "profiles", "objects"],
+  "properties": {
+    "format": {"const": "synthetic-engram"},
+    "version": {"const": "0.1.0"},
+    "id": {"$ref": "definitions.schema.json#/$defs/id"},
+    "created_at": {"$ref": "definitions.schema.json#/$defs/timestamp"},
+    "updated_at": {"$ref": "definitions.schema.json#/$defs/timestamp"},
+    "owner": {
+      "type": "object", "required": ["type", "name"],
+      "properties": {"type": {"enum": ["person", "organization", "other"]}, "name": {"type": "string", "minLength": 1}},
+      "additionalProperties": false
+    },
+    "profiles": {"type": "array", "contains": {"const": "core"}, "items": {"enum": ["core", "graph", "media", "action"]}, "uniqueItems": true},
+    "objects": {
+      "type": "array", "items": {
+        "type": "object", "required": ["id", "kind", "media_type", "path"],
+        "properties": {
+          "id": {"$ref": "definitions.schema.json#/$defs/id"},
+          "kind": {"enum": ["record", "graph", "attachment", "blob"]},
+          "media_type": {"type": "string", "pattern": "^[^/\\s]+/[^/\\s]+$"},
+          "path": {"$ref": "definitions.schema.json#/$defs/safePath"}
+        }, "additionalProperties": false
+      }, "minItems": 1
+    },
+    "extensions": {"$ref": "definitions.schema.json#/$defs/extensions"}
+  },
+  "additionalProperties": false
+}
