@@ -1,4 +1,4 @@
-name: Validate standard
+name: Validate specification
 on:
   push:
   pull_request:

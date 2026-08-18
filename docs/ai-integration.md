@@ -2,7 +2,7 @@
 
 This non-normative guide describes how an AI-enabled application can use a
 Synthetic Engram without turning Core 0.2 into a model-memory or retrieval
-standard.
+specification.
 
 ## Recommended boundary
 

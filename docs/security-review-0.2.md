@@ -21,7 +21,7 @@ release conditions, not claims that hostile imports are safe by default.
 The review traced each threat to normative requirement IDs, schema constraints,
 validator behavior, fixtures, and harness vectors. Evidence labelled
 **executable** is reproducible with the command shown. Evidence labelled
-**manual** is an inspection or application-level test because the standard does
+**manual** is an inspection or application-level test because the specification does
 not define the relevant runtime (for example, a browser renderer or transactional
 database).
 

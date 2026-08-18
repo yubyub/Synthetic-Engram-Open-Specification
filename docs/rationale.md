@@ -39,7 +39,7 @@ application concerns.
 Core 0.2 exports current state. It does not standardize revision history,
 conflict resolution, synchronization, provenance chains, authentication,
 authorization, encryption, canonical archive serialization, retrieval ranking,
-or a live AI tool API. Those features should only enter the standard after
+or a live AI tool API. Those features should only enter the specification after
 pilot evidence shows a portable contract is needed and at least two consumers
 can implement it consistently.
 

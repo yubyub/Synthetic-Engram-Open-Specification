@@ -1,4 +1,4 @@
-# Synthetic Engram Open Standard 0.2
+# Synthetic Engram Open Specification 0.2
 
 **Status:** Pilot specification
 

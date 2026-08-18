@@ -10,7 +10,7 @@ modification, distribution, sublicensing, and sale, provided that copies or
 substantial portions retain the copyright and permission notice.
 
 MIT does not require adopters to publish modifications or release the source of
-applications that implement, embed, or expose the standard. Implementing the
+applications that implement, embed, or expose the specification. Implementing the
 public format does not make an application's unrelated code or proprietary
 live-storage design part of this repository.
 

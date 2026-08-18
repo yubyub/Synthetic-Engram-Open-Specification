@@ -1,4 +1,4 @@
-# Synthetic Engram Open Standard
+# Synthetic Engram Open Specification
 
 **Manage knowledge once; keep it useful across people, applications, and AI.**
 
@@ -38,7 +38,7 @@ required meaning.
 A useful way to think about a Synthetic Engram is that an application **has an
 Engram**: a durable body of owner-controlled knowledge with stable identities
 and relationships. The application may store that knowledge in any suitable
-system. The standard defines the meaning that must remain portable, while the
+system. The specification defines the meaning that must remain portable, while the
 package defines how that meaning is exchanged and inspected.
 
 The following patterns are all valid. Choose according to the application's

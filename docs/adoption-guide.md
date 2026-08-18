@@ -13,11 +13,11 @@ export boundary; do not redesign a production database around it until a
 real-data pilot shows that its model and extension strategy fit the application.
 
 Synthetic Engram is both a portable knowledge structure and its interchange
-representation. The standard defines the meaning that survives interchange; it
+representation. The specification defines the meaning that survives interchange; it
 does not require an application to store its live state in that representation.
 Two components may access one live service without moving a package, but that
-service API is application-specific in Core 0.2. Standard interoperability begins
-when a conforming package is produced or consumed.
+service API is application-specific in Core 0.2. Interoperability under the
+specification begins when a conforming package is produced or consumed.
 
 ## Benefit versus burden
 
@@ -111,7 +111,7 @@ storage, retaining immutable schema and validator copies, periodically checking
 fixity, documenting rendering assumptions, and using an established outer
 packaging or repository standard where appropriate. The planned archive binding,
 provenance profile, history model, signed-package binding, and independent
-governance are the highest-value standard-level improvements.
+governance are the highest-value specification-level improvements.
 
 ## Pilot checklist
 
