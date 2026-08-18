@@ -4,6 +4,12 @@ Core 0.2 graphs are **portable directed topology with optional labels and record
 references**. They are not an ontology, RDF dataset, query language, layout
 format, or general property-graph model.
 
+They also cannot directly identify a Source Reference, attachment, or arbitrary
+future profile object: the optional node target is specifically a `record`.
+The [Source Reference exploration](development/source-reference-profile-proposal.md)
+therefore treats generalized object targets as future minor-version work, not
+as an interpretation of Core 0.2 `record` fields.
+
 ## JSON-LD and RDF
 
 Use a versioned adapter vocabulary rather than treating arbitrary edge relation

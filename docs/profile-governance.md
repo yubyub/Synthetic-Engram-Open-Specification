@@ -50,3 +50,10 @@ history/synchronization model. People, organizations, sources/citations, events,
 conversations, bookmarks, datasets, claims, observations, decisions,
 collections, and user-defined semantic types remain candidates—not commitments—
 until two consumers demonstrate the same portable need.
+
+Source Reference is a distinct priority exploration because connector access to
+externally stored knowledge creates an immediate portability gap: applications
+can often reach the bytes while the user's source identity, relationships,
+selection, observation, and materialization context remain trapped. It is not a
+shortcut to provenance, authorization, synchronization, or a remote API. See
+the [Source Reference exploration](development/source-reference-profile-proposal.md).

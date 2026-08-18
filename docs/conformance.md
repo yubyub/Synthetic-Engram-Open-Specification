@@ -21,6 +21,8 @@ Normative clauses have stable `REQ-*` identifiers. See the complete
 
 - In a complete package, references scoped `synthetic_engram` resolve.
 - A missing `synthetic_engram` target is external to a partial package; `outside_engram` means external to the Engram.
+- Consumers do not fetch or require the content of an `outside_engram` target to
+  establish package validity or complete-export closure.
 - Parent relationships are acyclic.
 - Graph-node `record` references follow `record_scope`; complete-package `synthetic_engram` references resolve.
 - Graph edge endpoints resolve to nodes in the same graph.

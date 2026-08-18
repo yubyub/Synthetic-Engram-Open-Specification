@@ -100,6 +100,13 @@ Dispositions mean:
 | Residual risk | Core does not prescribe URL navigation/fetch policy, DNS/IP filtering, redirect handling, download disposition, MIME sniffing, confusable-name handling, or platform reserved-name mapping. A valid attachment may still be malicious content. |
 | Release disposition | **Accept with limitation.** Resolution semantics prevent path substitution; network and presentation policy remain application responsibilities explicitly accepted by `SECURITY.md`. |
 
+Future structured Source References retain this threat boundary. Their locators,
+provider hints, identifiers, and observed metadata would remain untrusted and
+must not trigger automatic fetching or plugin execution. Credentials and grants
+belong to the resolver environment, not portable reference data. The proposed
+profile requires its own security review before acceptance; these notes do not
+add Source Reference support to Core 0.2.
+
 ## 7. Hash integrity versus authenticity
 
 | Item | Review record |

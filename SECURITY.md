@@ -23,3 +23,11 @@ archive paths and sizes, parsing depth, decompressed bytes, record counts, and
 attachment sizes; must not execute content; and must sanitize rendered Markdown
 and filenames. SHA-256 fields detect accidental or malicious content changes but
 do not authenticate an owner or producer.
+
+External references, ordinary links, and any future Source Reference objects
+must be treated as untrusted data. Import, validation, preview, graph traversal,
+or rendering must not automatically fetch them or execute a named plugin.
+Resolvers must apply authentication, per-object authorization, scheme and
+destination policy, SSRF and redirect controls, response limits, and safe
+content handling. Portable references must not contain credentials, access
+tokens, cookies, private keys, or authorization grants.

@@ -24,6 +24,8 @@ select stable object IDs
         |
 retrieve record bodies or attachments by ID, preferably in a batch
         |
+optionally resolve authorized external Source References
+        |
 return source IDs, freshness token, omissions, and transformation/loss
         |
 optionally materialize the authorized selection as a partial Engram Package
@@ -51,6 +53,14 @@ pagination tokens remain application-specific.
   and a declared selection description. Ranking remains implementation-local.
 - **Attachment delivery:** metadata and authorized bytes with size, digest,
   content-disposition, and range behavior chosen by the host.
+- **Source-reference discovery:** list portable external-source identity,
+  relationship, observation, and materialization metadata understood by an
+  experimental or future profile without fetching the external subject.
+- **Source resolution:** use a host-configured connector to retrieve an
+  explicitly requested, authorized external subject or bounded selection while
+  retaining its Source Reference ID and reporting observed version, omissions,
+  transformation, and limits. Resolver names and request schemas remain
+  implementation-specific.
 - **Partial-package delivery:** materialize selected authorized objects using Core
   partial-package completeness and reference-scope rules.
 
@@ -66,6 +76,11 @@ edge, neighbor, attachment, and derived projection. Package owner metadata is no
 permission. Treat record bodies, graph labels, links, and attachments as
 untrusted data; they are not privileged prompts or executable tool instructions.
 
+Apply the same boundary to Source References. Listing one must not trigger a
+network request or plugin execution. Locators and provider hints are untrusted,
+are not credentials or permission, and require scheme, destination, redirect,
+response-size, content-type, and authorization policy before resolution.
+
 This pattern does not standardize semantic-search ranking, embeddings, chunks,
 prompts, model context budgets, autonomous write policy, authentication methods,
 authorization policy, synchronization, or conflict resolution. AI outputs become
@@ -78,4 +93,6 @@ Working protocol prototypes remain blocked until at least two independently
 implemented stores and two clients publish evidence that incompatible APIs cause
 repeated integration cost. Only stable transport-neutral operations may then be
 considered for a separate optional binding; HTTP and MCP representations require
-their own threat models and interoperability reports.
+their own threat models and interoperability reports. Source Reference semantics
+should be standardized independently of any such delivery binding so the same
+portable object can be resolved through different connector technologies.

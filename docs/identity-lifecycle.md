@@ -59,6 +59,12 @@ Treat a URI as a native identifier only when its authority and persistence polic
 are known. Retrieval location, citation, and object identity are separate. A URL
 change need not change an Engram ID; two URLs are not automatically aliases.
 
+The same rule applies to the external subject of a future Source Reference.
+Sharing URLs, API endpoints, and local paths may be locators rather than stable
+identity. A Source Reference retains its Engram ID while explicitly mapped
+subject identifiers or locators change; implementations must not infer that two
+references denote the same subject from titles or similar content.
+
 [`tests/lifecycle/cases.json`](../tests/lifecycle/cases.json) makes these decisions
 executable in the repository implementations. It is guidance evidence, not a
 history, synchronization, alias, or global-identifier profile.

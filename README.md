@@ -17,6 +17,8 @@ directory package.
 Synthetic Engram defines the durable information that can move between a human,
 an application, and an AI integration. An application may use the package as a
 small local store, map it into a database, or expose it through its own API.
+Future profiles may also let it preserve user-controlled context about external
+datasets without copying those datasets into the package.
 
 The 0.2 interoperability boundary is the package. It is not a database engine,
 application framework, synchronization protocol, permission system, retrieval
@@ -110,7 +112,10 @@ Pilot implementations should:
 - publish mappings, omissions, transformations, and unsupported profiles;
 - round trip representative real data and preserve stable IDs;
 - treat every package as untrusted input;
-- retain source IDs in AI-derived context and citations; and
+- retain source IDs in AI-derived context and citations;
+- keep external-source credentials and resolver state outside portable context;
+- preserve external source identity and relationships when piloting connectors;
+  and
 - report integration friction before proposing new core fields.
 
 The included Python and Node processors are repository-maintained pilot adapters.
@@ -141,6 +146,13 @@ An AI can inspect a package directly, or an application can expose authorized
 Engram data through HTTP, MCP, a local library, or another interface. Core 0.2
 does not make those live interfaces mutually compatible.
 
+AI and application connectors may already reach user data held elsewhere. Core
+0.2 can link to a non-member, but it does not yet portably identify an external
+dataset, describe its role or observed version, or declare whether any content
+was materialized. The proposed [Source Reference profile](docs/development/source-reference-profile-proposal.md)
+keeps that contextual layer separate from provider-specific resolution and
+credentials.
+
 The recommended discovery sequence is capabilities, authorized overview,
 available graphs, bounded traversal or selection, and then batched object or
 attachment retrieval by stable ID. See the [AI integration guide](docs/ai-integration.md)
@@ -162,7 +174,8 @@ and [remote delivery pattern](docs/remote-delivery-pattern.md).
 
 Additional implementation guidance covers [front matter](docs/front-matter.md),
 [identity lifecycle](docs/identity-lifecycle.md), [profile governance](docs/profile-governance.md),
-[graph mappings](docs/graph-mappings.md), and [preservation](docs/preservation-mappings.md).
+[graph mappings](docs/graph-mappings.md), [Source Reference exploration](docs/development/source-reference-profile-proposal.md),
+and [preservation](docs/preservation-mappings.md).
 
 ## Validate the repository
 
