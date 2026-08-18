@@ -6,6 +6,7 @@
     "id": {
       "type": "string",
       "pattern": "^(?:engram|package|note|project|action|graph|attachment|node|edge)_[0-9A-HJKMNP-TV-Z]{26}$"
+      "pattern": "^[a-z][a-z0-9-]{1,31}_[0-9A-HJKMNP-TV-Z]{26}$"
     },
     "timestamp": {
       "type": "string",
@@ -39,6 +40,13 @@
         "external": {
           "type": "boolean",
           "default": false
+        "target_scope": {
+          "enum": [
+            "synthetic_engram",
+            "outside_engram"
+          ],
+          "default": "synthetic_engram",
+          "description": "Whether the target is a durable member of this Synthetic Engram."
         }
       },
       "additionalProperties": false

@@ -8,6 +8,10 @@
     "version",
     "engram_id",
     "id",
+    "id",
+    "engram_id",
+    "export_id",
+    "completeness",
     "created_at",
     "updated_at",
     "owner",
@@ -23,6 +27,7 @@
     },
     "id": {
       "$ref": "definitions.schema.json#/$defs/packageId"
+      "$ref": "definitions.schema.json#/$defs/id"
     },
     "created_at": {
       "$ref": "definitions.schema.json#/$defs/timestamp"
@@ -42,6 +47,10 @@
           "minLength": 1,
           "maxLength": 255
         },
+        "type",
+        "name"
+      ],
+      "properties": {
         "type": {
           "enum": [
             "person",
@@ -50,6 +59,7 @@
           ]
         },
         "display_name": {
+        "name": {
           "type": "string",
           "minLength": 1
         }
@@ -168,6 +178,7 @@
             }
           }
         ]
+        "additionalProperties": false
       },
       "minItems": 1
     },
@@ -176,7 +187,102 @@
     },
     "engram_id": {
       "$ref": "definitions.schema.json#/$defs/engramId"
+      "$ref": "definitions.schema.json#/$defs/id",
+      "description": "Stable identity of the durable Synthetic Engram."
+    },
+    "export_id": {
+      "$ref": "definitions.schema.json#/$defs/id",
+      "description": "Identity of the export event; packages retried from the same event retain this value."
+    },
+    "completeness": {
+      "enum": [
+        "complete",
+        "partial"
+      ]
+    },
+    "partial": {
+      "type": "object",
+      "description": "Selection that produced a partial package.",
+      "properties": {
+        "mechanism": {
+          "type": "object",
+          "required": [
+            "type",
+            "expression"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "query",
+                "id-list",
+                "time-range",
+                "application-defined"
+              ]
+            },
+            "expression": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "mechanism"
+          ]
+        },
+        {
+          "required": [
+            "description"
+          ]
+        }
+      ],
+      "additionalProperties": false
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "completeness": {
+            "const": "partial"
+          }
+        },
+        "required": [
+          "completeness"
+        ]
+      },
+      "then": {
+        "required": [
+          "partial"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "completeness": {
+            "const": "complete"
+          }
+        },
+        "required": [
+          "completeness"
+        ]
+      },
+      "then": {
+        "not": {
+          "required": [
+            "partial"
+          ]
+        }
+      }
+    }
+  ]
 }

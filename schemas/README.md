@@ -10,3 +10,4 @@ inventory, Engram-wide identity collision, reference, cycle, and checksum
 checks. The schemas enforce semantic prefixes where the object's kind or type
 is available locally; the validator additionally enforces the cross-file
 uniqueness domain.
+scope, complete-export closure, inventory, reference, cycle, and checksum checks. These experimental schemas will move to the `v1.0` schema path when the standard reaches 1.0; their current location implies no 1.0 stability.

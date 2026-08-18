@@ -9,6 +9,8 @@
     "id": "owner-example-01",
     "type": "person",
     "display_name": "Example Owner"
+    "type": "person",
+    "name": "Example Owner"
   },
   "profiles": [
     "core",
@@ -60,4 +62,8 @@
       "path": "attachments/package-overview.txt"
     }
   ]
+  ],
+  "engram_id": "engram_01J00000000000000000000001",
+  "export_id": "export_01J00000000000000000000009",
+  "completeness": "complete"
 }
