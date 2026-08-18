@@ -15,6 +15,7 @@ vendor, database, or service.
 - [JSON Schemas](schemas/README.md)
 - [Conformance and validation](docs/conformance.md)
 - [Original concept and design rationale](docs/concept-draft.md)
+- [Non-normative design-decision matrix](docs/design-decisions.md)
 - [Open design questions](docs/open-questions.md)
 
 ## Design principles

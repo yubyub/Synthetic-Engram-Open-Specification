@@ -18,7 +18,7 @@ from jsonschema import Draft202012Validator, FormatChecker
 from referencing import Registry, Resource
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA_DIR = ROOT / "schemas" / "v0.1"
+SCHEMA_ROOT = ROOT / "schemas"
 OBJECT_SCHEMA = {
     "record": "record.schema.json",
     "graph": "graph.schema.json",
@@ -120,16 +120,19 @@ def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
         result[key] = value
     return result
 
+def schema_registry(schema_dir: Path) -> Registry:
 
 def schema_registry() -> Registry:
     registry = Registry()
-    for path in SCHEMA_DIR.glob("*.schema.json"):
+    for path in schema_dir.glob("*.schema.json"):
         contents = load_json(path)
         registry = registry.with_resource(
             contents["$id"], Resource.from_contents(contents)
         )
     return registry
 
+def validator(name: str, registry: Registry, schema_dir: Path) -> Draft202012Validator:
+    schema = load_json(schema_dir / name)
 
 def validator(name: str, registry: Registry) -> Draft202012Validator:
     schema = load_json(SCHEMA_DIR / name)
@@ -139,6 +142,8 @@ def validator(name: str, registry: Registry) -> Draft202012Validator:
     )
 
 
+def check_schema(instance: Any, name: str, registry: Registry, schema_dir: Path, label: Path) -> None:
+    errors = sorted(validator(name, registry, schema_dir).iter_errors(instance), key=lambda e: list(e.absolute_path))
 def check_schema(instance: Any, name: str, registry: Registry, label: Path) -> None:
     errors = sorted(
         validator(name, registry).iter_errors(instance),
@@ -217,7 +222,6 @@ def safe_path(root: Path, value: str) -> Path:
 
 
 def validate_package(root: Path) -> None:
-    registry = schema_registry()
     manifest_path = root / "engram.json"
     if not manifest_path.is_file():
         fail(f"{root}: missing engram.json")
@@ -225,9 +229,29 @@ def validate_package(root: Path) -> None:
     selected_schema, unsupported_features = negotiate_manifest(manifest)
     if unsupported_features:
         print(f"NOTICE {manifest_path}: unsupported optional features: {', '.join(unsupported_features)}")
+    # Check manifest/object collisions before schema prefix checks so diagnostics
+    # identify identity reuse rather than only its consequent prefix mismatch.
+    manifest_identity = {manifest.get("engram_id"), manifest.get("id")}
+    for entry in manifest.get("objects", []):
+        if entry.get("id") in manifest_identity:
+            fail(f"identity collision: inventory ID {entry['id']} conflicts with manifest identity")
     check_schema(manifest, "manifest.schema.json", registry, manifest_path)
+    version = manifest.get("version", "")
+    schema_version = "1.0" if version.startswith("1.0.") else "0.1"
+    schema_dir = SCHEMA_ROOT / f"v{schema_version}"
+    registry = schema_registry(schema_dir)
+    check_schema(manifest, "manifest.schema.json", registry, schema_dir, manifest_path)
 
     paths: set[str] = set()
+    # All durable and fragment identities share one Engram-wide uniqueness domain.
+    # The attachment/blob inventory alias is handled separately below.
+    identity_source: dict[str, str] = {
+        manifest["engram_id"]: "manifest engram_id",
+        manifest["id"]: "manifest package id",
+    }
+    if len(identity_source) != 2:
+        fail("manifest Engram ID and package ID collide")
+
     entries_by_id: dict[str, list[dict[str, Any]]] = defaultdict(list)
     objects: dict[str, tuple[str, Any, Path]] = {}
     parent: dict[str, str] = {}
@@ -237,19 +261,22 @@ def validate_package(root: Path) -> None:
             fail(f"duplicate inventory path: {entry['path']}")
         paths.add(entry["path"])
         entries_by_id[entry["id"]].append(entry)
+        kind = entry["kind"]
+        if entry["id"] in identity_source and kind != "blob":
+            fail(f"identity collision: inventory ID {entry['id']} conflicts with {identity_source[entry['id']]}")
         path = safe_path(root, entry["path"])
         if not path.is_file():
             fail(f"missing inventory path: {entry['path']}")
-        kind = entry["kind"]
         if kind == "blob":
             continue
         value = read_record(path) if kind == "record" else load_json(path)
-        check_schema(value, OBJECT_SCHEMA[kind], registry, path)
+        check_schema(value, OBJECT_SCHEMA[kind], registry, schema_dir, path)
         if value["id"] != entry["id"]:
             fail(f"{entry['path']}: object ID does not match inventory")
         if entry["id"] in objects:
             fail(f"duplicate object ID: {entry['id']}")
         objects[entry["id"]] = (kind, value, path)
+        identity_source[entry["id"]] = f"object {entry['path']}"
         if kind == "record" and "parent" in value:
             parent[entry["id"]] = value["parent"]
         required_profile = PROFILE_FOR.get(kind)
@@ -299,12 +326,38 @@ def validate_package(root: Path) -> None:
                 fail(f"{path}: duplicate graph node ID")
             if len(edge_ids) != len(set(edge_ids)):
                 fail(f"{path}: duplicate graph edge ID")
+            for fragment_id in [*node_ids, *edge_ids]:
+                if fragment_id in identity_source:
+                    fail(f"identity collision: fragment ID {fragment_id} conflicts with {identity_source[fragment_id]}")
+                identity_source[fragment_id] = f"fragment in {path}"
             for node in value["nodes"]:
+                reference = node.get("object_id", node.get("record"))
+                if reference is not None:
+                    resolve(reference, False, path)
+                    if schema_version == "1.0" and node.get("object_kind") != objects[reference][0]:
+                        fail(f"{path}: graph node object_kind does not match inventory")
                 if "record" in node:
                     resolve(node["record"], node.get("record_scope", "synthetic_engram"), path)
             for edge in value["edges"]:
                 if edge["from"] not in node_ids or edge["to"] not in node_ids:
                     fail(f"{path}: graph edge has unresolved endpoint")
+                if schema_version == "1.0" and ":" in edge["relation"]:
+                    prefix = edge["relation"].split(":", 1)[0]
+                    if prefix != "core" and prefix not in value.get("relation_namespaces", {}):
+                        fail(f"{path}: unsupported relation vocabulary {prefix}")
+            if value["scope"] == "complete_records":
+                represented = {
+                    node["record"] for node in value["nodes"]
+                    if "record" in node and not node.get("external", False)
+                }
+                records = {
+                    candidate_id
+                    for candidate_id, (candidate_kind, _, _) in objects.items()
+                    if candidate_kind == "record"
+                }
+                missing = sorted(records - represented)
+                if missing:
+                    fail(f"{path}: complete_records graph omits inventoried record {missing[0]}")
         elif kind == "attachment":
             payload = safe_path(root, value["path"])
             blob_entries = [
