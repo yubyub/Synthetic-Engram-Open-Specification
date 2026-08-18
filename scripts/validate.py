@@ -136,21 +136,36 @@ def validate_package(root: Path) -> None:
         if kind == "record" and value["type"] == "action" and "action" not in manifest["profiles"]:
             fail("action record requires profile action")
 
+    # In a directory package, every file in a normative durable-artifact
+    # directory is observable. A complete package cannot hide one by merely
+    # leaving it out of the manifest.
+    if manifest["completeness"] == "complete":
+        durable_paths = {
+            path.relative_to(root).as_posix()
+            for directory in ("records", "graphs", "attachments")
+            if (root / directory).is_dir()
+            for path in (root / directory).rglob("*")
+            if path.is_file()
+        }
+        omitted = sorted(durable_paths - paths)
+        if omitted:
+            fail(f"complete package has un-inventoried durable artifact: {omitted[0]}")
+
     for object_id, entries in entries_by_id.items():
         kinds = sorted(entry["kind"] for entry in entries)
         if len(entries) > 1 and kinds != ["attachment", "blob"]:
             fail(f"duplicate inventory ID: {object_id}")
 
-    def resolve(target: str, external: bool, source: Path) -> None:
-        if not external and target not in objects:
-            fail(f"{source}: unresolved reference {target}")
+    def resolve(target: str, target_scope: str, source: Path) -> None:
+        if target_scope == "synthetic_engram" and target not in objects and manifest["completeness"] == "complete":
+            fail(f"{source}: complete package omits Engram member {target}")
 
     for object_id, (kind, value, path) in objects.items():
         if kind == "record":
             if "parent" in value:
-                resolve(value["parent"], False, path)
+                resolve(value["parent"], value.get("parent_scope", "synthetic_engram"), path)
             for link in value.get("links", []):
-                resolve(link["target"], link.get("external", False), path)
+                resolve(link["target"], link.get("target_scope", "synthetic_engram"), path)
         elif kind == "graph":
             node_ids = [node["id"] for node in value["nodes"]]
             edge_ids = [edge["id"] for edge in value["edges"]]
@@ -160,7 +175,7 @@ def validate_package(root: Path) -> None:
                 fail(f"{path}: duplicate graph edge ID")
             for node in value["nodes"]:
                 if "record" in node:
-                    resolve(node["record"], node.get("external", False), path)
+                    resolve(node["record"], node.get("record_scope", "synthetic_engram"), path)
             for edge in value["edges"]:
                 if edge["from"] not in node_ids or edge["to"] not in node_ids:
                     fail(f"{path}: graph edge has unresolved endpoint")

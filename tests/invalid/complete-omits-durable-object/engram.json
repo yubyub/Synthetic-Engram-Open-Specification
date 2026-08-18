@@ -28,12 +28,6 @@
       "path": "records/notes/hosting.md"
     },
     {
-      "id": "note_01J00000000000000000000004",
-      "kind": "record",
-      "media_type": "text/markdown",
-      "path": "records/notes/backup.md"
-    },
-    {
       "id": "action_01J00000000000000000000005",
       "kind": "record",
       "media_type": "text/markdown",

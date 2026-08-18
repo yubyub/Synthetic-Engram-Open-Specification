@@ -6,4 +6,4 @@ entry points; `definitions.schema.json` contains shared definitions.
 
 Record schemas validate parsed YAML front matter, not the Markdown body. Schema
 validation alone is insufficient: use `python scripts/validate.py` for package
-inventory, reference, cycle, and checksum checks.
+scope, complete-export closure, inventory, reference, cycle, and checksum checks. These experimental schemas will move to the `v1.0` schema path when the standard reaches 1.0; their current location implies no 1.0 stability.
