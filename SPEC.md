@@ -80,6 +80,46 @@ Markdown content. Front matter begins with `---` on the first line and ends
 with `---` on a line by itself. It MUST conform to
 [`schemas/v0.1/record.schema.json`](schemas/v0.1/record.schema.json).
 
+### 7.1 Serialization
+
+Records MUST be UTF-8 without a byte-order mark. Lines MAY end with either LF
+or CRLF; a bare CR is not a line ending. Unicode text is compared as encoded:
+consumers MUST NOT require or silently apply a normalization form. Producers
+SHOULD emit Unicode Normalization Form C (NFC).
+
+The opening delimiter is exactly the three ASCII characters `---`, followed by
+LF or CRLF, at byte zero. The closing delimiter is the next line whose content
+is exactly `---`; spaces, comments, or other characters are not permitted on a
+delimiter line. It MAY be followed by LF, CRLF, or end of file. Everything
+after that delimiter and its optional line ending is record content. Record
+content MAY be empty. Thus, the delimiter is structural and is not found by
+parsing YAML or by searching for a prefix.
+
+Front matter MUST use the following restricted YAML 1.2 subset:
+
+- it is exactly one mapping in exactly one YAML document;
+- mapping keys MUST be strings and MUST be unique within their mapping;
+  consumers MUST reject duplicate keys rather than select a value;
+- sequences, mappings, and JSON-compatible scalar values are permitted;
+- directives, explicit tags, anchors, aliases, merge keys (`<<`), and explicit
+  YAML document-start or document-end markers are prohibited; and
+- only block collections are permitted; flow collections are prohibited.
+
+Plain scalars use this deterministic typing rule. The exact lowercase tokens
+`null`, `true`, and `false` are null and booleans. JSON-number syntax produces
+numbers (with no non-finite values); every other plain scalar is a string.
+Single-quoted and double-quoted scalars are always strings. In particular,
+timestamps, Engram IDs, schema versions, and values such as `yes`, `no`, `on`,
+and `off` are strings. Schema constraints still determine where numbers,
+booleans, null, or strings are valid. Producers SHOULD quote strings when their
+plain spelling would otherwise be typed as null, a boolean, or a number.
+
+The content is Markdown, but v0.1 does not select a Markdown dialect and body
+rendering is implementation-defined. Raw HTML is allowed as record text, but
+no consumer is required to render it. As required by Section 13, Markdown and
+raw HTML are untrusted input: consumers MUST NOT execute them and renderers
+MUST sanitize or escape unsafe constructs for their output context.
+
 The core envelope requires `id`, `schema_version`, `type`, `title`,
 `created_at`, and `updated_at`. `type` is one of `note`, `project`, or `action`
 in v0.1. An action additionally MUST provide `status`; it MAY provide `due_at`.
@@ -111,7 +151,12 @@ payload inventory entry uses kind `blob` and the attachment ID.
 
 Markdown MAY refer to an attachment with
 `engram-attachment:<attachment-id>`. Consumers MUST resolve that URI by ID and
-MUST NOT treat an embedded path or remote URL as authoritative.
+MUST NOT treat an embedded path or remote URL as authoritative. The text is a
+URI with the `engram-attachment` scheme and is discovered only when it is the
+destination of a normal Markdown link or image. Consumers MUST NOT scan
+arbitrary body text for attachment references. Because Markdown parsing is
+implementation-defined, implementations MAY recognize link and image syntax
+in their chosen dialect, but MUST apply this discovery rule consistently.
 
 ## 10. Extensions
 
