@@ -47,6 +47,21 @@ unreviewed generations are normally derived operational state.
 8. Require an explicit application policy—and usually human review—before model
    output overwrites or becomes durable owner-controlled knowledge.
 
+## Graph-first context discovery
+
+For a large knowledge base, give the client a bounded overview before sending
+record bodies. It can inspect authorized manifest/object metadata and available
+graphs, traverse a relevant neighborhood, then retrieve selected records and
+attachments by stable ID. This supplies broad orientation without treating the
+entire package as one prompt and lets later answers cite durable sources.
+
+Graph topology is only one selection signal and may be incomplete or deliberately
+authored for another purpose. Implementations should combine it with explicit
+filters or application retrieval, enforce authorization at every traversal and
+fetch, report omissions, and retain source IDs through projections. The
+[remote delivery pattern](remote-delivery-pattern.md) names common operations
+without defining a Core API.
+
 ## Why Core should remain retrieval-agnostic
 
 Retrieval quality depends on model, language, domain, latency, cost, privacy,

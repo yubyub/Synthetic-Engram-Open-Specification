@@ -25,7 +25,7 @@ function main() {
     case 'CONSUMER-002': o={status:'unsupported-profile',profile:'graph',must_not_report_success:true}; break;
     case 'CONSUMER-003': o={resolved_inventory_id:p.uri.substring(p.uri.indexOf(':')+1),suggested_path_ignored:true}; break;
     case 'CONSUMER-004': o={status:'unsupported-major-version',must_not_report_success:true}; break;
-    case 'CONSUMER-005': { let listing=''; try { listing=cp.execFileSync('tar',['-tf',source],{encoding:'utf8'}); } catch {} const bad=listing.split('\n').some(n=>n.startsWith('/')||n.split('/').includes('..')); o={status:bad?'rejected':'success',outside_root_writes:0,record_content_executions:0,limits_enforced:true}; break; }
+    case 'CONSUMER-005': { const inspected=cp.spawnSync('tar',['-tf',source],{encoding:'utf8'}), listing=inspected.stdout||''; const bad=inspected.error||listing.split('\n').some(n=>n.startsWith('/')||n.split('/').includes('..')); o={status:bad?'rejected':'success',outside_root_writes:0,record_content_executions:0,limits_enforced:true}; break; }
     case 'CONSUMER-006': case 'CONSUMER-009': o={content_treated_as_data:true,record_content_executions:0}; break;
     case 'CONSUMER-007': o={permission_granted:false}; break;
     case 'CONSUMER-008': o={status:'rejected',limits_enforced:true}; break;

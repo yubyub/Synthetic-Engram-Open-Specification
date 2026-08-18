@@ -1,0 +1,65 @@
+{
+  "model_version": "1.0",
+  "cases": [
+    {
+      "id": "LIFECYCLE-001",
+      "operation": "export-event",
+      "input": {"kind": "first", "previous": null, "candidate": {"engram_id": "engram_A", "export_id": "export_A", "package_id": "package_A", "object_ids": ["note_A"]}},
+      "expected": {"status": "valid", "engram_id_retained": false, "export_id_retained": false, "package_id_changed": true, "object_ids_retained": true}
+    },
+    {
+      "id": "LIFECYCLE-002",
+      "operation": "export-event",
+      "input": {"kind": "retry", "previous": {"engram_id": "engram_A", "export_id": "export_A", "package_id": "package_A", "object_ids": ["note_A"]}, "candidate": {"engram_id": "engram_A", "export_id": "export_A", "package_id": "package_B", "object_ids": ["note_A"]}},
+      "expected": {"status": "valid", "engram_id_retained": true, "export_id_retained": true, "package_id_changed": true, "object_ids_retained": true}
+    },
+    {
+      "id": "LIFECYCLE-003",
+      "operation": "export-event",
+      "input": {"kind": "repack", "previous": {"engram_id": "engram_A", "export_id": "export_A", "package_id": "package_A", "object_ids": ["note_A"]}, "candidate": {"engram_id": "engram_A", "export_id": "export_A", "package_id": "package_C", "object_ids": ["note_A"]}},
+      "expected": {"status": "valid", "engram_id_retained": true, "export_id_retained": true, "package_id_changed": true, "object_ids_retained": true}
+    },
+    {
+      "id": "LIFECYCLE-004",
+      "operation": "export-event",
+      "input": {"kind": "later-snapshot", "previous": {"engram_id": "engram_A", "export_id": "export_A", "package_id": "package_A", "object_ids": ["note_A", "note_B"]}, "candidate": {"engram_id": "engram_A", "export_id": "export_B", "package_id": "package_B", "object_ids": ["note_A", "note_B"]}},
+      "expected": {"status": "valid", "engram_id_retained": true, "export_id_retained": false, "package_id_changed": true, "object_ids_retained": true}
+    },
+    {
+      "id": "LIFECYCLE-005",
+      "operation": "export-event",
+      "input": {"kind": "partial", "previous": {"engram_id": "engram_A", "export_id": "export_A", "package_id": "package_A", "object_ids": ["note_A", "note_B"]}, "candidate": {"engram_id": "engram_A", "export_id": "export_C", "package_id": "package_C", "object_ids": ["note_B"]}},
+      "expected": {"status": "valid", "engram_id_retained": true, "export_id_retained": false, "package_id_changed": true, "object_ids_retained": true}
+    },
+    {
+      "id": "LIFECYCLE-006",
+      "operation": "export-event",
+      "input": {"kind": "re-export", "previous": {"engram_id": "engram_A", "export_id": "export_A", "package_id": "package_A", "object_ids": ["note_A"]}, "candidate": {"engram_id": "engram_A", "export_id": "export_D", "package_id": "package_D", "object_ids": ["note_A"]}},
+      "expected": {"status": "valid", "engram_id_retained": true, "export_id_retained": false, "package_id_changed": true, "object_ids_retained": true}
+    },
+    {
+      "id": "LIFECYCLE-007",
+      "operation": "native-map",
+      "input": {"mappings": [{"namespace": "source-a", "native_id": "123", "engram_id": "note_A"}, {"namespace": "source-a", "native_id": "456", "engram_id": "note_A"}]},
+      "expected": {"status": "collision", "engram_id": "note_A", "automatic_merge": false}
+    },
+    {
+      "id": "LIFECYCLE-008",
+      "operation": "reclassify",
+      "input": {"record_id": "note_A", "from": "note", "to": "project"},
+      "expected": {"status": "valid", "record_id": "note_A", "id_retained": true, "prefix_rewritten": false}
+    },
+    {
+      "id": "LIFECYCLE-009",
+      "operation": "merge",
+      "input": {"survivor": "note_A", "merged": ["note_B", "note_C"], "source_aliases": ["b", "c"]},
+      "expected": {"status": "loss-report-required", "survivor": "note_A", "retired": ["note_B", "note_C"], "ids_reassigned": false}
+    },
+    {
+      "id": "LIFECYCLE-010",
+      "operation": "split",
+      "input": {"original": "note_A", "continuing": "note_A", "created": ["note_B", "note_C"]},
+      "expected": {"status": "loss-report-required", "retained": ["note_A"], "new": ["note_B", "note_C"], "old_id_reused_more_than_once": false}
+    }
+  ]
+}

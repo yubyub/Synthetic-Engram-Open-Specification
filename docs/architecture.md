@@ -5,6 +5,11 @@ normative [`SPEC.md`](../SPEC.md). It explains how the interchange format fits
 between an owner's durable knowledge and implementations that may store and use
 that knowledge very differently.
 
+The portable information model can also be part of an application's knowledge-
+management architecture: human interfaces, AI integrations, and package adapters
+may share one conforming live implementation. Only the materialized package is a
+Core 1.0 conformance boundary; its implementation API remains application-specific.
+
 ## The interoperability boundary
 
 ```text

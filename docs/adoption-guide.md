@@ -6,11 +6,11 @@ its referenced schemas remain authoritative.
 
 ## Short recommendation
 
-Adopt Synthetic Engram first as an optional import/export format when human
-inspection, durable identity, relationship preservation, or exchange between
-independently evolving tools matters. Do not redesign a production database
-around it until a real-data pilot shows that its model and extension strategy fit
-the application.
+Adopt Synthetic Engram as a portable knowledge model when human inspection,
+durable identity, relationship preservation, AI source context, or exchange
+between independently evolving tools matters. Begin with an optional import/
+export boundary; do not redesign a production database around it until a
+real-data pilot shows that its model and extension strategy fit the application.
 
 Synthetic Engram is both a portable knowledge structure and its interchange
 representation. The standard defines the meaning that survives interchange; it

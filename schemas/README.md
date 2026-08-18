@@ -10,6 +10,10 @@ as 1.0 input.
 Published schema URIs and their bytes are immutable. Errata never replace a
 released schema in place; see the [normative version and support
 policy](../docs/versioning.md) for publication and compatibility rules.
+Repository validation checks the published
+[v1.0 SHA-256 manifest](../docs/releases/v1.0-schema-sha256.txt). Independent
+hosts should follow the [schema mirroring procedure](../docs/schema-mirroring.md)
+and publish their own dated fixity and recovery reports.
 
 Record schemas validate parsed YAML front matter, not the Markdown body. Schema
 validation alone is insufficient: use `python scripts/validate.py` for package

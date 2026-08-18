@@ -9,6 +9,12 @@ def invoke(name, operation, source, output, case):
     output.mkdir(parents=True,exist_ok=True); request=output/'request.json'; artifact=output/'adapter-artifacts'; artifact.mkdir()
     request.write_text(json.dumps({'protocol_version':'1.0','case_id':case,'operation':operation,'fixture':str(source.resolve()),'artifact_directory':str(artifact.resolve()),'parameters':{'edits':[]},'supported_profiles':['core','graph','media','action']},indent=2)+'\n')
     result=subprocess.run(ADAPTERS[name]+[operation,str(request)],check=True,text=True,capture_output=True)
+    published=json.loads(request.read_text())
+    workspace=Path('/workspace/Synthetic-Engram-Open-Standard')
+    for field in ('fixture','artifact_directory'):
+        try: published[field]=str(workspace/Path(published[field]).relative_to(ROOT))
+        except ValueError: pass
+    request.write_text(json.dumps(published,indent=2)+'\n')
     parsed=json.loads(result.stdout); (output/'result.json').write_text(json.dumps(parsed,indent=2)+'\n'); return artifact/'package'
 
 def digest(path): return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -42,8 +48,15 @@ def compare(label,left,right):
             'semantic_or_normative_content_loss':[] if semantic else [k for k,v in fields.items() if not v]}
 
 def main():
-    if BASE.exists(): shutil.rmtree(BASE)
-    for d in ('python','node','exchange'): (BASE/d).mkdir(parents=True)
+    BASE.mkdir(parents=True,exist_ok=True)
+    for name in ('python','node'):
+        directory=BASE/name; directory.mkdir(exist_ok=True)
+        for child in directory.iterdir():
+            if child.name == 'conformance.json': continue
+            shutil.rmtree(child) if child.is_dir() else child.unlink()
+    exchange=BASE/'exchange'
+    if exchange.exists(): shutil.rmtree(exchange)
+    exchange.mkdir()
     source=ROOT/'examples/v1.0/basic-engram'
     py=invoke('python','produce',source,BASE/'python','PY-PRODUCE-BASIC'); node=invoke('node','produce',source,BASE/'node','NODE-PRODUCE-BASIC')
     node_from_py=invoke('node','round-trip',py,BASE/'exchange/node-import-python','NODE-IMPORT-PYTHON')

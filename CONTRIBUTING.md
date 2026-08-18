@@ -16,8 +16,12 @@ work must not silently alter its frozen schemas or semantics.
    [`implementation-feedback` register](docs/development/implementation-feedback.md)
    for related adoption concerns, and update its evidence/status when the change
    implements or resolves one of them.
-5. Run `python scripts/validate.py` before opening a pull request.
-6. Add a changelog entry for user-visible changes.
+5. For roadmap work, claim a `ready` item in the
+   [execution backlog](docs/development/implementation-backlog.md) and use its
+   backlog-entry or standards-proposal checklist. Update task status and evidence
+   in the same pull request; do not mark external evidence complete yourself.
+6. Run `python scripts/validate.py` before opening a pull request.
+7. Add a changelog entry for user-visible changes.
 
 Use one logical change per pull request. Normative language must use the BCP 14
 keywords consistently. JSON Schemas and prose must not contradict one another.

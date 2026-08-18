@@ -1,0 +1,124 @@
+{
+  "corpus_version": "1.0",
+  "cases": [
+    {
+      "id": "FM-VALID-001",
+      "content": "---\nname: Example\nnull_value: null\ntrue_value: true\nfalse_value: false\nzero: 0\nnegative: -12\ndecimal: 1.5\nexponent: 1e2\ntimestamp: 2026-08-18T00:00:00Z\nquoted_boolean: \"true\"\nsingle_quoted: 'hello'\n---\nBody\n",
+      "expected": {
+        "outcome": "accepted",
+        "front_matter": {
+          "name": "Example",
+          "null_value": null,
+          "true_value": true,
+          "false_value": false,
+          "zero": 0,
+          "negative": -12,
+          "decimal": 1.5,
+          "exponent": 100,
+          "timestamp": "2026-08-18T00:00:00Z",
+          "quoted_boolean": "true",
+          "single_quoted": "hello"
+        }
+      }
+    },
+    {
+      "id": "FM-VALID-002",
+      "content": "---\ntitle: Unicode 🧠\ntags:\n  - knowledge\n  - 日本語\nlinks:\n  - target: note_01ARZ3NDEKTSV4RRFFQ69G5FAV\n    target_scope: synthetic_engram\nextensions:\n  org.example.payload:\n    enabled: true\n    values:\n      - 1\n      - two\n---\n# Body\n",
+      "expected": {
+        "outcome": "accepted",
+        "front_matter": {
+          "title": "Unicode 🧠",
+          "tags": ["knowledge", "日本語"],
+          "links": [{"target": "note_01ARZ3NDEKTSV4RRFFQ69G5FAV", "target_scope": "synthetic_engram"}],
+          "extensions": {"org.example.payload": {"enabled": true, "values": [1, "two"]}}
+        }
+      }
+    },
+    {
+      "id": "FM-VALID-003",
+      "content": "---\r\ntitle: CRLF allowed\r\nempty_value:\r\n---\r\n",
+      "expected": {"outcome": "accepted", "front_matter": {"title": "CRLF allowed", "empty_value": ""}}
+    },
+    {
+      "id": "FM-INVALID-001",
+      "content": "﻿---\ntitle: BOM\n---\n",
+      "expected": {"outcome": "rejected", "code": "bom-not-allowed"}
+    },
+    {
+      "id": "FM-INVALID-002",
+      "content": "---\ntitle: bare CR\rvalue\n---\n",
+      "expected": {"outcome": "rejected", "code": "line-ending-invalid"}
+    },
+    {
+      "id": "FM-INVALID-003",
+      "content": " --\ntitle: bad opening\n---\n",
+      "expected": {"outcome": "rejected", "code": "delimiter-invalid"}
+    },
+    {
+      "id": "FM-INVALID-004",
+      "content": "---\ntitle: missing close\n",
+      "expected": {"outcome": "rejected", "code": "delimiter-invalid"}
+    },
+    {
+      "id": "FM-INVALID-005",
+      "content": "---\ntitle: one\ntitle: two\n---\n",
+      "expected": {"outcome": "rejected", "code": "yaml-duplicate-key"}
+    },
+    {
+      "id": "FM-INVALID-006",
+      "content": "---\nvalue: &anchor one\n---\n",
+      "expected": {"outcome": "rejected", "code": "yaml-forbidden-feature"}
+    },
+    {
+      "id": "FM-INVALID-007",
+      "content": "---\nvalue: *anchor\n---\n",
+      "expected": {"outcome": "rejected", "code": "yaml-forbidden-feature"}
+    },
+    {
+      "id": "FM-INVALID-008",
+      "content": "---\nvalue: !example tagged\n---\n",
+      "expected": {"outcome": "rejected", "code": "yaml-forbidden-feature"}
+    },
+    {
+      "id": "FM-INVALID-009",
+      "content": "---\nvalue: [one, two]\n---\n",
+      "expected": {"outcome": "rejected", "code": "yaml-forbidden-feature"}
+    },
+    {
+      "id": "FM-INVALID-010",
+      "content": "---\nvalue: {one: two}\n---\n",
+      "expected": {"outcome": "rejected", "code": "yaml-forbidden-feature"}
+    },
+    {
+      "id": "FM-INVALID-011",
+      "content": "---\n1: numeric key\n---\n",
+      "expected": {"outcome": "rejected", "code": "yaml-non-string-key"}
+    },
+    {
+      "id": "FM-INVALID-012",
+      "content": "---\n- top\n- level\n---\n",
+      "expected": {"outcome": "rejected", "code": "front-matter-not-mapping"}
+    },
+    {
+      "id": "FM-INVALID-013",
+      "content": "---\n%YAML 1.2\ntitle: directive\n---\n",
+      "expected": {"outcome": "rejected", "code": "yaml-forbidden-feature"}
+    },
+    {
+      "id": "FM-INVALID-014",
+      "content": "---\ntitle: marker\n...\n---\n",
+      "expected": {"outcome": "rejected", "code": "yaml-forbidden-feature"}
+    },
+    {
+      "id": "FM-INVALID-015",
+      "content": "---\nbase: &base\n  one: two\ncopy:\n  <<: *base\n---\n",
+      "expected": {"outcome": "rejected", "code": "yaml-forbidden-feature"}
+    },
+    {
+      "id": "FM-LIMIT-001",
+      "content": "---\ntitle: this record exceeds its configured test limit\n---\n",
+      "max_record_bytes": 24,
+      "expected": {"outcome": "rejected", "code": "resource-limit"}
+    }
+  ]
+}

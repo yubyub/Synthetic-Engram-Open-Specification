@@ -8,7 +8,9 @@ import hashlib
 import itertools
 import json
 import re
+import shutil
 import sys
+import tempfile
 from collections import defaultdict
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -312,6 +314,8 @@ def validate_package(root: Path) -> None:
 
 def repository_suite() -> None:
     check_local_markdown_links()
+    check_implementation_backlog()
+    check_released_schema_checksums()
     check_traceability_and_vectors()
     expected_profile_sets = {
         frozenset(("core", *selected))
@@ -331,16 +335,23 @@ def repository_suite() -> None:
     for target in targets:
         validate_package(target)
         print(f"PASS {target.relative_to(ROOT)}")
-    for target in sorted((FIXTURE_DIR / "invalid").iterdir()):
-        expected = (target / "expected-error.txt").read_text().strip()
-        try:
-            validate_package(target)
-        except ValidationError as exc:
-            if expected not in str(exc):
-                fail(f"{target}: rejected for the wrong reason: {exc}")
-            print(f"PASS {target.relative_to(ROOT)} (rejected: {expected})")
-        else:
-            fail(f"{target}: invalid fixture was accepted")
+    with tempfile.TemporaryDirectory(prefix="engram-invalid-fixtures-") as tmp:
+        for target in sorted((FIXTURE_DIR / "invalid").iterdir()):
+            expected = (target / "expected-error.txt").read_text().strip()
+            materialized = target
+            hex_recipe = target / "engram.json.hex"
+            if hex_recipe.is_file():
+                materialized = Path(tmp) / target.name
+                shutil.copytree(target, materialized)
+                (materialized / "engram.json").write_bytes(bytes.fromhex(hex_recipe.read_text()))
+            try:
+                validate_package(materialized)
+            except ValidationError as exc:
+                if expected not in str(exc):
+                    fail(f"{target}: rejected for the wrong reason: {exc}")
+                print(f"PASS {target.relative_to(ROOT)} (rejected: {expected})")
+            else:
+                fail(f"{target}: invalid fixture was accepted")
 
 
 def check_local_markdown_links() -> None:
@@ -352,6 +363,100 @@ def check_local_markdown_links() -> None:
             target = target.split("#", 1)[0]
             if target and not (document.parent / target).exists():
                 fail(f"{document}: broken local link {target}")
+
+
+def check_implementation_backlog() -> None:
+    """Keep the adoption roadmap dependency-complete and evidence-bound."""
+    path = ROOT / "docs" / "development" / "implementation-backlog.md"
+    text = path.read_text(encoding="utf-8")
+    # Templates are examples, not live tasks.
+    live_text = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
+    matches = list(re.finditer(r"^### (TASK-\d{3}) — .+$", live_text, re.MULTILINE))
+    if not matches:
+        fail("implementation backlog has no tasks")
+    allowed_statuses = {
+        "ready", "active", "blocked-external", "blocked-decision",
+        "deferred", "complete", "rejected",
+    }
+    required_fields = {
+        "Phase", "Feedback", "Status", "Depends on", "Owner",
+        "Deliverable", "Acceptance", "Evidence",
+    }
+    known_feedback = set(re.findall(
+        r"^\| (FB-\d{3}) \|", (ROOT / "docs/development/implementation-feedback.md").read_text(encoding="utf-8"), re.MULTILINE
+    ))
+    tasks: dict[str, dict[str, str]] = {}
+    for index, match in enumerate(matches):
+        task_id = match.group(1)
+        if task_id in tasks:
+            fail(f"duplicate backlog task ID {task_id}")
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(live_text)
+        block = live_text[match.end():end]
+        fields = dict(re.findall(r"^- \*\*(.+?):\*\* (.+)$", block, re.MULTILINE))
+        missing = sorted(required_fields - fields.keys())
+        if missing:
+            fail(f"{task_id} missing backlog fields: {', '.join(missing)}")
+        if fields["Status"] not in allowed_statuses:
+            fail(f"{task_id} has invalid status {fields['Status']!r}")
+        try:
+            phase = int(fields["Phase"])
+        except ValueError:
+            fail(f"{task_id} has invalid phase")
+        if phase not in range(8):
+            fail(f"{task_id} has invalid phase {phase}")
+        feedback = set(re.findall(r"FB-\d{3}", fields["Feedback"]))
+        if not feedback or feedback - known_feedback:
+            fail(f"{task_id} references unknown or missing feedback IDs")
+        if not fields["Owner"].strip() or not fields["Deliverable"].strip() or not fields["Acceptance"].strip():
+            fail(f"{task_id} has an empty owner, deliverable, or acceptance condition")
+        if fields["Status"] == "complete" and (fields["Evidence"] == "none" or "](" not in fields["Evidence"]):
+            fail(f"{task_id} is complete without linked evidence")
+        tasks[task_id] = fields
+
+    dependencies: dict[str, set[str]] = {}
+    for task_id, fields in tasks.items():
+        value = fields["Depends on"]
+        deps = set() if value == "none" else set(re.findall(r"TASK-\d{3}", value))
+        if value != "none" and not deps:
+            fail(f"{task_id} has malformed dependencies")
+        unknown = deps - tasks.keys()
+        if unknown:
+            fail(f"{task_id} references unknown dependencies: {', '.join(sorted(unknown))}")
+        if task_id in deps:
+            fail(f"{task_id} depends on itself")
+        dependencies[task_id] = deps
+
+    visiting: set[str] = set()
+    visited: set[str] = set()
+    def visit(task_id: str) -> None:
+        if task_id in visiting:
+            fail(f"implementation backlog dependency cycle at {task_id}")
+        if task_id in visited:
+            return
+        visiting.add(task_id)
+        for dependency in dependencies[task_id]:
+            visit(dependency)
+        visiting.remove(task_id)
+        visited.add(task_id)
+    for task_id in tasks:
+        visit(task_id)
+    represented = set().union(*(set(re.findall(r"FB-\d{3}", fields["Feedback"])) for fields in tasks.values()))
+    if represented != known_feedback:
+        fail(f"backlog feedback coverage mismatch: missing {', '.join(sorted(known_feedback - represented))}")
+    print(f"PASS implementation backlog ({len(tasks)} tasks)")
+
+
+def check_released_schema_checksums() -> None:
+    """Detect accidental modification of immutable v1.0 schema bytes."""
+    checksum_path = ROOT / "docs" / "releases" / "v1.0-schema-sha256.txt"
+    for line in checksum_path.read_text(encoding="utf-8").splitlines():
+        if not line or line.startswith("#"):
+            continue
+        digest, relative = line.split("  ", 1)
+        actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+        if actual != digest:
+            fail(f"released schema checksum mismatch: {relative}")
+    print("PASS immutable v1.0 schema checksums")
 
 def check_traceability_and_vectors() -> None:
     """Keep normative prose, the machine catalog, and behavioral vectors linked."""
@@ -379,7 +484,8 @@ def check_traceability_and_vectors() -> None:
                 fail(f"{path}: vector references unknown requirement")
             if not isinstance(case.get("expected"), dict) or not case["expected"]:
                 fail(f"{path}: vector lacks observable expected output")
-            if case.get("adapter_operation") != vector["role"].replace("consumer", "consume"):
+            operation_for_role = {"producer": "produce", "consumer": "consume", "round-trip": "round-trip"}
+            if case.get("adapter_operation") != operation_for_role[vector["role"]]:
                 fail(f"{path}: vector adapter operation does not match role")
             fixture = case.get("fixture")
             if not isinstance(fixture, dict) or fixture.get("kind") not in {"directory", "generated-tar"}:

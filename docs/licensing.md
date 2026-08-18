@@ -24,3 +24,8 @@ Commercial adopters should review the complete license texts and retain required
 notices. Implementing the public format does not make an application's unrelated
 code or proprietary live-storage design part of this repository or automatically
 subject it to either license.
+
+The same applies when the portable model is used inside a knowledge-management
+service or exposed through an application-specific API: obligations follow the
+covered specification and code artifacts, not the architectural role in which an
+adopter uses them. Adopters remain responsible for their own legal review.

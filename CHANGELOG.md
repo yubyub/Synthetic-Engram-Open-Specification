@@ -10,12 +10,21 @@ All notable specification changes are recorded here.
   guidance.
 - A non-normative implementation-feedback register to track constructive
   adoption recommendations and evidence without changing frozen Core 1.0.
+- An execution backlog with machine-checked dependencies, statuses, feedback
+  coverage, and evidence gates.
+- Component maturity, evaluator, pilot, SDK, identity, preservation, profile,
+  graph-mapping, and remote-delivery guidance.
+- A language-neutral front-matter parser contract with Python/Node differential
+  corpus tests and executable identity-lifecycle vectors.
 
 ### Changed
 
 - Clarified candidate-standard maturity, purpose, benefits, burdens, application
   roles, and the package-versus-live-store boundary in the README.
 - Defined adoption-triggered governance review milestones.
+- Reframed the front page and integration guides around knowledge management,
+  graph-first AI context, human interfaces, and package interoperability while
+  retaining the Core 1.0 package/API boundary.
 
 ## [1.0.0] - 2026-08-18
 
