@@ -3,6 +3,10 @@
 This document translates the normative rules in `SPEC.md` into a reviewable
 checklist. In a conflict, `SPEC.md` wins.
 
+Normative clauses have stable `REQ-*` identifiers. See the complete
+[requirement-to-test matrix](traceability.md) and the
+[machine-readable requirement catalog](requirements.json).
+
 ## Package checks
 
 - `engram.json` exists and validates against the v0.1 manifest schema.
@@ -29,4 +33,7 @@ checklist. In a conflict, `SPEC.md` wins.
 Run `python scripts/validate.py`. It validates the complete example and every
 fixture in `tests/valid`, then asserts that every fixture in `tests/invalid` is
 rejected. Invalid fixtures contain an `expected-error.txt` substring to ensure
-they fail for the intended reason.
+they fail for the intended reason. The suite also checks catalog/traceability
+coverage and the structure of the consumer and round-trip vectors in
+`tests/vectors`. Unlike producer fixtures, vectors name an operation and an
+observable `expected` result so implementations can report behavioral evidence.

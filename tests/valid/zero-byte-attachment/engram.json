@@ -1,0 +1,29 @@
+{
+  "format": "synthetic-engram",
+  "version": "0.1.0",
+  "id": "engram_01ARZ3NDEKTSV4RRFFQ69G5FAV",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-01T00:00:00Z",
+  "owner": {
+    "type": "person",
+    "name": "Test"
+  },
+  "profiles": [
+    "core",
+    "media"
+  ],
+  "objects": [
+    {
+      "id": "attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1",
+      "kind": "attachment",
+      "media_type": "application/json",
+      "path": "attachments/empty.json"
+    },
+    {
+      "id": "attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1",
+      "kind": "blob",
+      "media_type": "application/octet-stream",
+      "path": "attachments/empty.bin"
+    }
+  ]
+}

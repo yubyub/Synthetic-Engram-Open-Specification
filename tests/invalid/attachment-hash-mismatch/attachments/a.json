@@ -1,0 +1,10 @@
+{
+  "id": "attachment_01ARZ3NDEKTSV4RRFFQ69G5FB1",
+  "schema_version": "0.1",
+  "type": "attachment",
+  "filename": "a.bin",
+  "media_type": "application/octet-stream",
+  "size": 3,
+  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "path": "attachments/a.bin"
+}

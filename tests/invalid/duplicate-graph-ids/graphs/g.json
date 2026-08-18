@@ -1,0 +1,15 @@
+{
+  "id": "graph_01ARZ3NDEKTSV4RRFFQ69G5FB0",
+  "schema_version": "0.1",
+  "type": "graph",
+  "title": "G",
+  "nodes": [
+    {
+      "id": "n"
+    },
+    {
+      "id": "n"
+    }
+  ],
+  "edges": []
+}
