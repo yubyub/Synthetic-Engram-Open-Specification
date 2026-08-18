@@ -27,6 +27,7 @@ specification begins when a conforming package is produced or consumed.
 | IDs and links must survive renames and migrations | Strong benefit |
 | Two applications exchange notes, projects, actions, graphs, or media | Benefit after a round-trip pilot |
 | An AI tool needs durable source objects behind derived context | Useful source layer |
+| Several tools need context about data that remains in external services | Future Source Reference profile is relevant; Core 0.2 alone is insufficient |
 | Only one application will read the data | Usually unnecessary burden |
 | Plain Markdown already preserves all required meaning | Usually unnecessary burden |
 | The primary need is sync, history, ACLs, retrieval, or model memory behavior | Wrong layer by itself |
@@ -62,6 +63,13 @@ would reduce adoption. The tradeoff is that conformance does not make proprietar
 live services mutually queryable. A future protocol binding could standardize
 remote access without changing the portable information model.
 
+External source data need not move merely because it contributes to the user's
+context. A future Source Reference profile can preserve what external entity is
+relevant, its role, where it conceptually resides, what version was observed,
+and whether any representation was adopted. The provider-specific resolver and
+credentials remain local. Core 0.2 does not yet standardize that object, so a
+pilot must use a documented namespaced extension and report the limitation.
+
 ## Canonical internal storage
 
 The package can be used directly as a small local application's canonical store,
@@ -91,6 +99,11 @@ remain application-specific unless interoperable evidence shows that one shared
 profile is useful. Derived objects should retain source record IDs, declare loss
 or transformation, and never be confused with the durable source.
 
+For externally stored knowledge, context assembly should also retain a portable
+Source Reference ID and observed version when available. The reference is not
+permission to retrieve, and transient connector results do not become durable
+Engram knowledge unless explicitly adopted and inventoried.
+
 ## Long-term archive caveats
 
 The textual records, explicit inventory, stable IDs, and attachment hashes make
@@ -110,8 +123,9 @@ Make it a stronger archival choice by pairing it with managed preservation
 storage, retaining immutable schema and validator copies, periodically checking
 fixity, documenting rendering assumptions, and using an established outer
 packaging or repository standard where appropriate. The planned archive binding,
-provenance profile, history model, signed-package binding, and independent
-governance are the highest-value specification-level improvements.
+Source Reference and provenance profiles, history model, signed-package binding,
+and independent governance are the highest-value specification-level
+improvements.
 
 ## Pilot checklist
 
@@ -129,3 +143,5 @@ Before committing to adoption:
 7. Delete the source application and verify that a human can still inspect the
    package and another implementation can recover its intended meaning.
 8. Publish preserved, transformed, unsupported, and omitted semantics.
+9. If external connectors are used, disable them and verify that source
+   identity and relationships remain inspectable without credentials or fetches.

@@ -24,8 +24,9 @@ require a full revision or synchronization model.
 | Correction | Current entity corrects another identified entity without implying deletion | specialization/derivation plus a typed activity |
 
 Every source inside the Engram uses its stable object ID and explicit membership
-scope. External sources use typed URIs or future source-profile objects; fetching
-is never implied. A derivation declares activity type, responsible agent when
+scope. External sources use typed URIs or future Source Reference objects as
+explored in [`source-reference-profile-proposal.md`](source-reference-profile-proposal.md);
+fetching is never implied. A derivation declares activity type, responsible agent when
 known, time when known, source IDs, transformation description or identifier,
 and whether content was omitted, summarized, split, merged, or otherwise lossy.
 
@@ -54,6 +55,11 @@ and organizational relationships; they can also falsely imply authority. Treat
 agents and source URIs as untrusted claims, apply disclosure authorization to the
 entire relation, avoid automatic URL fetching, and distinguish integrity from
 authenticity. Signatures remain a separate binding.
+
+Source Reference and provenance remain separate profiles: the former identifies
+external knowledge and its portable context; the latter describes activities,
+agents, derivation, and responsibility. A reference can exist without any
+derivation, and provenance may refer entirely to Engram-native objects.
 
 The next step is pilot-backed field design under
 [`profile-governance.md`](../profile-governance.md). No schema is published until

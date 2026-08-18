@@ -22,19 +22,18 @@ Core 0.2 conformance boundary; its implementation API remains application-specif
        +--------------------------+--------------------------+
                                   |
                          implementation API
-                                  |
-                  +---------------+---------------+
-                  |       live Engram Store       |
-                  | files, SQL, graph DB, service |
-                  +---------------+---------------+
-                                  |
-                         import / export adapter
-                                  |
-                  +---------------+---------------+
-                  | portable Engram Package       |
-                  | manifest, records, graphs,    |
-                  | attachments                   |
-                  +-------------------------------+
+                     /                         \
+      +-----------------------------+     authorized resolver
+      |      live Engram Store      |              |
+      | files, SQL, graph DB, service|     external data systems
+      +-----------------------------+
+                     |
+            import / export adapter
+                     |
+      +-----------------------------+
+      | portable Engram Package     |
+      | records, graphs, attachments|
+      +-----------------------------+
 ```
 
 The package is the conformance boundary, not a mandatory live filesystem.
@@ -42,6 +41,14 @@ Applications may normalize records into relational tables, store edges in a
 graph database, keep blobs in object storage, or use the package directly. The
 stable IDs and declared semantics—not paths or database keys—connect those
 representations.
+
+An implementation may also use connectors to external systems without making
+their content part of the Engram. The portable concern is the contextual layer
+the owner deliberately adopts: source identity, relationships, labels,
+observations, selections, and any materialized representations. Connector state,
+credentials, provider indexes, and unexported interpretations remain outside it.
+Core 0.2 has only an `outside_engram` membership marker; a structured Source
+Reference object is future profile work.
 
 ## Portable information model
 
@@ -70,6 +77,12 @@ files are moved or live storage is replaced.
 A complete export is a closure of the owner's current durable knowledge at a
 source snapshot. The producer must compare the package inventory with that
 source; package self-consistency alone cannot prove nothing was withheld.
+
+Closure stops at the Engram boundary. A complete package contains every durable
+external-reference assertion owned by the Engram, but it need not contain the
+externally referenced data. Content retrieved from a source enters completeness
+only when deliberately adopted as a durable record, attachment, or future
+profile object.
 
 A partial export deliberately carries a subset. Its selection description and
 reference scopes prevent a consumer from mistaking an absent record for a
@@ -108,7 +121,7 @@ state that can be regenerated or that belongs to a particular runtime:
 | explicit links and graph topology | model context windows and query results |
 | adopted attachments | thumbnails and generated previews |
 | namespaced durable extensions | locks, unfinished writes, and telemetry |
-| external-reference semantics | credentials, tokens, and authorization state |
+| adopted external-reference context | credentials, tokens, connector state, and authorization decisions |
 
 An implementation may deliberately adopt a generated artifact as durable
 owner-controlled knowledge; once it does, the artifact must be inventoried under
@@ -132,4 +145,6 @@ and typed record links rather than leaked into the exchange contract.
 These deployments are interoperable only to the extent that their adapters meet
 the same conformance requirements. See the [design rationale](rationale.md) for
 why the boundary was selected and [related standards](related-standards.md) for
-adjacent formats and possible mappings.
+adjacent formats and possible mappings. The future
+[Source Reference profile](development/source-reference-profile-proposal.md)
+explores portable context for externally stored knowledge.

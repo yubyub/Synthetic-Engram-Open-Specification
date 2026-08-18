@@ -11,6 +11,7 @@
 | External implementations/products | None known | Pilot reports are invited; no adoption claim is made. |
 | Archive binding | Not standardized | A directory is the package baseline; archives are transport wrappers. |
 | Remote/API binding | Not standardized | HTTP, MCP, and local APIs remain application-specific. |
+| Source Reference profile | Exploration | A non-normative concept model exists; no profile identifier, schema, or conformance claim is available. |
 | History, provenance, sync, and authority | Not standardized | These require separate evidence-driven profiles or specifications. |
 
 A stable 1.0 should require real pilot use, at least one independently maintained

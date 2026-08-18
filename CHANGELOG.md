@@ -35,6 +35,17 @@ All notable specification and repository changes are recorded here.
 - Pilot and stable-release readiness criteria.
 - Public issue and pull-request templates, tag-addressed schema identifiers,
   and AI live-service discovery guidance.
+- A non-normative Source Reference profile exploration for portable context
+  about externally stored knowledge, with resolver, completeness, graph,
+  provenance, security, and pilot boundaries.
+
+### Clarified
+
+- Complete-export closure includes durable Engram-owned contextual assertions
+  but not the content of external entities merely reachable through links.
+- Plugins, connectors, APIs, and MCP servers may resolve external knowledge but
+  their credentials, authorization, and provider-specific state are not
+  portable Engram context.
 
 ## [0.2.0] - unreleased
 

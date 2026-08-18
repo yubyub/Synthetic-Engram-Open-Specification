@@ -132,6 +132,14 @@ These terms are distinct:
 Completeness is a claim about the producer's source snapshot, not merely package
 self-consistency. <a id="req-closure-compare"></a> **REQ-CLOSE-005:** A producer of a complete package MUST compare the inventory with that snapshot. A consumer can verify packaged evidence, but cannot prove disclosure of an object for which the package contains no evidence.
 
+The source snapshot is bounded by the durable artifacts owned by the Synthetic
+Engram. External entities named by `outside_engram` references are not Engram
+members and their content is therefore outside complete-export closure. If an
+implementation deliberately adopts a copy, excerpt, summary, observation, or
+other representation as durable Engram knowledge, REQ-CLOSE-004 applies to that
+adopted artifact. Package completeness does not mean that every resource
+reachable through an external link has been downloaded.
+
 ## 7. Records
 
 <a id="req-record-envelope"></a> **REQ-REC-001:** A record MUST be a `.md` file consisting of YAML 1.2 front matter followed by Markdown content; front matter begins with `---` on the first line and ends with `---` on a line by itself.
@@ -255,6 +263,13 @@ Core 0.2 does not define synchronization, conflict resolution, access-control
 descriptors, certification branding, query lenses, AI context selection, or
 portable revision deltas. Pilot feedback may justify future specifications,
 but applications must not infer these capabilities from 0.2 conformance.
+
+Core 0.2 also does not define a structured external-source identity, locator,
+observation, or materialization model. A future optional Source Reference
+profile may make owner-controlled contextual relationships to externally stored
+knowledge portable without embedding that knowledge, credentials, or a
+provider-specific resolver in the Engram. See the non-normative
+[Source Reference exploration](docs/development/source-reference-profile-proposal.md).
 
 Standardized archive serialization is also outside core 0.2 and is reserved
 for the future [Archive Binding Specification](docs/archive-binding.md).

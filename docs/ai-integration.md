@@ -30,6 +30,12 @@ Only the durable objects and portable semantics at the top and bottom are Engram
 knowledge. Indexes, embeddings, scores, chunks, prompts, model context, and
 unreviewed generations are normally derived operational state.
 
+An AI client may also reach user data through application connectors, plugins,
+APIs, or MCP servers. Access does not itself make the data or the connector's
+interpretation part of the Engram. The owner can adopt durable relationships,
+source identity, observations, selections, and chosen materializations while
+the external bytes remain in their source system.
+
 ## Integration rules of thumb
 
 1. Validate untrusted packages before indexing them.
@@ -46,6 +52,30 @@ unreviewed generations are normally derived operational state.
    a documented extension or future profile.
 8. Require an explicit application policy—and usually human review—before model
    output overwrites or becomes durable owner-controlled knowledge.
+9. Keep resolver configuration and credentials outside portable knowledge, and
+   do not treat a source reference as permission to fetch.
+10. When external content is used, retain its portable Source Reference ID when
+    available, the observed source version, and the transformation or omission
+    record alongside citations.
+
+## External source enrichment
+
+The future [Source Reference profile](development/source-reference-profile-proposal.md)
+is intended to let an Engram say what external knowledge it relates to, where
+that knowledge conceptually resides, and what role it has without requiring a
+copy. A resolver remains application-specific.
+
+A context assembly pipeline may resolve an authorized source at task time,
+retrieve only the necessary material, and combine it with native Engram records.
+It should distinguish source metadata, transient retrieved content, generated
+context, and deliberately adopted Engram knowledge. If a retrieved excerpt,
+summary, or snapshot is adopted, it becomes an inventoried object and should
+carry provenance back to the Source Reference. If it is not adopted, it remains
+ephemeral runtime context.
+
+Resolution must be optional. A client that lacks the provider integration—or
+has lost access—should still preserve and display the portable source identity,
+relationship, last observation, and materialization status it understands.
 
 ## Graph-first context discovery
 
@@ -75,7 +105,9 @@ standardized, applications SHOULD expose one read-only operation such as
 - the caller's authorized scope;
 - result-size and traversal limits;
 - whether overview, graph, search, record, and attachment retrieval are
-  available; and
+  available;
+- whether Source Reference listing or resolution is available, when an
+  experimental or future profile is understood; and
 - stable identifiers or links for the next permitted operations.
 
 An AI-oriented client can then follow this default sequence:
@@ -85,8 +117,10 @@ An AI-oriented client can then follow this default sequence:
 3. inspect available top-level graphs when they are useful;
 4. search or traverse within an explicit budget;
 5. fetch selected records in batches by stable ID;
-6. fetch attachments only when needed and permitted; and
-7. retain source IDs and report omitted or transformed content.
+6. fetch attachments only when needed and permitted;
+7. resolve external sources only when needed, permitted, and explicitly
+   requested by the application policy; and
+8. retain source IDs and report omitted or transformed content.
 
 This discovery operation is a strong candidate for a future HTTP, MCP, or local
 library binding. It is guidance rather than Core 0.2 conformance: naming one

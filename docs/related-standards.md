@@ -96,6 +96,14 @@ library API. MCP does not replace the durable package, completeness rules, or
 stable knowledge identity; Synthetic Engram does not prescribe MCP as its
 transport.
 
+The same separation applies to application plugins and connector ecosystems.
+They may authenticate to and retrieve from Google Drive, GitHub, databases, or
+other services, and may maintain their own search or classification state. That
+access path does not make source identity or contextual relationships portable.
+The future [Source Reference profile](development/source-reference-profile-proposal.md)
+would describe the external subject and owner-controlled context; MCP, a plugin,
+an API client, or a local adapter could independently act as its resolver.
+
 ## Reused foundational standards
 
 The core deliberately builds on established formats rather than redefining
