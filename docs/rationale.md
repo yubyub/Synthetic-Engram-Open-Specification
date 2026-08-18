@@ -1,12 +1,15 @@
-# Original concept: historical rationale
+# Design rationale
 
 > [!IMPORTANT]
-> This document is historical and non-normative. It contains no requirements.
+> This document is non-normative. It explains the reasoning behind the current
+> core and records the disposition of broader ideas from the original proposal.
+> It contains no requirements.
+>
 > [`SPEC.md`](../SPEC.md) and its referenced schemas are the only sources of
 > format requirements. The disposition of the original proposal is recorded in
 > the [design-decision matrix](design-decisions.md).
 
-## Purpose and interoperability rationale
+## Interoperability rationale
 
 The project began from a desire to separate durable knowledge ownership from
 application ownership. The proposed interchange layer covered human-facing

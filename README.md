@@ -1,20 +1,69 @@
 # Synthetic Engram Open Standard
 
-A human-owned, portable format for persistent knowledge that can be used by
-people, AI systems, and non-AI applications without tying that knowledge to one
-vendor, database, or service.
+**Keep knowledge useful when the application, AI provider, database, or hosting
+model changes.** Synthetic Engram is an open interchange standard for a
+human-owned knowledge base: typed Markdown records, explicit relationships,
+portable graphs, and verifiable attachments with stable identities.
 
 > [!IMPORTANT]
 > **Status: experimental v0.1 draft.** The format is implementable so that its
 > assumptions can be tested, but it is not yet a stable 1.0 standard.
 
-## Start here
+## Why use it?
+
+Most knowledge tools make their own storage model the boundary of what can be
+kept, linked, or moved. A folder of Markdown is inspectable but does not by
+itself define durable identity, typed records, graph semantics, package
+completeness, or preservation rules. A database can provide those features but
+usually binds them to one implementation.
+
+Synthetic Engram defines the boundary between **portable knowledge** and the
+software that stores or uses it. Choose it when you want to:
+
+- move a knowledge base between local files, SQL, graph databases, object
+  storage, or hosted services without changing its portable meaning;
+- let note tools, project tools, graph viewers, AI assistants, and coding agents
+  consume the same durable objects without making any one of them authoritative;
+- preserve IDs and relationships across renames, exports, and migrations;
+- exchange a complete archive or an explicitly partial package;
+- validate what an export contains, including references and attachment hashes;
+- allow partial implementations to declare exactly which profiles they support.
+
+It is **not** a database, sync protocol, application framework, retrieval
+algorithm, or AI-memory policy. Implementations keep their preferred live
+architecture and import or export the standard package at the interoperability
+boundary.
+
+## Who is it for?
+
+- **Knowledge-base owners** who need an inspectable exit path from a product.
+- **Application authors** who want a documented import/export contract rather
+  than another proprietary backup format.
+- **Agent and AI developers** who need durable, bounded context that remains
+  useful outside a model runtime.
+- **Adapter authors and coding agents** who need schemas, normative rules,
+  fixtures, and observable conformance behavior to make implementation choices.
+
+## Evaluate the standard
+
+1. Read the [architecture](docs/architecture.md) to understand what belongs in
+   the portable layer and what remains implementation-specific.
+2. Inspect the [complete example](examples/basic-engram/README.md), including a
+   project, notes, an action, their graph, and an attachment.
+3. Read the [normative specification](SPEC.md) and
+   [conformance checklist](docs/conformance.md).
+4. Run the validator, then compare the model with the
+   [related-work analysis](docs/related-standards.md).
+
+## Documentation map
 
 - [Normative specification](SPEC.md)
 - [Complete example package](examples/basic-engram/README.md)
 - [JSON Schemas](schemas/README.md)
 - [Conformance and validation](docs/conformance.md)
-- [Original concept and design rationale](docs/concept-draft.md)
+- [Design rationale](docs/rationale.md)
+- [Architecture and implementation boundaries](docs/architecture.md)
+- [Related standards and projects](docs/related-standards.md)
 - [Non-normative design-decision matrix](docs/design-decisions.md)
 - [Open design questions](docs/open-questions.md)
 

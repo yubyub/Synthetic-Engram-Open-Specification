@@ -22,7 +22,7 @@ extension data. It does not grant semantics from a deferred specification.
 
 ## Crosswalk for the retained historical document
 
-Every major heading that remains in [`concept-draft.md`](concept-draft.md) maps
+Every major heading that remains in [`rationale.md`](rationale.md) maps
 to the detailed original-heading decisions below.
 
 | Current historical heading | Matrix coverage |
