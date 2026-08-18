@@ -18,7 +18,7 @@ from jsonschema import Draft202012Validator, FormatChecker
 from referencing import Registry, Resource
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA_DIR = ROOT / "schemas" / "v0.1"
+SCHEMA_ROOT = ROOT / "schemas"
 OBJECT_SCHEMA = {
     "record": "record.schema.json",
     "graph": "graph.schema.json",
@@ -96,16 +96,19 @@ def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
         result[key] = value
     return result
 
+def schema_registry(schema_dir: Path) -> Registry:
 
 def schema_registry() -> Registry:
     registry = Registry()
-    for path in SCHEMA_DIR.glob("*.schema.json"):
+    for path in schema_dir.glob("*.schema.json"):
         contents = load_json(path)
         registry = registry.with_resource(
             contents["$id"], Resource.from_contents(contents)
         )
     return registry
 
+def validator(name: str, registry: Registry, schema_dir: Path) -> Draft202012Validator:
+    schema = load_json(schema_dir / name)
 
 def validator(name: str, registry: Registry) -> Draft202012Validator:
     schema = load_json(SCHEMA_DIR / name)
@@ -115,6 +118,8 @@ def validator(name: str, registry: Registry) -> Draft202012Validator:
     )
 
 
+def check_schema(instance: Any, name: str, registry: Registry, schema_dir: Path, label: Path) -> None:
+    errors = sorted(validator(name, registry, schema_dir).iter_errors(instance), key=lambda e: list(e.absolute_path))
 def check_schema(instance: Any, name: str, registry: Registry, label: Path) -> None:
     errors = sorted(
         validator(name, registry).iter_errors(instance),
@@ -193,12 +198,15 @@ def safe_path(root: Path, value: str) -> Path:
 
 
 def validate_package(root: Path) -> None:
-    registry = schema_registry()
     manifest_path = root / "engram.json"
     if not manifest_path.is_file():
         fail(f"{root}: missing engram.json")
     manifest = load_json(manifest_path)
-    check_schema(manifest, "manifest.schema.json", registry, manifest_path)
+    version = manifest.get("version", "")
+    schema_version = "1.0" if version.startswith("1.0.") else "0.1"
+    schema_dir = SCHEMA_ROOT / f"v{schema_version}"
+    registry = schema_registry(schema_dir)
+    check_schema(manifest, "manifest.schema.json", registry, schema_dir, manifest_path)
 
     paths: set[str] = set()
     entries_by_id: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -217,7 +225,7 @@ def validate_package(root: Path) -> None:
         if kind == "blob":
             continue
         value = read_record(path) if kind == "record" else load_json(path)
-        check_schema(value, OBJECT_SCHEMA[kind], registry, path)
+        check_schema(value, OBJECT_SCHEMA[kind], registry, schema_dir, path)
         if value["id"] != entry["id"]:
             fail(f"{entry['path']}: object ID does not match inventory")
         if entry["id"] in objects:
@@ -273,11 +281,20 @@ def validate_package(root: Path) -> None:
             if len(edge_ids) != len(set(edge_ids)):
                 fail(f"{path}: duplicate graph edge ID")
             for node in value["nodes"]:
+                reference = node.get("object_id", node.get("record"))
+                if reference is not None:
+                    resolve(reference, False, path)
+                    if schema_version == "1.0" and node.get("object_kind") != objects[reference][0]:
+                        fail(f"{path}: graph node object_kind does not match inventory")
                 if "record" in node:
                     resolve(node["record"], node.get("record_scope", "synthetic_engram"), path)
             for edge in value["edges"]:
                 if edge["from"] not in node_ids or edge["to"] not in node_ids:
                     fail(f"{path}: graph edge has unresolved endpoint")
+                if schema_version == "1.0" and ":" in edge["relation"]:
+                    prefix = edge["relation"].split(":", 1)[0]
+                    if prefix != "core" and prefix not in value.get("relation_namespaces", {}):
+                        fail(f"{path}: unsupported relation vocabulary {prefix}")
             if value["scope"] == "complete_records":
                 represented = {
                     node["record"] for node in value["nodes"]
