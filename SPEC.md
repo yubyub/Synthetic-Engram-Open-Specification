@@ -22,8 +22,9 @@ and **MAY** are to be interpreted as described by BCP 14 (RFC 2119 and RFC
 ## 3. Terminology
 
 - **Synthetic Engram:** a durable logical knowledge environment whose identity persists across exports, package layouts, and storage migrations.
-- **Engram Package:** a directory or archive containing all or part of a
-  Synthetic Engram in this portable representation. A package is a transport instance, not the Engram itself.
+- **Engram Package:** a directory containing all or part of a Synthetic Engram
+  in this portable representation. A package is an interchange instance, not
+  the Engram itself.
 - **Engram Record:** one durable typed object in an Engram.
 - **Engram ID:** the stable `engram_id` of the Synthetic Engram.
 - **Package ID:** manifest `id`, identifying one serialized package instance. Repacking creates a new Package ID.
@@ -38,7 +39,27 @@ and **MAY** are to be interpreted as described by BCP 14 (RFC 2119 and RFC
 <a id="req-encoding-markdown-utf8"></a> **REQ-ENC-003:** Markdown records MUST be UTF-8 encoded.
 <a id="req-path-portable"></a> **REQ-PATH-001:** Package paths MUST use `/` as the separator and MUST be relative.
 <a id="req-path-safe"></a> **REQ-PATH-002:** Package paths MUST NOT contain an empty segment, `.` segment, `..` segment, or NUL byte.
-<a id="req-path-archive"></a> **REQ-PATH-003:** An archive consumer MUST reject entries that escape the extraction root.
+<a id="req-path-archive"></a> **REQ-PATH-003:** If an implementation chooses to
+extract an archive transport wrapper, it MUST prevent every archive entry from
+escaping the extraction root and MUST enforce resource limits during
+inspection and extraction.
+
+### 4.1 Canonical directory representation
+
+The canonical core 1.0 interchange representation of an Engram Package is the
+directory tree rooted at `engram.json`. Package paths describe locations in
+that directory tree.
+
+ZIP, tar, and other archive formats MAY carry a directory-form Engram Package
+as transport wrappers. Core 1.0 does not select an archive format, media type,
+entry model, or serialization. Consequently, an archive wrapper cannot
+independently claim standardized archive conformance under core 1.0. A core
+conformance claim applies to the represented directory package after any
+implementation-defined, security-constrained extraction.
+
+A future [Archive Binding Specification](docs/archive-binding.md) will define
+standardized archive conformance without changing the identity or package-path
+semantics of the canonical directory representation.
 
 <a id="req-time-utc"></a> **REQ-TIME-001:** Timestamps MUST be RFC 3339 `date-time` strings in UTC and use the `Z` suffix.
 Producers SHOULD emit seconds even when the value has no sub-second precision.
@@ -102,7 +123,8 @@ These terms are distinct:
 <a id="req-closure-transient"></a> **REQ-CLOSE-003:** A complete export MUST NOT classify transient caches, search indexes, lock files, sessions, credentials, access tokens, telemetry, temporary files, or unfinished writes as normative objects. It need not include thumbnails, previews, embeddings, rendered HTML, compiled views, query results, model outputs, or other reproducible derivative artifacts.
 <a id="req-closure-adopted"></a> **REQ-CLOSE-004:** A derivative artifact deliberately adopted as durable owner-controlled knowledge MUST be inventoried under an applicable profile or namespaced extension.
 
-Completeness is a claim about the producer's source snapshot, not merely archive self-consistency. <a id="req-closure-compare"></a> **REQ-CLOSE-005:** A producer of a complete package MUST compare the inventory with that snapshot. A consumer can verify packaged evidence, but cannot prove disclosure of an object for which the package contains no evidence.
+Completeness is a claim about the producer's source snapshot, not merely package
+self-consistency. <a id="req-closure-compare"></a> **REQ-CLOSE-005:** A producer of a complete package MUST compare the inventory with that snapshot. A consumer can verify packaged evidence, but cannot prove disclosure of an object for which the package contains no evidence.
 
 ## 7. Records
 
@@ -207,3 +229,6 @@ v0.1 does not define synchronization, conflict resolution, access-control
 descriptors, certification branding, query lenses, AI context selection, or
 portable revision deltas. These subjects remain documented in
 [docs/open-questions.md](docs/open-questions.md).
+
+Standardized archive serialization is also outside core 1.0 and is reserved
+for the future [Archive Binding Specification](docs/archive-binding.md).
