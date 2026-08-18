@@ -1,0 +1,1 @@
+schema error at objects/0/path

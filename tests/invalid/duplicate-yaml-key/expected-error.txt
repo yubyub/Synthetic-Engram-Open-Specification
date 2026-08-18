@@ -1,1 +1,2 @@
+duplicate YAML key
 duplicate YAML key 'title'

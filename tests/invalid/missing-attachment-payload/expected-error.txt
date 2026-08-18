@@ -1,0 +1,1 @@
+missing inventory path: attachments/a.bin

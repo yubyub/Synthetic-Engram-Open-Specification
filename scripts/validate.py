@@ -38,6 +38,11 @@ FEATURE_RE = re.compile(r"^[a-z0-9]+(?:[.-][a-z0-9]+)+$")
 class EngramLoader(yaml.SafeLoader):
     pass
 
+def _unique_yaml_mapping(loader: EngramLoader, node: yaml.MappingNode, deep: bool = False) -> dict[str, Any]:
+    """Construct a mapping while rejecting keys YAML would otherwise overwrite."""
+    result: dict[str, Any] = {}
+    for key_node, value_node in node.value:
+        key = loader.construct_object(key_node, deep=deep)
 
 EngramLoader.yaml_implicit_resolvers = {}
 EngramLoader.add_implicit_resolver(
@@ -73,6 +78,14 @@ def _unique_mapping(
         result[key] = loader.construct_object(value_node, deep=deep)
     return result
 
+EngramLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _unique_yaml_mapping
+)
+
+EngramLoader.yaml_implicit_resolvers = {
+    key: [(tag, regex) for tag, regex in values if tag != "tag:yaml.org,2002:timestamp"]
+    for key, values in yaml.SafeLoader.yaml_implicit_resolvers.items()
+}
 
 EngramLoader.add_constructor("tag:yaml.org,2002:map", _unique_mapping)
 
@@ -212,6 +225,8 @@ def read_record(path: Path) -> dict[str, Any]:
 
 
 def safe_path(root: Path, value: str) -> Path:
+    if "\\" in value:
+        fail(f"unsafe inventory path: {value}")
     pure = PurePosixPath(value)
     if pure.is_absolute() or any(part in ("", ".", "..") for part in pure.parts):
         fail(f"unsafe inventory path: {value}")
@@ -448,6 +463,7 @@ def check_conformance_fixtures() -> None:
 
 def repository_suite() -> None:
     check_local_markdown_links()
+    check_traceability_and_vectors()
     check_conformance_fixtures()
     targets = [ROOT / "examples" / "basic-engram", *sorted((ROOT / "tests" / "valid").iterdir())]
 
@@ -495,6 +511,40 @@ def check_local_markdown_links() -> None:
             if target and not (document.parent / target).exists():
                 fail(f"{document}: broken local link {target}")
 
+def check_traceability_and_vectors() -> None:
+    """Keep normative prose, the machine catalog, and behavioral vectors linked."""
+    spec = (ROOT / "SPEC.md").read_text(encoding="utf-8")
+    normative_lines = [
+        line for line in spec.splitlines()
+        if re.search(r"\bMUST(?: NOT)?\b", line) and "key words" not in line
+    ]
+    for line in normative_lines:
+        if not re.search(r"\*\*REQ-[A-Z]+-\d{3}:\*\*", line):
+            fail(f"normative MUST lacks a stable requirement ID: {line}")
+
+    spec_ids = set(re.findall(r"\*\*(REQ-[A-Z]+-\d{3}):\*\*", spec))
+    catalog = load_json(ROOT / "docs" / "requirements.json")
+    catalog_ids = [item["id"] for item in catalog["requirements"]]
+    if len(catalog_ids) != len(set(catalog_ids)) or set(catalog_ids) != spec_ids:
+        fail("requirement catalog does not exactly match SPEC.md")
+    trace = (ROOT / "docs" / "traceability.md").read_text(encoding="utf-8")
+    missing = sorted(requirement for requirement in spec_ids if requirement not in trace)
+    if missing:
+        fail(f"requirements missing from traceability matrix: {', '.join(missing)}")
+
+    vector_ids: set[str] = set()
+    for path in sorted((ROOT / "tests" / "vectors").glob("*.json")):
+        vector = load_json(path)
+        if vector.get("role") not in {"consumer", "round-trip"}:
+            fail(f"{path}: invalid vector role")
+        for case in vector.get("cases", []):
+            if case.get("id") in vector_ids:
+                fail(f"{path}: duplicate vector ID {case.get('id')}")
+            vector_ids.add(case.get("id"))
+            if case.get("requirement") not in spec_ids:
+                fail(f"{path}: vector references unknown requirement")
+            if not isinstance(case.get("expected"), dict) or not case["expected"]:
+                fail(f"{path}: vector lacks observable expected output")
 
 def main() -> int:
     parser = argparse.ArgumentParser()

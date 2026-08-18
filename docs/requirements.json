@@ -1,0 +1,162 @@
+{
+  "specification": "Synthetic Engram Open Standard",
+  "version": "0.1.0",
+  "requirements": [
+    {
+      "id": "REQ-ENC-001",
+      "spec_anchor": "#req-encoding-json-utf8"
+    },
+    {
+      "id": "REQ-ENC-002",
+      "spec_anchor": "#req-encoding-json-unique"
+    },
+    {
+      "id": "REQ-ENC-003",
+      "spec_anchor": "#req-encoding-markdown-utf8"
+    },
+    {
+      "id": "REQ-PATH-001",
+      "spec_anchor": "#req-path-portable"
+    },
+    {
+      "id": "REQ-PATH-002",
+      "spec_anchor": "#req-path-safe"
+    },
+    {
+      "id": "REQ-PATH-003",
+      "spec_anchor": "#req-path-archive"
+    },
+    {
+      "id": "REQ-TIME-001",
+      "spec_anchor": "#req-time-utc"
+    },
+    {
+      "id": "REQ-ID-001",
+      "spec_anchor": "#req-id-shape"
+    },
+    {
+      "id": "REQ-ID-002",
+      "spec_anchor": "#req-id-unique"
+    },
+    {
+      "id": "REQ-ID-003",
+      "spec_anchor": "#req-id-stable"
+    },
+    {
+      "id": "REQ-ID-004",
+      "spec_anchor": "#req-id-independent"
+    },
+    {
+      "id": "REQ-MAN-001",
+      "spec_anchor": "#req-manifest-root"
+    },
+    {
+      "id": "REQ-INV-001",
+      "spec_anchor": "#req-inventory-fields"
+    },
+    {
+      "id": "REQ-INV-002",
+      "spec_anchor": "#req-inventory-exists"
+    },
+    {
+      "id": "REQ-INV-003",
+      "spec_anchor": "#req-inventory-id-match"
+    },
+    {
+      "id": "REQ-INV-004",
+      "spec_anchor": "#req-inventory-unique"
+    },
+    {
+      "id": "REQ-INV-005",
+      "spec_anchor": "#req-inventory-complete"
+    },
+    {
+      "id": "REQ-INV-006",
+      "spec_anchor": "#req-inventory-no-infer"
+    },
+    {
+      "id": "REQ-REC-001",
+      "spec_anchor": "#req-record-envelope"
+    },
+    {
+      "id": "REQ-REC-002",
+      "spec_anchor": "#req-record-schema"
+    },
+    {
+      "id": "REQ-REC-003",
+      "spec_anchor": "#req-action-status"
+    },
+    {
+      "id": "REQ-REF-001",
+      "spec_anchor": "#req-link-resolve"
+    },
+    {
+      "id": "REQ-REF-002",
+      "spec_anchor": "#req-hierarchy-acyclic"
+    },
+    {
+      "id": "REQ-GRAPH-001",
+      "spec_anchor": "#req-graph-resolve"
+    },
+    {
+      "id": "REQ-GRAPH-002",
+      "spec_anchor": "#req-graph-ids"
+    },
+    {
+      "id": "REQ-MEDIA-001",
+      "spec_anchor": "#req-media-integrity"
+    },
+    {
+      "id": "REQ-MEDIA-002",
+      "spec_anchor": "#req-media-inventory"
+    },
+    {
+      "id": "REQ-MEDIA-003",
+      "spec_anchor": "#req-media-uri"
+    },
+    {
+      "id": "REQ-EXT-001",
+      "spec_anchor": "#req-extension-name"
+    },
+    {
+      "id": "REQ-EXT-002",
+      "spec_anchor": "#req-extension-core"
+    },
+    {
+      "id": "REQ-PROF-001",
+      "spec_anchor": "#req-profile-core"
+    },
+    {
+      "id": "REQ-PROF-002",
+      "spec_anchor": "#req-profile-optional"
+    },
+    {
+      "id": "REQ-CONF-001",
+      "spec_anchor": "#req-conformance-claim"
+    },
+    {
+      "id": "REQ-CONF-002",
+      "spec_anchor": "#req-producer-valid"
+    },
+    {
+      "id": "REQ-CONF-003",
+      "spec_anchor": "#req-consumer-profile"
+    },
+    {
+      "id": "REQ-VERS-001",
+      "spec_anchor": "#req-version-major"
+    },
+    {
+      "id": "REQ-SEC-001",
+      "spec_anchor": "#req-security-input"
+    },
+    {
+      "id": "REQ-SEC-002",
+      "spec_anchor": "#req-security-untrusted"
+    },
+    {
+      "id": "REQ-SEC-003",
+      "spec_anchor": "#req-security-permission"
+    }
+  ]
+}

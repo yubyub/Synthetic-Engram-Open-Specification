@@ -1,3 +1,6 @@
+# object-id-mismatch
+
+Focused rejection case: `object ID does not match inventory`.
 # Basic Synthetic Engram
 
 This directory is a complete v0.1 package. It demonstrates:
