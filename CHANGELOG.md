@@ -4,6 +4,19 @@ All notable specification changes are recorded here.
 
 ## [Unreleased]
 
+### Added
+
+- Audience-specific adoption, AI integration, and commercial licensing
+  guidance.
+- A non-normative implementation-feedback register to track constructive
+  adoption recommendations and evidence without changing frozen Core 1.0.
+
+### Changed
+
+- Clarified candidate-standard maturity, purpose, benefits, burdens, application
+  roles, and the package-versus-live-store boundary in the README.
+- Defined adoption-triggered governance review milestones.
+
 ## [1.0.0] - 2026-08-18
 
 The reviewed `1.0.0-rc.1` candidate was promoted without changes to normative
