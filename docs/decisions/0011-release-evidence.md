@@ -30,6 +30,10 @@ Freeze and link [SPEC](../../SPEC.md), [schemas](../../schemas/README.md), [fixt
 
 ## Final 1.0 evidence
 
+Promotion is controlled by the authoritative
+[1.0 promotion checklist](../releases/1.0-checklist.md); every required review
+must have linked evidence, an approver, and a date there.
+
 The exact reviewed release set and supported-runtime matrix are recorded in the
 [1.0 release evidence](../release-evidence-1.0.md). The bidirectional artifacts
 are retained in the [interoperability report](../interoperability/1.0/REPORT.md),
