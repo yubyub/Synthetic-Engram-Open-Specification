@@ -15,7 +15,11 @@ The existing directory model is inspectable and already has schemas and validato
 
 - **Satisfied:** identities and inventory are specified and schema constrained. Evidence: [SPEC §§5–6](../../SPEC.md#5-identifiers), the schemas above, and [`invalid/id-collision`](../../tests/invalid/id-collision).
 - **Open:** add normative edge fixtures for all equivalent path/timestamp/YAML cases and document the coverage set; traversal and duplicate keys alone do not establish completeness. Existing evidence includes [`invalid/unsafe-path`](../../tests/invalid/unsafe-path), [`invalid/duplicate-json-key`](../../tests/invalid/duplicate-json-key), [`invalid/duplicate-yaml-key`](../../tests/invalid/duplicate-yaml-key), and [`invalid/malformed-timestamp`](../../tests/invalid/malformed-timestamp).
-- **Open:** amend `SPEC.md` to name directory interchange as canonical and prohibit archive-specific conformance claims. `REQ-PATH-003` remains applicable security guidance, not an archive-format claim.
+- **Satisfied:** `SPEC.md` names directory interchange as canonical, treats
+  archives only as transport wrappers, prohibits archive-specific core
+  conformance claims, and links the future
+  [Archive Binding Specification](../archive-binding.md). `REQ-PATH-003`
+  remains applicable security guidance, not an archive-format claim.
 - **Open:** publish exchange evidence from two independent implementations using [`tests/valid/basic-engram`](../../tests/valid/basic-engram), with unchanged IDs and normative content.
 
 ## Linked changes required to close
