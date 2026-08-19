@@ -21,16 +21,8 @@ Lenses, and OKF interoperability.
    validator, and traceability for every testable normative change.
 7. Update the changelog.
 
-## Legacy Synthetic Engram 0.2 changes
-
-The legacy `docs/legacy/synthetic-engram-0.2/SPEC.md`, `schemas/v0.2`,
-`examples/v0.2`, and `tests/v0.2` form a
-separate legacy contract. A change to that line must be identified explicitly
-as a 0.2 correction, keep schemas and normative prose aligned, preserve tagged
-artefacts, and run the legacy validation commands described by its tooling.
-
-Do not rename 0.2 wire fields or schema identifiers to Engram Mesh. Do not
-describe repository-local adapters or self-review as independent evidence.
+Do not describe repository-local adapters or self-review as independent
+evidence.
 
 One logical change per pull request is preferred. By contributing, you agree
 that your contributions are available under the repository's [MIT License](LICENSE).

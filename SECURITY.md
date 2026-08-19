@@ -5,10 +5,9 @@
 | Version | Status |
 | --- | --- |
 | Engram Mesh 0.3.x | Pilot model, schemas, and validator; security and privacy fixes accepted |
-| Synthetic Engram 0.2.x | Legacy pilot; parser and package security fixes are accepted |
 | Earlier drafts | Unsupported |
 
-Because both lines are pre-stable and have no production SDK, response times and private
+Because the pilot is pre-stable and has no production SDK, response times and private
 patch delivery are best effort. Public advisories should distinguish format
 weaknesses from vulnerabilities in a particular application.
 
@@ -26,8 +25,3 @@ documents. Constrain document size, parsing depth, network and filesystem scope,
 redirects, retries, and returned content. Authorize every disclosure and
 mutation against the Source at execution time; capabilities and mesh membership
 are not permission.
-
-The legacy Synthetic Engram validator and processors are not hardened archive
-extractors. Legacy packages remain untrusted and require constrained archive
-paths and sizes, parsing depth, decompressed bytes, record counts, and attachment
-sizes. Legacy hashes provide integrity evidence, not authenticity or authority.

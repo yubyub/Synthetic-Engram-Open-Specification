@@ -3,8 +3,6 @@
 **Status:** pilot specification
 
 **Version:** 0.3.0
-**Supersedes:** Synthetic Engram 0.2 for future development; it does not alter
-the 0.2 package contract
 
 ## 1. Scope
 
@@ -423,17 +421,11 @@ external ID, or Source descriptor MUST NOT be treated as authorization or cause
 an implementation to load a plugin, open a connection, or fetch content without
 the explicit operation required by REQ-SLICE-006.
 
-## 9. Version and migration status
-
-Engram Mesh 0.3 is a new, incompatible pilot line. Synthetic Engram 0.2 remains
-defined by `docs/legacy/synthetic-engram-0.2/SPEC.md`, `schemas/v0.2`, `examples/v0.2`, and
-`tests/v0.2`. No implicit conversion or conformance equivalence exists between
-the two lines.
+## 9. Version status
 
 The 0.3 canonical representation is `engram-mesh.json` under
 `schemas/v0.3/`. The repository validator and fixtures exercise this pilot
-binding. Published or tagged 0.2 artefacts MUST NOT be rewritten to use
-Engram Mesh names or semantics.
+binding.
 
 ## 10. Deferred work
 
