@@ -314,6 +314,17 @@ endpoint Nodes. A `complete` slice MUST provide an opaque snapshot identifier;
 it MUST include every entity in the represented mesh and have an empty boundary.
 A `partial` slice MUST NOT be promoted to complete by a consumer.
 
+<a id="req-slice-external-closure"></a> **REQ-SLICE-005:** Completeness of a
+mesh or Mesh Slice applies to its durable mesh entities and explicitly included
+materializations at the declared snapshot. It MUST NOT be interpreted as a claim
+that every object reachable through a Source Binding has been copied, and it
+MUST NOT require a resolver to retrieve such content.
+
+<a id="req-slice-explicit-resolution"></a> **REQ-SLICE-006:** Importing,
+validating, displaying, traversing, or exporting a mesh or Mesh Slice MUST NOT
+implicitly invoke a resolver or fetch source content. Resolution and
+materialization require an explicit, authorized implementation operation.
+
 ### 5.8 Lens
 
 A lens is a query, filter, or view definition that MAY produce a Mesh Slice.
@@ -406,6 +417,11 @@ unauthorized external object exists.
 authorized at execution time against the authoritative source. Mesh membership,
 a capability declaration, possession of a slice, or prior read access is not
 authorization.
+
+<a id="req-security-resolver-hint"></a> **REQ-SEC-005:** A resolver hint,
+external ID, or Source descriptor MUST NOT be treated as authorization or cause
+an implementation to load a plugin, open a connection, or fetch content without
+the explicit operation required by REQ-SLICE-006.
 
 ## 9. Version and migration status
 

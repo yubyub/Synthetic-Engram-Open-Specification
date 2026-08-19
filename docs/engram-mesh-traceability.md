@@ -16,13 +16,14 @@ not proof of safe source access or full implementation conformance.
 | `REQ-BIND-001`–`REQ-BIND-007` | Endpoint, generation, state, successor, freshness, capability, and single-authority checks | Idempotent discovery, external-ID reuse, deletion evidence, and atomic authority transition tests |
 | `REQ-CAP-*` | Namespaced names and binding-subset checks | Per-operation authentication, authorization, precondition, and no-elevation tests |
 | `REQ-REL-*`, `REQ-HIER-*` | Endpoint resolution, direction retention by round trip, single parent, and cycle rejection | Application interpretation of custom relationship types |
-| `REQ-SLICE-*` | Entity closure, complete-snapshot and full-inclusion checks, boundary disposition/privacy checks | Authorization-aware selection showing undisclosed identities are not leaked |
+| `REQ-SLICE-001`–`REQ-SLICE-004` | Entity closure, complete-snapshot and full-inclusion checks, boundary disposition/privacy checks | Authorization-aware selection showing undisclosed identities are not leaked |
+| `REQ-SLICE-005`, `REQ-SLICE-006` | None: external resolution is outside the canonical document | Integration tests showing complete slices do not fetch bound content and passive operations never invoke a resolver |
 | `REQ-LENS-*` | Mechanism, version, and expression presence | Unsupported-mechanism reporting and proof that evaluation does not mutate membership or authority |
 | `REQ-PORT-*` | Closed core objects and namespaced extensions | Recipient-specific disclosure review and unknown-extension round-trip tests |
 | `REQ-OKF-*` | None in core validation | Independent OKF validation, stable-ID mapping, and declared-loss report |
 | `REQ-MCP-*` | None in core validation | Protocol-specific conformance performed separately, if MCP is used |
 | `REQ-SEC-001`, `REQ-SEC-002` | Resource limit and non-executing JSON parser | Resolver sandbox, network/filesystem boundary, and hostile-content tests |
-| `REQ-SEC-003`, `REQ-SEC-004` | ID-free `undisclosed` boundary enforcement | Object-level disclosure and mutation authorization tests |
+| `REQ-SEC-003`–`REQ-SEC-005` | ID-free `undisclosed` boundary enforcement | Object-level disclosure and mutation authorization tests; tests that hints cannot trigger plugin loading, connections, or fetches |
 
 The expected-diagnostic files under `tests/v0.3/invalid` prevent a negative
 fixture from passing because of an unrelated error. New normative requirements

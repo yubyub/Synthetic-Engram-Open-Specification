@@ -67,4 +67,8 @@ authorized Mesh Slice
 
 Materialization is a view or copy. Authority remains with the declared source
 unless the application performs an explicit ownership transition outside this
-draft.
+draft. A complete Mesh Slice accounts for the durable mesh entities and
+explicitly included materializations at its snapshot; it does not imply that all
+content reachable from a Source was fetched or copied. Resolution is always an
+explicit, authorized runtime operation, never an import, validation, display,
+traversal, or export side effect.

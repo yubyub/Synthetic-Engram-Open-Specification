@@ -77,6 +77,11 @@ preconditions, and validate freshness/conflict tokens.
 Possession of `engram-mesh.json`, a Mesh Slice, a resolver hint, or an earlier
 successful read is never authorization.
 
+Discovery, import, validation, display, traversal, and export must not resolve
+a Binding as a side effect. Resolve source content only for an explicit,
+authorized operation; a resolver hint selects a possible mechanism but must not
+load a plugin, establish a connection, or grant permission by itself.
+
 ## Freshness
 
 Freshness evidence contains `observed_at` plus a revision, digest, or opaque
@@ -96,4 +101,5 @@ has an explicit conflict policy.
 - caller authorization is checked on every operation;
 - stale mutation is rejected;
 - resolver configuration emits no credentials; and
+- import, validation, display, traversal, and export do not trigger resolution;
 - partial export preserves authority and privacy-safe boundary states.
