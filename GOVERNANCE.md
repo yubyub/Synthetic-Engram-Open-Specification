@@ -1,6 +1,7 @@
 # Governance
 
-Synthetic Engram 0.2 is a maintainer-led pilot specification. It is not an
+Engram Mesh 0.3 is a maintainer-led draft specification. Synthetic Engram 0.2
+is retained as its legacy package-oriented predecessor. Neither line is an
 established multi-vendor standard and currently has no independent adopter or
 external implementation evidence.
 
@@ -11,9 +12,10 @@ and conformance fixtures. The author and approving maintainer may be the same
 person while the project has only one active maintainer; the change record must
 state that fact and must not be described as independent approval.
 
-Before 1.0, minor versions may contain breaking changes. Already tagged versions
-remain identifiable and are not silently rewritten. Releases follow
-`docs/versioning.md` and record known limitations in `CHANGELOG.md`.
+Before 1.0, draft versions may contain breaking changes. Already tagged versions
+remain identifiable and are not silently rewritten. Engram Mesh releases follow
+`docs/engram-mesh-versioning.md`; legacy 0.2 package releases follow
+`docs/legacy/synthetic-engram-0.2/versioning.md`. Both record known limitations in `CHANGELOG.md`.
 
 Governance must be reviewed when the project gains an independently maintained
 implementation, a production adopter, or a second active maintainer. That review

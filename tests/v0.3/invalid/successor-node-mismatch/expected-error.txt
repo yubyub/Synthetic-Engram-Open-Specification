@@ -1,0 +1,1 @@
+successor binding must retain the same node
