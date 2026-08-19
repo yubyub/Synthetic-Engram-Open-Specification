@@ -6,6 +6,11 @@ All notable specification and repository changes are recorded here.
 
 ### Changed
 
+- Refocused future development under the Engram Mesh name around a
+  source-independent logical mesh while preserving Synthetic Engram 0.2 as a
+  separate legacy package contract.
+- Established Engram Mesh 0.3 as a pilot model with a canonical JSON
+  serialization and repository conformance exercises.
 - Relicensed the entire repository under the MIT License.
 - Reclassified the work from a claimed stable 1.0 release to a 0.2 pilot
   specification intended for real-world implementation feedback.
@@ -30,6 +35,16 @@ All notable specification and repository changes are recorded here.
 
 ### Added
 
+- A normative Engram Mesh 0.3 pilot covering stable mesh identity, sources,
+  source bindings, authority, capabilities, typed relationships, Mesh Slices,
+  Lenses, and security boundaries.
+- Engram Mesh schemas, fixtures, dependency-free validator, prototype Python and
+  Node adapters, CI coverage, and non-normative architecture, rationale, status,
+  versioning, and OKF 0.2 import/export mapping guidance.
+- Executable binding lifecycle, authority-conflict, capability-subset,
+  freshness, hierarchy, slice-closure, privacy-boundary, resolver-disclosure,
+  and expected-diagnostic checks, plus getting-started, source-adapter, and
+  requirement-traceability guidance.
 - A public adoption-question table covering likely implementer objections,
   current answers, and evidence-driven follow-up work.
 - Pilot and stable-release readiness criteria.

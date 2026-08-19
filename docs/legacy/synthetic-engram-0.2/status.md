@@ -1,5 +1,9 @@
 # Project and component maturity
 
+> [!NOTE]
+> This page records the legacy Synthetic Engram 0.2 package line. Current
+> Engram Mesh status is in [`engram-mesh-status.md`](../../engram-mesh-status.md).
+
 | Component | Status | Meaning |
 | --- | --- | --- |
 | Synthetic Engram 0.2 | Pilot specification | Available for prototypes and feedback; breaking changes are expected before 1.0. |

@@ -1,5 +1,10 @@
 # Normative version and support policy
 
+> [!NOTE]
+> This policy applies to the legacy Synthetic Engram 0.2 package line. Current
+> Engram Mesh draft policy is in
+> [`engram-mesh-versioning.md`](../../engram-mesh-versioning.md).
+
 This document is normative. BCP 14 requirement words have the meanings
 established by `SPEC.md`.
 

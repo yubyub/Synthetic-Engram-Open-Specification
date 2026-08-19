@@ -59,6 +59,6 @@ Treat a URI as a native identifier only when its authority and persistence polic
 are known. Retrieval location, citation, and object identity are separate. A URL
 change need not change an Engram ID; two URLs are not automatically aliases.
 
-[`tests/lifecycle/cases.json`](../tests/lifecycle/cases.json) makes these decisions
+[`tests/lifecycle/cases.json`](../../../tests/lifecycle/cases.json) makes these decisions
 executable in the repository implementations. It is guidance evidence, not a
 history, synchronization, alias, or global-identifier profile.

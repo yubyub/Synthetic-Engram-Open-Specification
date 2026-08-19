@@ -1,7 +1,7 @@
 # Engram Front Matter grammar and parser test contract
 
 This document extracts Core 0.2 record-envelope behavior into a standalone,
-non-normative implementation guide. [`SPEC.md`](../SPEC.md) remains authoritative.
+non-normative implementation guide. [`SPEC.md`](SPEC.md) remains authoritative.
 
 ## Restricted grammar
 
@@ -82,7 +82,7 @@ commit a future SDK API.
 
 ## Corpus and limits
 
-[`tests/front-matter/cases.json`](../tests/front-matter/cases.json) is the shared
+[`tests/front-matter/cases.json`](../../../tests/front-matter/cases.json) is the shared
 corpus. The runner materializes exact record bytes, invokes the Python and Node
 parsers, compares their result to the expected JSON value or diagnostic code,
 and runs deterministic generated scalar and resource-limit properties.

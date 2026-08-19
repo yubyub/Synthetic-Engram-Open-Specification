@@ -1,7 +1,7 @@
 # Core 0.2 security review
 
 **Review status:** pilot publication assessment complete
-**Reviewed surface:** the 0.2 normative model in [`SPEC.md`](../SPEC.md), the
+**Reviewed surface:** the 0.2 normative model in [`SPEC.md`](SPEC.md), the
 0.2 schemas, reference validator, versioned examples and fixtures, and the
 language-neutral conformance harness.
 **Threat model:** every package, archive wrapper, pathname, declared media type,
@@ -12,7 +12,7 @@ they are not hardened importers.
 This review applies to the 0.2 pilot schema line. It should be repeated after
 material model changes and before a stable release. The accepted implementation
 boundary is the repository's
-[security policy](../SECURITY.md): callers must add limits, non-execution,
+[security policy](../../../SECURITY.md): callers must add limits, non-execution,
 rendering/filename sanitization, and safe extraction. These limitations are
 release conditions, not claims that hostile imports are safe by default.
 
@@ -161,8 +161,8 @@ No reviewed item blocks publication for controlled pilot development. The model 
 normative boundaries for path spelling, duplicate keys, restricted YAML,
 non-execution, attachment integrity/resolution, unsupported profiles, untrusted
 content, and non-authority. Pilot publication is acceptable only with the limitations
-already stated in [`SECURITY.md`](../SECURITY.md) and the known limitations in
-the [changelog](../CHANGELOG.md):
+already stated in [`SECURITY.md`](../../../SECURITY.md) and the known limitations in
+the [changelog](../../../CHANGELOG.md):
 
 1. archive extraction and transactional import are product responsibilities;
 2. every parser and content class needs deployment-appropriate quotas;

@@ -1,7 +1,7 @@
 # Architecture
 
 This document is a non-normative guide to the system boundaries defined by the
-normative [`SPEC.md`](../SPEC.md). It explains how the interchange format fits
+normative [`SPEC.md`](SPEC.md). It explains how the interchange format fits
 between an owner's durable knowledge and implementations that may store and use
 that knowledge very differently.
 

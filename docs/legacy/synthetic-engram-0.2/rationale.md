@@ -1,6 +1,6 @@
 # Design rationale
 
-> This document is non-normative. [`SPEC.md`](../SPEC.md) and its referenced
+> This document is non-normative. [`SPEC.md`](SPEC.md) and its referenced
 > schemas are the sources of format requirements.
 
 ## Why this exists

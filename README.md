@@ -1,186 +1,112 @@
-# Synthetic Engram Open Specification
+# Engram Mesh Open Specification
 
-**Manage knowledge once; keep it useful across people, applications, and AI.**
+**Connect knowledge across sources without taking ownership of it.**
 
-Synthetic Engram 0.2 is a pilot specification for portable, human-controlled
-knowledge. It represents typed Markdown records, stable identities, explicit
-relationships, portable graphs, and verifiable attachments in an inspectable
-directory package.
+Engram Mesh is a draft open specification for a source-independent logical mesh.
+It gives knowledge stable logical identity and relationships across repositories,
+document stores, local vaults, databases, and knowledge applications while the
+underlying content remains in its authoritative source.
 
 > [!IMPORTANT]
-> **Status: 0.2 pilot specification.** It is available for prototypes, pilots,
-> and implementation feedback. No external application is known to use it yet.
-> Breaking changes are expected before a stable 1.0 release.
+> **Status: 0.3 pilot specification.** The canonical `engram-mesh.json`
+> representation, schemas, fixtures, and prototype adapters are available for
+> evaluation. Breaking changes remain possible before 1.0.
 
-## What it is
+## What it standardizes
 
-Synthetic Engram defines the durable information that can move between a human,
-an application, and an AI integration. An application may use the package as a
-small local store, map it into a database, or expose it through its own API.
+Engram Mesh focuses on:
 
-The 0.2 interoperability boundary is the package. It is not a database engine,
-application framework, synchronization protocol, permission system, retrieval
-algorithm, AI-memory policy, or standardized remote API.
-
-```text
-application store <--> 0.2 package <--> another application
-       |                      |
- human interface       bounded AI context
-```
-
-Use it when stable IDs, links, explicit complete/partial exports, human
-inspection, or a credible exit path matter. It is probably unnecessary when one
-program will always own the data or ordinary Markdown already preserves all
-required meaning.
-
-## Recommended usage patterns
-
-A useful way to think about a Synthetic Engram is that an application **has an
-Engram**: a durable body of owner-controlled knowledge with stable identities
-and relationships. The application may store that knowledge in any suitable
-system. The specification defines the meaning that must remain portable, while the
-package defines how that meaning is exchanged and inspected.
-
-The following patterns are all valid. Choose according to the application's
-size, write behavior, and interoperability needs.
-
-### 1. Package-native local store
-
-Use the package itself as the application's primary store. This is the simplest
-pattern for a local, single-user, or write-light tool. The application must add
-safe and atomic writes, indexing, history, backups, and any required access
-controls because Core 0.2 does not provide them.
-
-```mermaid
-flowchart LR
-    Person[Person] <--> App[Local application]
-    App <--> Package[Synthetic Engram package<br/>live durable knowledge]
-    Package --> Backup[Backup or another application]
-```
-
-### 2. Portable canonical domain model
-
-Use Engram identities and semantics as the durable knowledge contract while a
-database, object store, or graph store provides the operational representation.
-Here, "canonical" describes the meaning and identity of the knowledge, not a
-requirement to mirror the package's files in the database. Search indexes,
-embeddings, graph layout, sessions, and caches remain derived application state.
-
-This is the recommended pattern for a hosted knowledge-base application that
-serves a human interface, an AI integration, and a graph viewer from the same
-logical Engram.
-
-```mermaid
-flowchart TD
-    Person[Person] --> UI[Knowledge interface]
-    AI[AI integration] --> API[Authorized application API]
-    Viewer[Graph viewer] --> API
-    UI --> API
-    API <--> Store[Application store<br/>records, stable IDs, links, media]
-    Store --> Derived[Derived indexes, embeddings,<br/>and graph layout]
-    Store <--> Adapter[Engram import/export adapter]
-    Adapter <--> Package[Portable Synthetic Engram package]
-```
-
-The application should be able to map its durable records, relationships,
-graphs, and attachments to and from the package without silently changing their
-stable IDs or claimed meaning. Its API is still application-specific in Core
-0.2.
-
-### 3. Interchange boundary for an existing application
-
-Keep an application's established internal model and add Engram only at its
-boundary. This is the lowest-risk way to pilot portable backup, migration,
-bounded AI delivery, or exchange with another tool. The adapter must document
-which semantics are preserved, transformed, omitted, or represented by
-namespaced extensions.
-
-```mermaid
-flowchart LR
-    Existing[Existing application model] <--> Mapping[Engram mapping adapter]
-    Mapping <--> Package[Synthetic Engram package]
-    Package <--> Consumer[Another application,<br/>archive, or bounded AI context]
-```
-
-## Pilot expectations
-
-Pilot implementations should:
-
-- begin with import/export rather than redesigning a production database;
-- publish mappings, omissions, transformations, and unsupported profiles;
-- round trip representative real data and preserve stable IDs;
-- treat every package as untrusted input;
-- retain source IDs in AI-derived context and citations; and
-- report integration friction before proposing new core fields.
-
-The included Python and Node processors are repository-maintained pilot adapters.
-They exercise the same vectors in two runtimes, but are not independent external
-implementations, production SDKs, or certification evidence.
-
-## Package at a glance
+- stable node identity independent of filenames, paths, provider IDs, and
+  current storage systems;
+- Sources and Source Bindings that connect nodes to externally controlled
+  objects;
+- typed relationships and logical hierarchy across source boundaries;
+- explicit source ownership and authority classification;
+- portable capability names without treating them as authorization;
+- bounded Mesh Slices for sharing, context, export, and traversal; and
+- Lenses as query or view definitions distinct from sources and namespaces.
 
 ```text
-my-engram/
-├── engram.json
-├── records/
-│   ├── notes/
-│   ├── projects/
-│   └── actions/
-├── graphs/
-└── attachments/
+ Obsidian ───────────┐
+ GitHub ─────────────┤
+ Google Drive ───────┼──► Engram Mesh logical graph
+ OKF bundles ────────┤
+ Native stores ──────┘
 ```
 
-The manifest inventories every normative object. Records are UTF-8 Markdown with
-restricted YAML front matter; graphs and attachment metadata are JSON. Inspect
-the [complete example](examples/v0.2/basic-engram/README.md) and the
-[partial example](examples/v0.2/partial-engram/README.md).
+The content does not have to move. Mesh membership does not imply storage,
+ownership, index inclusion, search representation, modification authority, or
+export inclusion.
 
-## AI integration
+## Relationship to existing standards
 
-An AI can inspect a package directly, or an application can expose authorized
-Engram data through HTTP, MCP, a local library, or another interface. Core 0.2
-does not make those live interfaces mutually compatible.
+[Open Knowledge Format](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
+is the preferred portable knowledge representation where its Markdown/YAML
+concept and bundle model fits. Engram Mesh does not define a competing document
+format. It adds the cross-source identity, binding, typed relationship,
+authority, and capability layer. See the
+[OKF interoperability mapping](docs/okf-interoperability.md).
 
-The recommended discovery sequence is capabilities, authorized overview,
-available graphs, bounded traversal or selection, and then batched object or
-attachment retrieval by stable ID. See the [AI integration guide](docs/ai-integration.md)
-and [remote delivery pattern](docs/remote-delivery-pattern.md).
+[Model Context Protocol](https://modelcontextprotocol.io/) is one useful way for
+agents and applications to access an Engram Mesh implementation. It remains a
+runtime protocol, not part of the Engram Mesh data model; HTTP, GraphQL, library
+APIs, CLIs, and application plugins are equally possible.
 
-## Evaluate or implement
+[Basic Memory](https://docs.basicmemory.com/) and projects using the ambiguous
+name “OpenMemory” solve adjacent knowledge-base or AI-memory problems. They may
+participate as Sources or implement adapters; the Engram Mesh specification
+does not reproduce their storage, retrieval, or memory behavior. See the
+[adjacent-systems boundary](docs/engram-mesh-related-standards.md).
 
-- Adoption decision: [adoption guide](docs/adoption-guide.md)
-- Common objections and planned responses: [adoption questions](docs/adoption-questions.md)
-- Normative format: [SPEC.md](SPEC.md)
-- JSON Schemas: [schemas/README.md](schemas/README.md)
-- Producer/consumer obligations: [conformance guide](docs/conformance.md)
-- Architecture boundaries: [architecture](docs/architecture.md)
-- Security limitations: [SECURITY.md](SECURITY.md) and
-  [0.2 security review](docs/security-review-0.2.md)
-- Current maturity: [component status](docs/status.md)
-- Related work: [related standards and projects](docs/related-standards.md)
-- Contribution process: [CONTRIBUTING.md](CONTRIBUTING.md)
+## Deliberate non-goals
 
-Additional implementation guidance covers [front matter](docs/front-matter.md),
-[identity lifecycle](docs/identity-lifecycle.md), [profile governance](docs/profile-governance.md),
-[graph mappings](docs/graph-mappings.md), and [preservation](docs/preservation-mappings.md).
+Engram Mesh does not standardize:
 
-## Validate the repository
+- Markdown knowledge documents already covered by OKF;
+- search, embeddings, chunks, ranking, or vector databases;
+- SQLite, PostgreSQL, graph databases, or filesystem layouts;
+- web servers, containers, frontends, or MCP server implementations;
+- authentication mechanisms, credentials, or application authorization policy;
+  or
+- synchronization and conflict-resolution algorithms.
 
-Requires Python 3.11+, Node 20+ for cross-runtime development tests, and the
-Python dependencies in `requirements-dev.txt`.
+## Current documents
 
-```sh
-python3 -m pip install -r requirements-dev.txt
-python3 scripts/validate.py
-python3 scripts/conformance_harness.py --adapter implementations/python-engram/engram_adapter.py
-python3 scripts/conformance_harness.py --adapter implementations/node-engram/engram-adapter.js
-python3 scripts/run_frontmatter_tests.py
-python3 scripts/run_lifecycle_tests.py
-python3 scripts/run_interoperability.py
-```
+- First use: [Getting started](docs/getting-started.md)
+- Normative pilot specification: [Engram Mesh Open Specification 0.3](SPEC.md)
+- Architecture: [Engram Mesh architecture](docs/engram-mesh-architecture.md)
+- Rationale: [Engram Mesh design rationale](docs/engram-mesh-rationale.md)
+- Version and legacy policy: [Engram Mesh versioning](docs/engram-mesh-versioning.md)
+- Conformance: [Engram Mesh 0.3 conformance](docs/engram-mesh-conformance.md)
+- Requirement coverage: [Engram Mesh traceability](docs/engram-mesh-traceability.md)
+- Adapter behavior: [Source adapter contract](docs/source-adapter-contract.md)
+- OKF mapping: [Engram Mesh and OKF interoperability](docs/okf-interoperability.md)
+- Adjacent systems: [Engram Mesh and related standards](docs/engram-mesh-related-standards.md)
+- Maturity: [Engram Mesh component status](docs/engram-mesh-status.md)
+- Refocus decision: [Engram Mesh refocus and OKF alignment](docs/decisions/refocus.md)
 
-Some systems provide the interpreter as `python` instead of `python3`; either
-is acceptable when it resolves to Python 3.11 or newer.
+## Legacy Synthetic Engram 0.2
+
+The earlier package-oriented pilot is preserved unchanged as a separate legacy
+line. It is not Engram Mesh 0.3 and there is no implicit conformance equivalence
+or lossless migration between them.
+
+- Legacy normative specification: [Synthetic Engram 0.2](docs/legacy/synthetic-engram-0.2/SPEC.md)
+- Legacy reference material: [Synthetic Engram 0.2 documentation](docs/legacy/synthetic-engram-0.2/README.md)
+- Legacy schemas: [schemas/v0.2](schemas/v0.2)
+- Legacy examples: [examples/v0.2](examples/v0.2)
+- Legacy fixtures: [tests/v0.2](tests/v0.2)
+- Legacy validator and adapters: `scripts/validate.py` and `implementations/`
+
+The existing validation commands continue to exercise the legacy 0.2 package
+contract. Engram Mesh validation is separate; see the conformance guide.
+
+## Contributing
+
+The immediate need is implementation evidence for the 0.3 model: adapters for
+independently controlled sources, stable identity across source moves,
+cross-source relationship round trips, authority handling, and OKF
+materialization with explicit loss reporting. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Licence
 

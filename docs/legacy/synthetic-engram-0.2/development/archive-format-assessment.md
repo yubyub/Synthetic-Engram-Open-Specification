@@ -59,5 +59,5 @@ counts, deep paths, compression bombs, and trailing data.
 
 Governance chooses a binding only after two prototype writers produce identical
 bytes for canonical fixtures and two readers agree on every adversarial outcome.
-Until then, `docs/archive-binding.md` remains a placeholder and archives are only
+Until then, `docs/legacy/synthetic-engram-0.2/archive-binding.md` remains a placeholder and archives are only
 implementation-defined transport wrappers.

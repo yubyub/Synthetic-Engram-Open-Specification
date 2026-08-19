@@ -365,13 +365,14 @@ def check_local_markdown_links() -> None:
 
 def check_traceability_and_vectors() -> None:
     """Keep normative prose, the machine catalog, and behavioral vectors linked."""
-    spec = (ROOT / "SPEC.md").read_text(encoding="utf-8")
+    legacy_docs = ROOT / "docs" / "legacy" / "synthetic-engram-0.2"
+    spec = (legacy_docs / "SPEC.md").read_text(encoding="utf-8")
     spec_ids = set(re.findall(r"\*\*(REQ-[A-Z]+-\d{3}):\*\*", spec))
-    catalog = load_json(ROOT / "docs" / "requirements.json")
+    catalog = load_json(legacy_docs / "requirements.json")
     catalog_ids = [item["id"] for item in catalog["requirements"]]
     if len(catalog_ids) != len(set(catalog_ids)) or set(catalog_ids) != spec_ids:
         fail("requirement catalog does not exactly match SPEC.md")
-    trace = (ROOT / "docs" / "traceability.md").read_text(encoding="utf-8")
+    trace = (legacy_docs / "traceability.md").read_text(encoding="utf-8")
     missing = sorted(requirement for requirement in spec_ids if requirement not in trace)
     if missing:
         fail(f"requirements missing from traceability matrix: {', '.join(missing)}")

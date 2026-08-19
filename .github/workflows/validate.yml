@@ -47,3 +47,18 @@ jobs:
       - run: python -m pip install -r requirements-dev.txt
       - run: python scripts/run_frontmatter_tests.py
       - run: python scripts/run_lifecycle_tests.py
+  engram-mesh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python scripts/validate_engram_mesh_schema.py
+      - run: python scripts/validate_engram_mesh.py
+      - run: python scripts/validate_engram_mesh.py examples/v0.3/basic-mesh/engram-mesh.json
+      - run: python scripts/run_engram_mesh_adapter_tests.py

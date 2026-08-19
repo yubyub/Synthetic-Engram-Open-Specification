@@ -1,6 +1,6 @@
 # Normative requirement traceability
 
-This matrix maps every stable requirement in [`SPEC.md`](../SPEC.md) to its
+This matrix maps every stable requirement in [`SPEC.md`](SPEC.md) to its
 schema constraint, validator assertion, fixture, vector, or review procedure.
 [`requirements.json`](requirements.json) is the machine-readable catalog.
 Schema validation below means the applicable file in `schemas/v0.2/`.
