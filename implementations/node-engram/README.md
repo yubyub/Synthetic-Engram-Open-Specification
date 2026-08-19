@@ -5,9 +5,7 @@ preservation profiles: **core, graph, media, action**.
 
 **Maturity:** repository-maintained pilot processor. This executable exercises
 the conformance vectors; it is not an independently maintained implementation,
-production SDK, supported service, or security certification. See the project
-[maturity matrix](../../docs/legacy/synthetic-engram-0.2/status.md) and
-[SDK release criteria](../../docs/legacy/synthetic-engram-0.2/development/sdk-release-criteria.md).
+production SDK, supported service, or security certification.
 
 The executable is separately implemented with Node built-ins. It owns its
 JSON/UTF-8 inventory parser, attachment-link discovery, safety checks, and

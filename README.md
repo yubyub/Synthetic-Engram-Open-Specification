@@ -76,7 +76,7 @@ Engram Mesh does not standardize:
 - Normative pilot specification: [Engram Mesh Open Specification 0.3](SPEC.md)
 - Architecture: [Engram Mesh architecture](docs/engram-mesh-architecture.md)
 - Rationale: [Engram Mesh design rationale](docs/engram-mesh-rationale.md)
-- Version and legacy policy: [Engram Mesh versioning](docs/engram-mesh-versioning.md)
+- Version policy: [Engram Mesh versioning](docs/engram-mesh-versioning.md)
 - Conformance: [Engram Mesh 0.3 conformance](docs/engram-mesh-conformance.md)
 - Requirement coverage: [Engram Mesh traceability](docs/engram-mesh-traceability.md)
 - Adapter behavior: [Source adapter contract](docs/source-adapter-contract.md)
@@ -84,22 +84,6 @@ Engram Mesh does not standardize:
 - Adjacent systems: [Engram Mesh and related standards](docs/engram-mesh-related-standards.md)
 - Maturity: [Engram Mesh component status](docs/engram-mesh-status.md)
 - Refocus decision: [Engram Mesh refocus and OKF alignment](docs/decisions/refocus.md)
-
-## Legacy Synthetic Engram 0.2
-
-The earlier package-oriented pilot is preserved unchanged as a separate legacy
-line. It is not Engram Mesh 0.3 and there is no implicit conformance equivalence
-or lossless migration between them.
-
-- Legacy normative specification: [Synthetic Engram 0.2](docs/legacy/synthetic-engram-0.2/SPEC.md)
-- Legacy reference material: [Synthetic Engram 0.2 documentation](docs/legacy/synthetic-engram-0.2/README.md)
-- Legacy schemas: [schemas/v0.2](schemas/v0.2)
-- Legacy examples: [examples/v0.2](examples/v0.2)
-- Legacy fixtures: [tests/v0.2](tests/v0.2)
-- Legacy validator and adapters: `scripts/validate.py` and `implementations/`
-
-The existing validation commands continue to exercise the legacy 0.2 package
-contract. Engram Mesh validation is separate; see the conformance guide.
 
 ## Contributing
 

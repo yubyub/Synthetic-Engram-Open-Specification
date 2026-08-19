@@ -1,7 +1,6 @@
 # Governance
 
-Engram Mesh 0.3 is a maintainer-led draft specification. Synthetic Engram 0.2
-is retained as its legacy package-oriented predecessor. Neither line is an
+Engram Mesh 0.3 is a maintainer-led draft specification. It is not an
 established multi-vendor standard and currently has no independent adopter or
 external implementation evidence.
 
@@ -14,8 +13,7 @@ state that fact and must not be described as independent approval.
 
 Before 1.0, draft versions may contain breaking changes. Already tagged versions
 remain identifiable and are not silently rewritten. Engram Mesh releases follow
-`docs/engram-mesh-versioning.md`; legacy 0.2 package releases follow
-`docs/legacy/synthetic-engram-0.2/versioning.md`. Both record known limitations in `CHANGELOG.md`.
+`docs/engram-mesh-versioning.md` and record known limitations in `CHANGELOG.md`.
 
 Governance must be reviewed when the project gains an independently maintained
 implementation, a production adopter, or a second active maintainer. That review

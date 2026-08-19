@@ -7,18 +7,13 @@ All notable specification and repository changes are recorded here.
 ### Changed
 
 - Refocused future development under the Engram Mesh name around a
-  source-independent logical mesh while preserving Synthetic Engram 0.2 as a
-  separate legacy package contract.
+  source-independent logical mesh.
 - Established Engram Mesh 0.3 as a pilot model with a canonical JSON
   serialization and repository conformance exercises.
 - Relicensed the entire repository under the MIT License.
-- Reclassified the work from a claimed stable 1.0 release to a 0.2 pilot
-  specification intended for real-world implementation feedback.
 - Removed completed planning registers, self-approval release records, the
   original concept dump, obsolete v0.1 material, duplicate unversioned fixtures,
   and generated release-gate artifacts.
-- Consolidated the active schemas, examples, fixtures, security review, and
-  interoperability exercises under explicit 0.2 paths.
 - Corrected governance language to describe the current single-maintainer model
   and repository-local adapters honestly.
 

@@ -1,49 +1,31 @@
-# Engram Mesh Open Specification — Refocus and OKF Alignment
+# ThoughtMesh Open Specification — Refocus and OKF Alignment
 
 ## Purpose of this change
 
-Refactor the existing Synthetic Engram / Engram Mesh Open Specification around a narrower and more distinctive purpose.
+Refactor the ThoughtMesh Open Specification around a narrower and more distinctive purpose.
 
-Engram Mesh should **not attempt to define another general AI memory format, Markdown knowledge format, search system, MCP protocol, or storage engine**.
+ThoughtMesh should **not attempt to define another general AI memory format, Markdown knowledge format, search system, MCP protocol, or storage engine**.
 
 Existing projects and standards already cover substantial parts of those problems.
 
-The distinctive purpose of Engram Mesh is:
+The distinctive purpose of ThoughtMesh is:
 
-> **A source-independent logical mesh that maps and connects knowledge across independently owned storage systems without requiring that knowledge to be moved, rewritten, or owned by Engram Mesh.**
+> **A source-independent logical mesh that maps and connects knowledge across independently owned storage systems without requiring that knowledge to be moved, rewritten, or owned by ThoughtMesh.**
 
 The specification should concentrate on that problem.
 
 ---
 
-# 1. Rename
+# 1. Terminology
 
-Rename the specification and terminology from:
-
-```text
-Synthetic Engram
-Synthetic Engram Open Specification
-SEOS
-```
-
-to:
-
-```text
-Engram Mesh
-Engram Mesh Open Specification
-```
-
-Do not mechanically replace every occurrence of `Engram`.
-
-Review terminology semantically.
-
-Concepts that existed primarily because the whole system was described as an "Engram" should be reconsidered rather than renamed blindly.
+Use `ThoughtMesh` and `ThoughtMesh Open Specification` consistently. Review
+terminology semantically rather than applying mechanical substitutions.
 
 ---
 
 # 2. Relationship to Existing Standards
 
-Engram Mesh should explicitly avoid rebuilding capabilities already addressed by existing standards.
+ThoughtMesh should explicitly avoid rebuilding capabilities already addressed by existing standards.
 
 The specification should recognise at least:
 
@@ -51,7 +33,7 @@ The specification should recognise at least:
 * Model Context Protocol (MCP)
 * existing memory/knowledge systems such as Basic Memory and OpenMemory
 
-These systems may be used independently of Engram Mesh or in conjunction with it.
+These systems may be used independently of ThoughtMesh or in conjunction with it.
 
 ---
 
@@ -59,7 +41,7 @@ These systems may be used independently of Engram Mesh or in conjunction with it
 
 OKF should be treated as the preferred existing open representation for portable knowledge where its model is suitable.
 
-Engram Mesh should NOT create another competing Markdown + YAML knowledge-document format where OKF already provides the necessary semantics.
+ThoughtMesh should NOT create another competing Markdown + YAML knowledge-document format where OKF already provides the necessary semantics.
 
 Conceptually:
 
@@ -67,14 +49,14 @@ Conceptually:
 OKF
     portable representation of knowledge
 
-Engram Mesh
+ThoughtMesh
     mapping and relationships across knowledge sources
 
 MCP
     runtime interface through which agents may access systems
 ```
 
-Engram Mesh may use OKF for:
+ThoughtMesh may use OKF for:
 
 * import;
 * export;
@@ -83,36 +65,36 @@ Engram Mesh may use OKF for:
 * concepts that can be represented directly using OKF;
 * provenance and source metadata where OKF already provides suitable semantics.
 
-Do not duplicate OKF fields merely to give them Engram Mesh-specific names.
+Do not duplicate OKF fields merely to give them ThoughtMesh-specific names.
 
 ---
 
-# 4. Do Not Make Engram Mesh Merely an OKF Extension Yet
+# 4. Do Not Make ThoughtMesh Merely an OKF Extension Yet
 
-Do not currently define Engram Mesh as formally extending or modifying OKF.
+Do not currently define ThoughtMesh as formally extending or modifying OKF.
 
 Instead:
 
-1. define the Engram Mesh-specific problem independently;
+1. define the ThoughtMesh-specific problem independently;
 2. identify direct mappings to OKF;
 3. use OKF concepts wherever they are sufficient;
-4. define Engram Mesh-specific structures only where OKF does not solve the mesh problem;
-5. document how an Engram Mesh can be imported/exported using OKF.
+4. define ThoughtMesh-specific structures only where OKF does not solve the mesh problem;
+5. document how a ThoughtMesh can be imported/exported using OKF.
 
-This reduces unnecessary coupling while OKF and Engram Mesh are both evolving.
+This reduces unnecessary coupling while OKF and ThoughtMesh are both evolving.
 
-A future version may define a formal Engram Mesh profile or extension for OKF if that becomes useful.
+A future version may define a formal ThoughtMesh profile or extension for OKF if that becomes useful.
 
 ---
 
-# 5. The Distinctive Engram Mesh Problem
+# 5. The Distinctive ThoughtMesh Problem
 
-Engram Mesh should primarily standardize how independently stored knowledge participates in one logical graph.
+ThoughtMesh should primarily standardize how independently stored knowledge participates in one logical graph.
 
 Example:
 
 ```text
-                 Engram Mesh
+                 ThoughtMesh
 
  Obsidian ───────────┐
                      │
@@ -131,7 +113,7 @@ The underlying information does not need to move.
 
 The source system can remain authoritative.
 
-Engram Mesh provides the connective layer.
+ThoughtMesh provides the connective layer.
 
 ---
 
@@ -139,7 +121,7 @@ Engram Mesh provides the connective layer.
 
 Focus the specification around concepts such as:
 
-## Stable Engram Mesh identity
+## Stable ThoughtMesh identity
 
 A logical node requires an identity that is independent of:
 
@@ -166,7 +148,7 @@ Google Drive
 SharePoint
 OpenMemory
 Basic Memory
-Engram Mesh native storage
+ThoughtMesh native storage
 filesystem
 database
 other application
@@ -176,12 +158,12 @@ other application
 
 ## Source binding
 
-an Engram Mesh node may map to an object controlled by a Source.
+A ThoughtMesh node may map to an object controlled by a Source.
 
 Conceptually:
 
 ```text
-Engram Mesh Node
+ThoughtMesh Node
       │
       ▼
 Source Binding
@@ -197,7 +179,7 @@ Separate portable source identity from implementation-local credentials and conn
 
 ## Graph relationships
 
-Engram Mesh defines relationships between logical nodes regardless of where their underlying knowledge is stored.
+ThoughtMesh defines relationships between logical nodes regardless of where their underlying knowledge is stored.
 
 For example:
 
@@ -223,7 +205,7 @@ Hierarchy should describe logical organisation rather than necessarily matching 
 
 ## Fragment
 
-Retain the useful concept currently called an Engram Fragment, but rename/reconsider it in Engram Mesh terminology.
+Retain the useful concept currently called an Engram Fragment, but rename/reconsider it in ThoughtMesh terminology.
 
 A fragment is a bounded subset of the mesh suitable for:
 
@@ -233,7 +215,7 @@ A fragment is a bounded subset of the mesh suitable for:
 * export;
 * constrained traversal.
 
-Choose final terminology carefully rather than automatically calling it `Engram Mesh Fragment`.
+Choose final terminology carefully rather than automatically calling it `ThoughtMesh Fragment`.
 
 ---
 
@@ -247,16 +229,16 @@ It is not equivalent to a namespace or physical source.
 
 ## Source ownership
 
-Engram Mesh must distinguish:
+ThoughtMesh must distinguish:
 
 ```text
-Engram Mesh knows about an object
+ThoughtMesh knows about an object
 ```
 
 from:
 
 ```text
-Engram Mesh owns the object's content
+ThoughtMesh owns the object's content
 ```
 
 Externally stored knowledge remains owned by its source.
@@ -289,7 +271,7 @@ Make this principle prominent:
 ```text
 Storage ownership
         ≠
-Engram Mesh membership
+ThoughtMesh membership
         ≠
 Index scope
         ≠
@@ -318,12 +300,12 @@ Do not standardize:
 
 An implementation can create these from indexed content.
 
-Search chunks should NOT automatically become durable Engram Mesh nodes.
+Search chunks should NOT automatically become durable ThoughtMesh nodes.
 
 Example:
 
 ```text
-Engram Mesh:
+ThoughtMesh:
 
 Requirements.pdf
         │
@@ -357,13 +339,13 @@ Remove or clearly mark as implementation concerns any requirement for:
 * MCP server implementation;
 * frontend technology.
 
-The Engram Mesh Open Specification must be implementable using different technologies.
+The ThoughtMesh Open Specification must be implementable using different technologies.
 
 ---
 
 # 10. MCP Relationship
 
-MCP should be described as one useful runtime access mechanism, not as part of the Engram Mesh data model.
+MCP should be described as one useful runtime access mechanism, not as part of the ThoughtMesh data model.
 
 Conceptually:
 
@@ -374,7 +356,7 @@ AI
 MCP
  │
  ▼
-Engram Mesh implementation
+ThoughtMesh implementation
 ```
 
 Another implementation could expose:
@@ -387,7 +369,7 @@ CLI
 application plugin
 ```
 
-and still implement the Engram Mesh specification.
+and still implement the ThoughtMesh specification.
 
 Do not redefine MCP concepts that MCP already standardizes.
 
@@ -409,13 +391,13 @@ A user could potentially use:
 Basic Memory
       │
       ▼
-Engram Mesh Source Adapter
+ThoughtMesh Source Adapter
       │
       ▼
-Engram Mesh
+ThoughtMesh
 ```
 
-Engram Mesh does not need to replace Basic Memory.
+ThoughtMesh does not need to replace Basic Memory.
 
 ## OpenMemory
 
@@ -429,25 +411,25 @@ OpenMemory
      ├── AI persistent memories
      │
      ▼
-Engram Mesh Source
+ThoughtMesh Source
 ```
 
 or use OpenMemory independently.
 
-Engram Mesh should not attempt to become a better version of OpenMemory merely because persistent AI memory is useful.
+ThoughtMesh should not attempt to become a better version of OpenMemory merely because persistent AI memory is useful.
 
 ---
 
-# 12. Engram Mesh Native Storage Is Not Part of the Standard
+# 12. ThoughtMesh Native Storage Is Not a mandatory Part of the Specification even if it is included
 
-an Engram Mesh implementation may provide its own knowledge storage.
+A ThoughtMesh implementation may provide its own knowledge storage.
 
 This is optional.
 
 Conceptually:
 
 ```text
-                 Engram Mesh
+                 ThoughtMesh
 
 External Sources ──┐
                    ├── mesh
@@ -462,7 +444,7 @@ The Open Specification should not require a particular native-storage format.
 
 # 13. Import and Export
 
-Engram Mesh should support portable interchange without forcing external sources to change format.
+ThoughtMesh should support portable interchange without forcing external sources to change format.
 
 OKF should be the preferred format to investigate and use for portable knowledge materialization.
 
@@ -473,7 +455,7 @@ Materialize
     Include the knowledge in the portable export.
 
 Reference
-    Include the Engram Mesh mapping/reference without copying source data.
+    Include the ThoughtMesh mapping/reference without copying source data.
 
 Exclude
     Leave the source/object outside this export.
@@ -482,7 +464,7 @@ Exclude
 For example:
 
 ```text
-Engram Mesh
+ThoughtMesh
 
 Obsidian note ───── materialize ──► OKF concept
 GitHub repo ─────── reference ────► source/resource reference
@@ -505,13 +487,13 @@ Where OKF already provides appropriate semantics for:
 
 use them.
 
-Only add Engram Mesh-specific metadata where necessary.
+Only add ThoughtMesh-specific metadata where necessary.
 
 ---
 
-# 14. What Engram Mesh Should NOT Try to Be
+# 14. What ThoughtMesh Should NOT Try to Be
 
-Explicitly state that Engram Mesh is not intended to be:
+Explicitly state that ThoughtMesh is not intended to be:
 
 ```text
 another Markdown note format
@@ -524,7 +506,7 @@ another knowledge storage engine
 another OKF competitor
 ```
 
-Individual Engram Mesh implementations may provide some of those capabilities for convenience.
+Individual ThoughtMesh implementations may provide some of those capabilities for convenience.
 
 They are not the purpose of the Open Specification.
 
@@ -534,7 +516,7 @@ They are not the purpose of the Open Specification.
 
 Refactor the specification around a concise definition similar to:
 
-> Engram Mesh is an open model for creating a stable, portable knowledge graph across independently owned and heterogeneous information sources. It defines identity, source mapping, relationships, bounded views and portability without requiring the underlying information to move into a new storage system.
+> ThoughtMesh is an open model for creating a stable, portable knowledge graph across independently owned and heterogeneous information sources. It defines identity, source mapping, relationships, bounded views and portability without requiring the underlying information to move into a new storage system.
 
 The exact wording may be improved, but preserve this scope.
 
@@ -554,11 +536,11 @@ MCP
 Basic Memory / OpenMemory / Obsidian / GitHub / Drive
     may own or provide knowledge
 
-Engram Mesh
+ThoughtMesh
     maps these things into one logical mesh
 ```
 
-Engram Mesh's value is the connective layer.
+ThoughtMesh's value is the connective layer.
 
 Do not retain old specification material merely because it already exists.
 
